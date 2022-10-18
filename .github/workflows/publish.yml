@@ -1,0 +1,21 @@
+name: Publish NPM package
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 'lts/*'
+      - run: |
+          npm publish
+        working-directory: dist
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
