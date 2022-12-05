@@ -14,8 +14,10 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 'lts/*'
+          scope: '@nice-devone'
+          registry-url: https://registry.npmjs.org
       - run: |
-          npm publish
+          npm publish --access public
         working-directory: dist
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
