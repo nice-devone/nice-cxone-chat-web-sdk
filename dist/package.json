@@ -1,0 +1,16 @@
+{
+  "name": "@nice-devone/nice-cxone-chat-web-sdk",
+  "version": "1.0.0",
+  "description": "Web SDK for DFO Chat",
+  "author": "NICE Ltd.",
+  "main": "index.js",
+  "license": "UNLICENSED",
+  "bundleDependencies": [
+    "@brandembassy/ts-types-chat",
+    "@brandembassy/ts-types-platform"
+  ],
+  "dependencies": {
+    "ua-parser-js": "1.0.2",
+    "uuid": "8.3.2"
+  }
+}
