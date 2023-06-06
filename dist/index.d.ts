@@ -1,19 +1,14 @@
 import { v4 as generateId } from 'uuid';
 import * as yup from 'yup';
 
-declare type AccessToken = {
+declare interface AccessToken {
     token: string;
     expiresIn: number;
-};
+}
 
-declare type Agent = {
-    id: UserId;
-    image: string;
-    publicImage: string | null;
-    name: string;
-    online: boolean;
-    uri: string;
-};
+export declare type Agent = User;
+
+export declare type AgentId = UserId;
 
 declare enum ApplicationType {
     BROWSER = "browser"
@@ -26,13 +21,13 @@ export declare type AssignedAgentChangedData = yup.InferType<typeof caseInboxAss
     inboxAssignee: User | null;
     previousInboxAssignee: User | null;
     routingQueue: RoutingQueue | null;
+    preferredUserForNextAssign?: User | null;
 };
 
-export declare type AssignedAgentChangedEvent = yup.InferType<typeof caseInboxAssigneeChangedEventSchema> & PushUpdateEventFields & {
-    eventObject: PushUpdateEventObject.CASE;
-    eventType: PushUpdateEventType.CASE_INBOX_ASSIGNEE_CHANGED;
+export declare interface AssignedAgentChangedEvent extends ChatEventData {
     data: AssignedAgentChangedData;
-};
+    type: typeof ChatEvent.ASSIGNED_AGENT_CHANGED;
+}
 
 declare interface Attachment {
     url: string;
@@ -64,16 +59,56 @@ declare type Author = {
     customFields?: Array<CustomField>;
 };
 
-declare interface AuthorizeConsumerEventSuccessResponse extends ChatEventData {
+export declare interface AuthorizationToken {
+    token: string;
+}
+
+export declare interface AuthorizeConsumerEventSuccessResponse extends ChatEventData {
     data: AuthorizeConsumerEventSuccessResponseData;
     type: AwsResponseEventType.CONSUMER_AUTHORIZED;
 }
 
-declare interface AuthorizeConsumerEventSuccessResponseData extends ConsumerAuthorizationSuccessPayloadData {
+export declare interface AuthorizeConsumerEventSuccessResponseData extends ConsumerAuthorizationSuccessPayloadData {
     status: 'success';
 }
 
 declare interface AwsInputEventData {
+}
+
+declare enum AwsInputEventType {
+    SENDER_TYPING_STARTED = "SenderTypingStarted",
+    SENDER_TYPING_ENDED = "SenderTypingEnded",
+    LOAD_MORE_MESSAGES = "LoadMoreMessages",
+    RECOVER_LIVECHAT = "RecoverLivechat",
+    RECOVER_THREAD = "RecoverThread",
+    SEND_MESSAGE = "SendMessage",
+    SEND_OUTBOUND = "SendOutbound",
+    SEND_OFFLINE_MESSAGE = "SendOfflineMessage",
+    SEND_PAGE_VIEWS = "SendPageViews",
+    SEND_CONSUMER_CUSTOM_FIELDS = "SetConsumerCustomFields",
+    SET_CONSUMER_CONTACT_CUSTOM_FIELD = "SetConsumerContactCustomFields",
+    MESSAGE_SEEN = "MessageSeenByConsumer",
+    SEND_TRANSCRIPT = "SendTranscript",
+    FETCH_THREAD_LIST = "FetchThreadList",
+    END_CONTACT = "EndContact",
+    EXECUTE_TRIGGER = "ExecuteTrigger",
+    AUTHORIZE_CONSUMER = "AuthorizeConsumer",
+    AUTHORIZE_CUSTOMER = "AuthorizeCustomer",
+    RECONNECT_CONSUMER = "ReconnectConsumer",
+    UPDATE_THREAD = "UpdateThread",
+    ARCHIVE_THREAD = "ArchiveThread",
+    LOAD_THREAD_METADATA = "LoadThreadMetadata",
+    REFRESH_TOKEN = "RefreshToken",
+    STORE_VISITOR = "StoreVisitor",
+    STORE_VISITOR_EVENTS = "StoreVisitorEvents",
+    CREATE_GROUP_CHAT_INVITE = "CreateInvitationToGroupChat",
+    SEND_EMAIL_INVITE_TO_GROUP_CHAT = "SendEmailInvitationToGroupChat",
+    JOIN_GROUP_CHAT = "JoinGroupChat",
+    LEAVE_GROUP_CHAT = "LeaveGroupChat",
+    GENERATE_AUTHORIZATION_TOKEN = "GenerateAuthorizationToken",
+    ADD_VISITOR_TAGS = "AddVisitorTags",
+    REMOVE_VISITOR_TAGS = "RemoveVisitorTags",
+    SEND_MESSAGE_PREVIEW = "SendMessagePreview"
 }
 
 declare interface AwsResponseEventPostbackData {
@@ -138,6 +173,7 @@ declare type Case = yup.InferType<typeof caseSchema> & {
     id: CaseId;
     threadId: ThreadId;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
+    consumerContactStorageId: ContactStorageId;
     status: CaseStatus;
     routingQueueId?: RoutingQueueId;
     authorEndUserIdentity?: EndUserIdentity;
@@ -145,6 +181,7 @@ declare type Case = yup.InferType<typeof caseSchema> & {
     inboxAssigneeUser?: User | null;
     inboxPreAssigneeUser?: User | null;
     ownerAssigneeUser?: User | null;
+    routableType?: ContactRoutableType;
 };
 
 declare type CaseCreatedData = yup.InferType<typeof caseCreatedEventDataSchema> & {
@@ -152,6 +189,8 @@ declare type CaseCreatedData = yup.InferType<typeof caseCreatedEventDataSchema> 
     case: Case;
     channel: Channel;
     thread: Thread_2;
+    routingQueue?: RoutingQueue | null;
+    preferredUserForNextAssign?: User | null;
 };
 
 declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
@@ -164,6 +203,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         id: any;
         threadId: any;
         threadIdOnExternalPlatform: any;
+        consumerContactStorageId: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -179,11 +219,13 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         statistics: any;
         recipientsCustomers: any;
         recipients: any;
+        routableType: any;
     };
     channel: object & {
         id: any;
         name: any;
         integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -235,7 +277,30 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         id: any;
         idOnExternalPlatform: any;
         threadName: any;
+        channelId: any;
+        canAddMoreMessages: any;
     };
+    routingQueue: (object & {
+        id: any;
+        name: any;
+        isSubqueue: any;
+        isDeleted: any;
+        skillId: any;
+    }) | null | undefined;
+    preferredUserForNextAssign: (object & {
+        id: any;
+        incontactId: any;
+        agentId: any;
+        emailAddress: any;
+        loginUsername: any;
+        firstName: any;
+        surname: any;
+        nickname: any;
+        isBotUser: any;
+        isSurveyUser: any;
+        imageUrl: any;
+        publicImageUrl: any;
+    }) | null | undefined;
 }>;
 
 declare type CaseId = ContactNumber;
@@ -255,6 +320,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         id: any;
         threadId: any;
         threadIdOnExternalPlatform: any;
+        consumerContactStorageId: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -270,11 +336,13 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         statistics: any;
         recipientsCustomers: any;
         recipients: any;
+        routableType: any;
     };
     channel: object & {
         id: any;
         name: any;
         integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -325,6 +393,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
     inboxAssignee: object & {
         id: any;
         incontactId: any;
+        agentId: any;
         emailAddress: any;
         loginUsername: any;
         firstName: any;
@@ -338,6 +407,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
     previousInboxAssignee: (object & {
         id: any;
         incontactId: any;
+        agentId: any;
         emailAddress: any;
         loginUsername: any;
         firstName: any;
@@ -348,37 +418,34 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         imageUrl: any;
         publicImageUrl: any;
     }) | null;
-    routingQueue: object & {
+    routingQueue: (object & {
         id: any;
         name: any;
         isSubqueue: any;
-    };
-}>;
-
-declare const caseInboxAssigneeChangedEventSchema: yup.ObjectSchema<{
-    data: object & {
-        acceptRejectFlow: any;
-        brand: any;
-        case: any;
-        channel: any;
-        inboxAssignee: any;
-        previousInboxAssignee: any;
-        routingQueue: any;
-    };
-} & {
-    eventId: string;
-    eventObject: string;
-    eventType: string;
-    context: (object & {
-        initiator: any;
+        isDeleted: any;
+        skillId: any;
     }) | null;
-    createdAt: Date;
+    preferredUserForNextAssign: (object & {
+        id: any;
+        incontactId: any;
+        agentId: any;
+        emailAddress: any;
+        loginUsername: any;
+        firstName: any;
+        surname: any;
+        nickname: any;
+        isBotUser: any;
+        isSurveyUser: any;
+        imageUrl: any;
+        publicImageUrl: any;
+    }) | null | undefined;
 }>;
 
 declare const caseSchema: yup.ObjectSchema<{
     id: string;
     threadId: string;
     threadIdOnExternalPlatform: string;
+    consumerContactStorageId: string;
     status: string;
     direction: string;
     routingQueueId: string;
@@ -387,6 +454,7 @@ declare const caseSchema: yup.ObjectSchema<{
     inboxAssigneeUser: (object & {
         id: any;
         incontactId: any;
+        agentId: any;
         emailAddress: any;
         loginUsername: any;
         firstName: any;
@@ -400,6 +468,7 @@ declare const caseSchema: yup.ObjectSchema<{
     inboxPreAssigneeUser: (object & {
         id: any;
         incontactId: any;
+        agentId: any;
         emailAddress: any;
         loginUsername: any;
         firstName: any;
@@ -414,6 +483,7 @@ declare const caseSchema: yup.ObjectSchema<{
     ownerAssigneeUser: (object & {
         id: any;
         incontactId: any;
+        agentId: any;
         emailAddress: any;
         loginUsername: any;
         firstName: any;
@@ -447,6 +517,7 @@ declare const caseSchema: yup.ObjectSchema<{
         customFields: any;
     }[];
     recipients: Recipient[];
+    routableType: string | undefined;
 }>;
 
 declare enum CaseStatus {
@@ -463,6 +534,8 @@ declare type CaseStatusChangedData = yup.InferType<typeof caseStatusChangedEvent
     brand: Brand;
     case: Case;
     channel: Channel;
+    routingQueue?: RoutingQueue | null;
+    preferredUserForNextAssign?: User | null;
 };
 
 declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
@@ -475,6 +548,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         id: any;
         threadId: any;
         threadIdOnExternalPlatform: any;
+        consumerContactStorageId: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -490,11 +564,13 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         statistics: any;
         recipientsCustomers: any;
         recipients: any;
+        routableType: any;
     };
     channel: object & {
         id: any;
         name: any;
         integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -542,6 +618,27 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         translationGroup: any;
         wysiwygEnabled: any;
     };
+    routingQueue: (object & {
+        id: any;
+        name: any;
+        isSubqueue: any;
+        isDeleted: any;
+        skillId: any;
+    }) | null | undefined;
+    preferredUserForNextAssign: (object & {
+        id: any;
+        incontactId: any;
+        agentId: any;
+        emailAddress: any;
+        loginUsername: any;
+        firstName: any;
+        surname: any;
+        nickname: any;
+        isBotUser: any;
+        isSurveyUser: any;
+        imageUrl: any;
+        publicImageUrl: any;
+    }) | null | undefined;
 }>;
 
 declare type Channel = yup.InferType<typeof channelSchema> & {
@@ -561,7 +658,8 @@ declare type ChannelIdOnExternalPlatform = Flavor<string, 'ChannelIdOnExternalPl
 declare const channelSchema: yup.ObjectSchema<{
     id: string;
     name: string;
-    integrationBoxIdentifier: string;
+    integrationBoxIdentifier: string | null;
+    integrationBoxIdent: string;
     idOnExternalPlatform: string;
     realExternalPlatformId: string;
     externalPlatformAvatar: string;
@@ -610,10 +708,16 @@ declare const channelSchema: yup.ObjectSchema<{
     wysiwygEnabled: boolean;
 }>;
 
+declare class ChatCustomEvent<T extends ChatEventData = ChatEventData> extends CustomEvent<T> {
+}
+
 export declare const ChatEvent: {
     readonly AGENT_TYPING_STARTED: "AgentTypingStarted";
     readonly AGENT_TYPING_ENDED: "AgentTypingEnded";
     readonly ASSIGNED_AGENT_CHANGED: "AssignedAgentChanged";
+    readonly CONTACT_CREATED: "ContactCreated";
+    readonly CONTACT_STATUS_CHANGED: "ContactStatusChanged";
+    readonly CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED: "ContactToRoutingQueueAssignmentChanged";
     readonly LIVECHAT_RECOVERED: AwsResponseEventType.LIVECHAT_RECOVERED;
     readonly MORE_MESSAGES_LOADED: AwsResponseEventType.MORE_MESSAGES_LOADED;
     readonly OFFLINE_MESSAGE_SENT: AwsResponseEventType.OFFLINE_MESSAGE_SENT;
@@ -634,6 +738,8 @@ export declare const ChatEvent: {
     readonly CASE_INBOX_ASSIGNEE_CHANGED: PushUpdateEventType.CASE_INBOX_ASSIGNEE_CHANGED;
     readonly CASE_STATUS_CHANGED: PushUpdateEventType.CASE_STATUS_CHANGED;
     readonly CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED: PushUpdateEventType.CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
+    readonly CONTACT_PREFERRED_USER_CHANGED: PushUpdateEventType.CONTACT_PREFERRED_USER_CHANGED;
+    readonly CONTACT_SYNC: PushUpdateEventType.CONTACT_SYNC;
     readonly CHANNEL_CREATED: PushUpdateEventType.CHANNEL_CREATED;
     readonly CHANNEL_DELETED: PushUpdateEventType.CHANNEL_DELETED;
     readonly CHANNEL_UPDATED: PushUpdateEventType.CHANNEL_UPDATED;
@@ -664,9 +770,12 @@ export declare const ChatEvent: {
     readonly FIRE_PROACTIVE: PushUpdateEventType.FIRE_PROACTIVE;
     readonly CONTACT_INBOX_PRE_ASSIGNEE_CHANGED: PushUpdateEventType.CONTACT_INBOX_PRE_ASSIGNEE_CHANGED;
     readonly CONTACT_RECIPIENTS_CHANGED: PushUpdateEventType.CONTACT_RECIPIENTS_CHANGED;
+    readonly MESSAGE_PREVIEW_CREATED: PushUpdateEventType.MESSAGE_PREVIEW_CREATED;
 };
 
 export declare interface ChatEventData {
+    context?: [] | PushUpdateContext;
+    createdAt: Date;
     data: unknown;
     error?: MessageFailedEventData['error'];
     id: string;
@@ -679,46 +788,77 @@ export declare type ChatEventType = typeof ChatEvent[ChatEventKey];
 
 declare class ChatSdk {
     onError?: (error: Error) => void;
+    onRawEvent?: (event: ChatCustomEvent) => void;
+    isLivechat: boolean;
+    channelId: ChannelId;
     private websocketClient;
     private customer;
     private _incomingChatEventMiddleware;
     private _messageEmitter;
     private isAuthorizationEnabled;
-    isLivechat: boolean;
-    channelId: ChannelId;
+    private _threadCache;
     constructor(options: ChatSDKOptions);
     onErrorHandler(error: unknown): void;
     /**
      * Send Authorization Event
-     * @param authorizationCode
-     * @param visitorId
+     * @param authorizationCode - authorization code
+     * @param visitorId - visitor id
      */
     authorize(authorizationCode?: string, visitorId?: string): Promise<ConsumerAuthorizationSuccessPayloadData>;
-    private _sendRefreshTokenEvent;
+    /**
+     * Generate Authorization Token from the given url
+     *
+     * @param threadIdOnExternalPlatform - Thread Id
+     * @param url - Authorization Service URL
+     */
+    generateAuthorizationToken(threadIdOnExternalPlatform: ThreadIdOnExternalPlatform, url: string): Promise<AuthorizationToken>;
     /**
      * Register handler to chat event
      *
-     * @param type type of chat event
-     * @param handler event handler
+     * @param type - type of chat event
+     * @param handler - event handler
      * @returns function to unregister handler
      */
-    onChatEvent(type: ChatEventType, handler: (event: CustomEvent<ChatEventData>) => void): RemoveListenerFunction;
+    onChatEvent(type: ChatEventType, handler: (event: ChatCustomEvent) => void): RemoveListenerFunction;
     /**
      * Get Customer instance
      */
-    getCustomer(): Customer_2 | null;
+    getCustomer(): Customer | null;
     /**
      * Get Thread instance by id
-     * @param id
+     * @param id - thread id
      * @returns instance of thread based on channel settings
      */
     getThread(id: ThreadIdOnExternalPlatform): Thread | LivechatThread;
     /**
      * Get list of available threads
-     * @async
      * @returns list of threads
      */
     getTheadList(): Promise<Array<IThread> | null>;
+    /**
+     * Get access to a websocket connection
+     * @returns WebSocketClient instance
+     */
+    getWebsocketClient(): WebSocketClient | null;
+    /**
+     * Send the Offline Message
+     * @param offlineMessageData - offline message data (name, email, message)
+     * @returns success
+     */
+    sendOfflineMessage(offlineMessageData: OfflineMessageData): Promise<MessageSuccessEventData>;
+    private _sendRefreshTokenEvent;
+    /**
+     * Recover thread data
+     * @param threadIdOnExternalPlatform - thread id on external platform
+     * @returns thread session data
+     */
+    recoverThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): Promise<ThreadRecoveredChatEvent>;
+    /**
+     * Recover livechat thread data
+     * @param threadIdOnExternalPlatform - thread id on external platform
+     * @returns thread livechat session data
+     */
+    recoverLivechatThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): Promise<ThreadRecoveredChatEvent>;
     /**
      * Setup Environment endpoints
      */
@@ -737,16 +877,10 @@ export declare interface ChatSDKOptions {
     customerName?: string;
     environment: EnvironmentName;
     onError?: (error: Error) => void;
+    onRawEvent?: (event: ChatCustomEvent) => void;
 }
 
-declare type CloseEvent_2 = Events.CloseEvent;
-
-declare class CloseEvent_3 extends Event_2 {
-    code: number;
-    reason: string;
-    wasClean: boolean;
-    constructor(code: number | undefined, reason: string | undefined, target: any);
-}
+declare type ChatWindowId = Flavor<string, 'ChatWindowId'>;
 
 export declare interface ConsumerAuthorizationSuccessPayloadData {
     accessToken?: AccessToken;
@@ -786,17 +920,61 @@ declare interface ConsumerContact {
     customFields: Array<CustomField>;
 }
 
-declare interface ContactCreatedChatEvent extends ChatEventData {
-    data: CaseCreatedData;
-    type: PushUpdateEventType.CASE_CREATED;
+declare type ConsumerContact_2 = {
+    id: string;
+};
+
+declare interface Contact {
+    authorEndUserIdentity: EndUserIdentity | null;
+    channelId: ChannelId;
+    consumerContactStorageId: string;
+    contactId: string;
+    customFields: Array<CustomField>;
+    customerContactId: string;
+    detailUrl: string;
+    id: ContactNumber;
+    inboxAssignee: UserId | null;
+    inboxAssigneeLastAssignedAt: string | null;
+    inboxAssigneeUser: User | null;
+    inboxPreAssigneeUser: User | null;
+    interactionId: string;
+    ownerAssignee: UserId | null;
+    ownerAssigneeUser: User | null;
+    recipients: Array<Recipient>;
+    recipientsCustomers: Array<CustomerRecipient>;
+    routingQueueId: RoutingQueueId | null;
+    routingQueuePriority: number;
+    status: CaseStatus;
+    statusUpdatedAt: string;
+    threadId: ThreadId;
+    threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
 }
+
+export declare interface ContactCreatedChatEvent extends ChatEventData {
+    data: ContactCreatedData;
+    type: typeof ChatEvent.CONTACT_CREATED;
+}
+
+export declare type ContactCreatedData = CaseCreatedData;
 
 declare type ContactNumber = Flavor<string, 'ContactNumber'>;
 
-declare interface ContactStatusChangedEvent extends ChatEventData {
-    data: CaseStatusChangedData;
-    type: PushUpdateEventType.CASE_STATUS_CHANGED;
+declare enum ContactRoutableType {
+    ROUTABLE = "ROUTABLE",
+    NOT_ROUTABLE = "NOT_ROUTABLE"
 }
+
+declare interface ContactStatusChangedChatEvent extends ChatEventData {
+    data: CaseStatusChangedData;
+    type: typeof ChatEvent.CONTACT_STATUS_CHANGED;
+}
+
+declare interface ContactStatusChangedChatEvent_2 extends ChatEventData {
+    data: CaseStatusChangedData;
+    type: typeof ChatEvent.CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
+}
+
+declare type ContactStorageId = Flavor<string, 'ContactStorageId'>;
 
 declare type ContentRemoved = yup.InferType<typeof contentRemovedSchema>;
 
@@ -805,9 +983,19 @@ declare const contentRemovedSchema: yup.ObjectSchema<{
     removedAt: Date;
 }>;
 
-declare type Customer = yup.InferType<typeof customerSchema>;
+export declare function createCreateInvitationToGroupChatPayloadData(id: CaseId): EventPayloadData<CreateInvitationToGroupChatEventData>;
 
-declare class Customer_2 {
+declare interface CreateInvitationToGroupChatEventData extends AwsInputEventData {
+    contact: ConsumerContact_2;
+}
+
+export declare function createJoinGroupChatPayloadData(code: string): EventPayloadData<JoinGroupChatEventData>;
+
+export declare function createLeaveGroupChatPayloadData(id: CaseId): EventPayloadData<LeaveGroupChatEventData>;
+
+export declare function createSendEmailInvitationToGroupChatPayloadData(caseId: CaseId, invitationCode: string, email: string): EventPayloadData<SendEmailInvitationToGroupChatEventData>;
+
+export declare class Customer {
     websocketClient: WebSocketClient | null;
     constructor(id: CustomerIdentityIdOnExternalPlatform, name: string | undefined, websocketClient: WebSocketClient | null);
     static setId(id: CustomerIdentityIdOnExternalPlatform): void;
@@ -820,17 +1008,21 @@ declare class Customer_2 {
     setName(name?: string): void;
     /**
      * Set Customer Custom fields
-     * @param customFields custom fields object
-     * @example { indentName: 'value' }
+     * @param customFields - custom fields object
+     * @example setCustomFields(\{ indentName: 'value' \})
      */
     setCustomFields(customFields: CustomFields): Promise<ChatEventData>;
     /**
      * Set Customer Custom field
-     * @param name Custom field name
-     * @param value Custom field value
+     * @param name - Custom field name
+     * @param value - Custom field value
      */
-    setCustomField(name: string, value: string): Promise<ChatEventData>;
+    setCustomField(name: string, value: CustomField['value']): Promise<ChatEventData>;
 }
+
+declare type Customer_2 = Override<yup.InferType<typeof customerSchema>, {
+    customFields: Array<CustomField>;
+}>;
 
 export declare interface CustomerIdentity {
     idOnExternalPlatform: CustomerIdentityIdOnExternalPlatform;
@@ -839,24 +1031,74 @@ export declare interface CustomerIdentity {
     image?: string;
 }
 
+declare type CustomerIdentity_2 = Override<yup.InferType<typeof customerIdentitySchema>, {
+    id: CustomerIdentityId;
+    idOnExternalPlatform: CustomerIdentityIdOnExternalPlatform_2;
+}>;
+
+declare type CustomerIdentityId = Flavor<string, 'CustomerIdentityId'>;
+
 export declare type CustomerIdentityIdOnExternalPlatform = Flavor<string, 'CustomerIdentityIdOnExternalPlatform'>;
+
+declare type CustomerIdentityIdOnExternalPlatform_2 = Flavor<string, 'CustomerIdentityIdOnExternalPlatform'>;
+
+declare const customerIdentitySchema: yup.ObjectSchema<{
+    idOnExternalPlatform: string;
+    firstName: string;
+    lastName: string;
+    nickname: string;
+    image: string;
+    externalPlatformId: string;
+}>;
+
+declare type CustomerRecipient = Override<yup.InferType<typeof customerRecipientSchema>, {
+    id: EndUserIdentityId;
+    identities: Array<CustomerIdentity_2>;
+}>;
+
+declare const customerRecipientSchema: yup.ObjectSchema<{
+    fullName: string;
+    firstName: string;
+    surname: string | null;
+    id: string;
+    identities: (object & {
+        idOnExternalPlatform: any;
+        firstName: any;
+        lastName: any;
+        nickname: any;
+        image: any;
+        externalPlatformId: any;
+    })[];
+    image: string;
+    customFields: (object & {
+        ident: any;
+        value: any;
+        updatedAt: any;
+    })[];
+}>;
 
 declare const customerSchema: yup.ObjectSchema<{
     firstName: string;
     lastName: string;
     fullName: string;
-    customFields: (object & {
+    customFields: {
         ident: any;
         value: any;
-    })[];
+    }[];
 }>;
 
-declare type CustomField = {
-    ident: string;
-    value: string;
-};
+declare type CustomField = yup.InferType<typeof customFieldSchema>;
 
-declare type CustomFields = Record<string, string>;
+declare type CustomFields = Record<CustomField['ident'], CustomField['value']>;
+
+declare const customFieldSchema: yup.ObjectSchema<{
+    ident: string;
+    value: string | null;
+}>;
+
+declare interface DestinationInput {
+    id: ChatWindowId;
+}
 
 declare enum DeviceType {
     DESKTOP = "desktop",
@@ -865,10 +1107,10 @@ declare enum DeviceType {
     TABLET = "tablet"
 }
 
-declare type EndUserIdentity = yup.InferType<typeof endUserIdentitySchema> & {
+declare type EndUserIdentity = Override<yup.InferType<typeof endUserIdentitySchema>, {
     id: EndUserIdentityId;
     idOnExternalPlatform: CustomerIdentityIdOnExternalPlatform;
-};
+}>;
 
 declare type EndUserIdentityId = Flavor<string, 'EndUserIdentityId'>;
 
@@ -882,7 +1124,7 @@ declare const endUserIdentitySchema: yup.ObjectSchema<{
     image: string;
 }>;
 
-declare interface EnvironmentEndpoints {
+export declare interface EnvironmentEndpoints {
     chat: string;
     gateway: string;
     name: string;
@@ -898,30 +1140,16 @@ export declare enum EnvironmentName {
     custom = "custom"
 }
 
-declare class ErrorEvent_2 extends Event_2 {
-    message: string;
-    error: Error;
-    constructor(error: Error, target: any);
-}
-
-declare class Event_2 {
-    target: any;
-    type: string;
-    constructor(type: string, target: any);
-}
-
 declare type EventId = Flavor<string, 'eventId'>;
 
-export declare type EventListenerFunction = (event: CustomEvent<ChatEventData>) => void;
+export declare type EventListenerFunction = (event: ChatCustomEvent) => void;
 
-declare namespace Events {
-    export {
-        Event_2 as Event,
-        ErrorEvent_2 as ErrorEvent,
-        CloseEvent_3 as CloseEvent,
-        WebSocketEventMap_2 as WebSocketEventMap,
-        WebSocketEventListenerMap
-    }
+export declare interface EventPayloadData<D extends AwsInputEventData> {
+    consumerIdentity?: CustomerIdentity;
+    data: D;
+    destination?: DestinationInput;
+    eventType: AwsInputEventType;
+    visitor?: VisitorInput;
 }
 
 declare type Flavor<T, FlavorT> = T & Flavoring<FlavorT>;
@@ -934,17 +1162,17 @@ export { generateId }
 
 /**
  * Get message author name of given message
- * @param message
+ * @param message - message
  * @returns message author name
  */
 export declare const getAuthor: (message: Message) => string;
 
 export declare interface IChatEventTarget extends EventTarget {
-    addEventListener<K extends ChatEventType>(type: K, listener: (event: CustomEvent<ChatEventData>) => void, options?: boolean | AddEventListenerOptions): void;
+    addEventListener<K extends ChatEventType>(type: K, listener: (event: ChatCustomEvent) => void, options?: boolean | AddEventListenerOptions): void;
     addEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: EventListenerOptions | boolean): void;
-    dispatchEvent(event: CustomEvent<ChatEventData>): boolean;
+    dispatchEvent(event: ChatCustomEvent): boolean;
     removeEventListener(type: string, callback: EventListenerOrEventListenerObject | null, options?: boolean | EventListenerOptions | undefined): void;
-    removeEventListener<K extends ChatEventType>(type: K, callback: (event: CustomEvent<ChatEventData>) => void, options?: boolean | EventListenerOptions | undefined): void;
+    removeEventListener<K extends ChatEventType>(type: K, callback: (event: ChatCustomEvent) => void, options?: boolean | EventListenerOptions | undefined): void;
 }
 
 declare type IdentityIdOnExternalPlatform = CustomerIdentityIdOnExternalPlatform | ChannelIdOnExternalPlatform;
@@ -958,11 +1186,15 @@ declare const inboxAssigneeResponseTimeSchema: yup.ObjectSchema<{
     isRunning: boolean;
 }>;
 
+export declare function isAssignedAgentChangedEvent(event: ChatEventData): event is AssignedAgentChangedEvent;
+
 export declare const isAuthSuccessEvent: (payload: ChatEventData) => payload is AuthorizeConsumerEventSuccessResponse;
 
 export declare function isContactCreatedEvent(event: ChatEventData): event is ContactCreatedChatEvent;
 
-export declare function isContactStatusChangedEvent(event: ChatEventData): event is ContactStatusChangedEvent;
+export declare function isContactStatusChangedEvent(event: ChatEventData): event is ContactStatusChangedChatEvent;
+
+export declare function isContactToRoutingQueueAssignmentChangedEvent(event: ChatEventData): event is ContactStatusChangedChatEvent_2;
 
 export declare const isLoadMetadataSuccessPayload: (response: ChatEventData) => response is LoadThreadMetadataChatEvent;
 
@@ -1006,6 +1238,18 @@ export declare interface IThread {
     url: string;
 }
 
+declare interface JoinGroupChatEventData extends AwsInputEventData {
+    invitation: {
+        code: string;
+    };
+}
+
+declare interface LeaveGroupChatEventData extends AwsInputEventData {
+    contact: {
+        id: CaseId;
+    };
+}
+
 export declare class LivechatThread extends Thread {
     protected _isInitialized: boolean;
     protected _canSendMessage: boolean;
@@ -1017,7 +1261,7 @@ export declare class LivechatThread extends Thread {
     sendMessage(messageData: SendMessageEventData): Promise<MessageSuccessEventData>;
     /**
      * Start livechat
-     * @param {string} [initialMessageText]
+     * @param initialMessageText - initial message text
      */
     startChat(initialMessageText?: string): Promise<MessageSuccessEventData | void>;
     endChat(): Promise<void>;
@@ -1055,10 +1299,11 @@ export declare type Message = yup.InferType<typeof messageSchema> & {
 
 declare type MessageContent = Override<yup.InferType<typeof messageContentSchema>, {
     type: MessageType;
+    text: string | MessageContentText;
 }>;
 
 declare const messageContentSchema: yup.ObjectSchema<{
-    text: string;
+    text: any;
     type: string;
     payload: {
         text: any;
@@ -1067,6 +1312,14 @@ declare const messageContentSchema: yup.ObjectSchema<{
     };
     fallbackText: string;
     isAutoTranslated: boolean;
+}>;
+
+declare type MessageContentText = yup.InferType<typeof messageContentTextSchema>;
+
+declare const messageContentTextSchema: yup.ObjectSchema<{
+    content: string;
+    mimeType: string;
+    text: string;
 }>;
 
 declare type MessageCreatedData = yup.InferType<typeof messageCreatedDataSchema> & {
@@ -1122,6 +1375,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         id: any;
         threadId: any;
         threadIdOnExternalPlatform: any;
+        consumerContactStorageId: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -1137,11 +1391,13 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         statistics: any;
         recipientsCustomers: any;
         recipients: any;
+        routableType: any;
     };
     channel: object & {
         id: any;
         name: any;
         integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -1193,6 +1449,8 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         id: any;
         idOnExternalPlatform: any;
         threadName: any;
+        channelId: any;
+        canAddMoreMessages: any;
     };
 }>;
 
@@ -1252,7 +1510,7 @@ declare const messageSchema: yup.ObjectSchema<{
         isAutoTranslated: any;
     };
     hasAdditionalMessageContent: boolean;
-    reactionStatistics: {
+    reactionStatistics: object & {
         likes: any;
         shares: any;
         isLikedByChannel: any;
@@ -1273,6 +1531,7 @@ declare const messageSchema: yup.ObjectSchema<{
     authorUser: (object & {
         id: any;
         incontactId: any;
+        agentId: any;
         emailAddress: any;
         loginUsername: any;
         firstName: any;
@@ -1316,6 +1575,7 @@ declare const messageSchema: yup.ObjectSchema<{
     user: (object & {
         id: any;
         incontactId: any;
+        agentId: any;
         emailAddress: any;
         loginUsername: any;
         firstName: any;
@@ -1337,6 +1597,7 @@ declare const messageSchema: yup.ObjectSchema<{
         id: any;
         name: any;
         integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -1419,9 +1680,13 @@ export declare interface MessageSuccessEventData extends ChatEventData {
 export declare enum MessageType {
     TEXT = "TEXT",
     FILE = "FILE",
+    FORM = "FORM",
     PLUGIN = "PLUGIN",
     POSTBACK = "POSTBACK",
-    QUICK_REPLIES = "QUICK_REPLIES"
+    QUICK_REPLIES = "QUICK_REPLIES",
+    RICH_LINK = "RICH_LINK",
+    LIST_PICKER = "LIST_PICKER",
+    ADAPTIVE_CARD = "ADAPTIVE_CARD"
 }
 
 export declare interface MoreMessagesLoadedEvent extends ChatEventData {
@@ -1431,10 +1696,18 @@ export declare interface MoreMessagesLoadedEvent extends ChatEventData {
 declare interface MoreMessagesLoadedPostbackData extends AwsResponseEventPostbackData {
     messages: Message[];
     scrollToken: string;
+    contactHistory: Array<PushUpdateEventFields>;
+}
+
+export declare interface OfflineMessageData {
+    email: string;
+    message: string;
+    name: string;
 }
 
 declare type Override<T1, T2> = Omit<T1, keyof T2> & T2;
 
+/** @deprecated use ContactStorageId */
 declare type PostId = ThreadId;
 
 declare type PushUpdateContext = {
@@ -1462,7 +1735,7 @@ declare type PushUpdateEventFields = Override<yup.InferType<typeof pushUpdateEve
     eventId: PushUpdateEventId;
     eventObject: PushUpdateEventObject;
     eventType: PushUpdateEventType;
-    context?: PushUpdateContext;
+    context?: PushUpdateContext | [];
 }>;
 
 declare const pushUpdateEventFieldsSchema: yup.ObjectSchema<{
@@ -1489,15 +1762,26 @@ declare enum PushUpdateEventObject {
     CUSTOMER_CONTACT = "CustomerContact",
     CONSUMER_CONTACT = "ConsumerContact",
     CONTACT = "Contact",
-    MESSAGE_NOTE = "MessageNote"
+    MESSAGE_NOTE = "MessageNote",
+    MESSAGE_PREVIEW = "MessagePreview"
 }
 
 declare enum PushUpdateEventType {
     AUTHORIZE_CONSUMER = "AuthorizeConsumer",
+    /** @deprecated use CONTACT_CREATED */
     CASE_CREATED = "CaseCreated",
+    /** @deprecated use ASSIGNED_AGENT_CHANGED */
     CASE_INBOX_ASSIGNEE_CHANGED = "CaseInboxAssigneeChanged",
+    /** @deprecated use CONTACT_STATUS_CHANGED */
     CASE_STATUS_CHANGED = "CaseStatusChanged",
+    /** @deprecated use CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED */
     CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED = "CaseToRoutingQueueAssignmentChanged",
+    CONTACT_CREATED = "CaseCreated",
+    ASSIGNED_AGENT_CHANGED = "CaseInboxAssigneeChanged",
+    CONTACT_STATUS_CHANGED = "CaseStatusChanged",
+    CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED = "CaseToRoutingQueueAssignmentChanged",
+    CONTACT_PREFERRED_USER_CHANGED = "ContactPreferredUserChanged",
+    CONTACT_SYNC = "ContactSync",
     CHANNEL_CREATED = "ChannelCreated",
     CHANNEL_DELETED = "ChannelDeleted",
     CHANNEL_UPDATED = "ChannelUpdated",
@@ -1527,7 +1811,8 @@ declare enum PushUpdateEventType {
     SENDER_TYPING_ENDED = "SenderTypingEnded",
     FIRE_PROACTIVE = "FireProactiveAction",
     CONTACT_INBOX_PRE_ASSIGNEE_CHANGED = "ConsumerContactInboxPreAssigneeChanged",
-    CONTACT_RECIPIENTS_CHANGED = "ContactRecipientsChanged"
+    CONTACT_RECIPIENTS_CHANGED = "ContactRecipientsChanged",
+    MESSAGE_PREVIEW_CREATED = "MessagePreviewCreated"
 }
 
 declare type Recipient = yup.InferType<typeof recipientSchema> & {
@@ -1553,7 +1838,34 @@ declare const routingQueueSchema: yup.ObjectSchema<{
     id: string;
     name: string;
     isSubqueue: boolean;
+    isDeleted: boolean;
+    skillId: number | null | undefined;
 }>;
+
+/**
+ * Send chat event
+ * @param payloadData - payload data
+ * @param webSocketClient - websocket client
+ */
+export declare function sendChatEvent<D extends AwsInputEventData>(payloadData: EventPayloadData<D>, webSocketClient: WebSocketClient | null): Promise<ChatEventData>;
+
+export declare function sendCreateInvitationToGroupChatEvent(createInvitationPayloadData: EventPayloadData<CreateInvitationToGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
+
+export declare function sendEmailInvitationToGroupChatEvent(createInvitationPayloadData: EventPayloadData<SendEmailInvitationToGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
+
+declare interface SendEmailInvitationToGroupChatEventData extends AwsInputEventData {
+    contact: ConsumerContact_2;
+    invitation: {
+        code: string;
+    };
+    recipients: Array<{
+        idOnExternalPlatform: string;
+    }>;
+}
+
+export declare function sendJoinGroupChatEvent(joinGroupChatPayloadData: EventPayloadData<JoinGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
+
+export declare function sendLeaveGroupChatEvent(leaveGroupChatPayloadData: EventPayloadData<LeaveGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
 
 export declare interface SendMessageEventData extends AwsInputEventData {
     accessToken?: {
@@ -1582,6 +1894,9 @@ declare interface SendMessageOptions {
     browserFingerprint?: BrowserFingerprint;
     messageId?: MessageId;
     threadCustomFields?: CustomFields;
+}
+
+declare interface SendOutboundEventData extends Omit<SendMessageEventData, 'consumer'> {
 }
 
 declare enum Sentiment {
@@ -1646,19 +1961,23 @@ export declare class Thread {
     recover(): Promise<ThreadRecoveredPostbackData>;
     /**
      * Send message
-     * @param messageData
+     * @param messageData - message data
      */
     sendMessage(messageData: SendMessageEventData): Promise<MessageSuccessEventData>;
     /**
      * Send text message
-     * @param {string} messageText
-     * @param {SendMessageOptions} [options]
+     * @param messageText - text of message
+     * @param options - options
      */
     sendTextMessage(messageText: string, options?: SendMessageOptions): Promise<MessageSuccessEventData>;
     /**
+     * Send Outbound Message
+     * @param messageData - message data
+     */
+    sendOutboundMessage(messageData: SendOutboundEventData): Promise<MessageSuccessEventData>;
+    /**
      * Load previous messages
-     * @async
-     * @return previous messages
+     * @returns previous messages
      */
     loadMoreMessages(): Promise<MoreMessagesLoadedEvent | null>;
     /**
@@ -1667,15 +1986,16 @@ export declare class Thread {
     lastMessageSeen(): Promise<ChatEventData>;
     /**
      * Send attachment
-     * @param {FileList} files - An object of this type is returned by the files' property of the HTML <input> element; this lets you access the list of files selected with the <input type="file"> element.
-     * @param {SendMessageOptions} [options]
-     * @description Raw function to send attachments
-     * @return when upload failed UploadFailResponse contains allowed file size and file types
+     *
+     * Raw function to send attachments
+     * @param files - An object of this type is returned by the files' property of the HTML <input> element; this lets you access the list of files selected with the <input type="file"> element.
+     * @param options - options
+     * @returns when upload failed UploadFailResponse contains allowed file size and file types
      */
     sendAttachments(files: FileList, options?: SendMessageOptions): Promise<MessageSuccessEventData | UploadFailResponse>;
     /**
      * Send start and stop typing events. It sends stop typing event after the timeout. Repeated calls resets this timeout.
-     * @param timeout [timeout=1000] - The timeout in milliseconds.
+     * @param timeout - The timeout in milliseconds.
      */
     keystroke(timeout?: number): void;
     /**
@@ -1684,44 +2004,52 @@ export declare class Thread {
     stopTyping(): void;
     /**
      * Get Thread Metadata
-     * @returns {LoadThreadMetadataChatEvent} response otherwise throw an error response
+     * @returns response otherwise throw an error response
      */
     getMetadata(): Promise<LoadThreadMetadataChatEvent>;
     onThreadEvent(type: ChatEventType, handler: EventListenerFunction): RemoveListenerFunction;
     /**
      * Set thread custom fields
-     * @param customFields custom fields object
-     * @example { indentName: 'value' }
+     * @param customFields - custom fields object
+     * @example \{ indentName: 'value' \}
      */
     setCustomFields(customFields: CustomFields): Promise<void>;
     /**
      * Set thread custom field
-     * @param name custom field name
-     * @param value custom field value
+     * @param name - custom field name
+     * @param value - custom field value
      */
-    setCustomField(name: string, value: string): Promise<void>;
+    setCustomField(name: string, value: CustomField['value']): Promise<void>;
     /**
      * Set thread as archived
-     * @returns {true} if success otherwise throw error response
+     * @returns true if success otherwise throw error response
      */
     archive(): Promise<true>;
     /**
      * Set thread name
-     * @param name New name of the Thread
-     * @returns {true} if success otherwise throw an error response
+     * @param name - New name of the Thread
+     * @returns if success returns true otherwise throw an error response
      */
     setName(name: string): Promise<true>;
-    private _registerEventHandlers;
     /**
      * Send message preview
-     * @param text
+     * @param text - text
      */
     sendMessagePreview(text: string): Promise<void>;
+    /**
+     * Send conversation transcript to email
+     * @param email - email
+     */
+    sendTranscript(contactNumber: ContactNumber, email: string): Promise<ChatEventData>;
+    private _mergeCustomFieldsAndAccessTokenWithMessageData;
+    private _registerEventHandlers;
 }
 
 declare type Thread_2 = yup.InferType<typeof threadSchema> & {
     id: ThreadId;
     idOnExternalPlatform: ThreadIdOnExternalPlatform;
+    channelId?: ChannelId;
+    canAddMoreMessages: boolean;
 };
 
 declare interface ThreadArchivedEvent extends ChatEventData {
@@ -1738,7 +2066,7 @@ declare interface ThreadListFetchedPostbackData extends AwsResponseEventPostback
 
 declare interface ThreadMetadataLoadedPostbackData extends AwsResponseEventPostbackData {
     lastMessage: Message;
-    ownerAssignee: Agent;
+    ownerAssignee: User;
 }
 
 declare interface ThreadRecoveredChatEvent extends ChatEventData {
@@ -1746,7 +2074,8 @@ declare interface ThreadRecoveredChatEvent extends ChatEventData {
 }
 
 export declare interface ThreadRecoveredPostbackData extends AwsResponseEventPostbackData {
-    consumerContact: ConsumerContact;
+    consumerContact?: ConsumerContact;
+    contact?: Contact;
     ownerAssignee: UserFromApiData | null;
     inboxAssignee: UserFromApiData | null;
     messages: Message[];
@@ -1757,15 +2086,15 @@ export declare interface ThreadRecoveredPostbackData extends AwsResponseEventPos
         threadName: string;
     };
     contactHistory: Array<PushUpdateEventFields>;
-    customer: Override<Customer, {
-        customFields: Array<CustomField>;
-    }>;
+    customer: Customer_2;
 }
 
 declare const threadSchema: yup.ObjectSchema<{
     id: string;
     idOnExternalPlatform: string;
     threadName: string;
+    channelId: string;
+    canAddMoreMessages: boolean | null;
 }>;
 
 declare interface TokenRefreshedPostbackData extends AwsResponseEventPostbackData {
@@ -1802,6 +2131,7 @@ declare type UserId = Flavor<number, 'UserId'>;
 declare const userSchema: yup.ObjectSchema<{
     id: number;
     incontactId: string | null;
+    agentId: number | null | undefined;
     emailAddress: string;
     loginUsername: string;
     firstName: string;
@@ -1824,6 +2154,12 @@ declare const userStatisticsSchema: yup.ObjectSchema<{
     } | null;
 }>;
 
+declare type VisitorId = Flavor<string, 'VisitorId'>;
+
+declare interface VisitorInput {
+    id: VisitorId;
+}
+
 /**
  * Websocket client
  */
@@ -1832,8 +2168,9 @@ export declare class WebSocketClient {
     private channelId;
     private customerId;
     private options?;
+    private onError?;
     private _connection;
-    constructor(brandId: BrandId, channelId: ChannelId, customerId: CustomerIdentityIdOnExternalPlatform, options?: WebSocketClientOptions | undefined);
+    constructor(brandId: BrandId, channelId: ChannelId, customerId: CustomerIdentityIdOnExternalPlatform, options?: WebSocketClientOptions | undefined, onError?: ((error: Error) => void) | undefined);
     /**
      * Connect websocket
      */
@@ -1848,25 +2185,28 @@ export declare class WebSocketClient {
     reconnect(): void;
     /**
      * Send data to active connection
-     * @param data
+     * @param data - data to send
      */
     send(data: unknown): void;
     /**
      * Register event handler to websocket event
-     * @param eventType websocket event
-     * @param handlerCallback event handler
+     * @param eventType - websocket event
+     * @param handlerCallback - event handler
      */
     on(eventType: WebSocketClientEvent_2, handlerCallback: (event: CustomEvent) => void): void;
     /**
      * Unregister event handler to websocket event
-     * @param eventType websocket event
-     * @param handlerCallback event handler
+     * @param eventType - websocket event
+     * @param handlerCallback - event handler
      */
     off(eventType: WebSocketClientEvent_2, handlerCallback: (event: CustomEvent) => void): void;
-    _errorHandler(type: string, closeEvent: CloseEvent_2 | undefined): void;
+    /**
+     * Handle error from event listeners with onError callback or throw error
+     */
+    private _errorHandler;
 }
 
-declare class WebSocketClientError extends Error {
+export declare class WebSocketClientError extends Error {
     name: string;
     constructor(message: string, reason?: string);
 }
@@ -1875,45 +2215,17 @@ export declare const WebSocketClientEvent: typeof WebSocketClientEvent_2;
 
 declare enum WebSocketClientEvent_2 {
     CLOSE = "close",
+    ERROR = "error",
     MESSAGE = "message",
     OPEN = "open"
 }
 
 declare interface WebSocketClientOptions {
-    /**
-     * host for websocket connection
-     */
+    forceSecureProtocol?: boolean;
     host?: string;
-    /**
-     * common error handler
-     */
     onError?: (error: WebSocketClientError) => void;
-    /**
-     * port for websocket connection
-     */
     port?: string;
-}
-
-declare interface WebSocketEventListenerMap {
-    close: (event: CloseEvent_3) => void | {
-        handleEvent: (event: CloseEvent_3) => void;
-    };
-    error: (event: ErrorEvent_2) => void | {
-        handleEvent: (event: ErrorEvent_2) => void;
-    };
-    message: (event: MessageEvent) => void | {
-        handleEvent: (event: MessageEvent) => void;
-    };
-    open: (event: Event_2) => void | {
-        handleEvent: (event: Event_2) => void;
-    };
-}
-
-declare interface WebSocketEventMap_2 {
-    close: CloseEvent_3;
-    error: ErrorEvent_2;
-    message: MessageEvent;
-    open: Event_2;
+    prefix?: string;
 }
 
 export { }
