@@ -1,6 +1,29 @@
 import { v4 as generateId } from 'uuid';
 import * as yup from 'yup';
 
+export declare interface Abortable {
+    abort: (reason?: string) => void;
+    readonly abortReason?: string;
+}
+
+declare type AbortableExecutorFunction<T> = (resolve: (value: PromiseLike<T> | T) => void, reject: (reason?: unknown) => void, abortSignal: AbortSignal) => void;
+
+/**
+ * AbortablePromise is a Promise that can be aborted.
+ * Source: https://github.com/zzdjk6/simple-abortable-promise, MIT License
+ */
+export declare class AbortablePromise<T> extends Promise<T> implements Abortable {
+    abort: Abortable['abort'];
+    constructor(executor: AbortableExecutorFunction<T>);
+    private _abortReason?;
+    get abortReason(): string | undefined;
+    static from: <P>(promise: Promise<P>) => AbortablePromise<P>;
+}
+
+export declare class AbortError extends Error {
+    constructor(message?: string);
+}
+
 declare interface AccessToken {
     token: string;
     expiresIn: number;
@@ -9,6 +32,20 @@ declare interface AccessToken {
 export declare type Agent = User;
 
 export declare type AgentId = UserId;
+
+export declare type AgentTypingEndedData = SenderTypingEndedData;
+
+export declare interface AgentTypingEndedEvent extends ChatEventData {
+    data: AgentTypingEndedData;
+    type: typeof ChatEvent.AGENT_TYPING_ENDED;
+}
+
+export declare type AgentTypingStartedData = SenderTypingStartedData;
+
+export declare interface AgentTypingStartedEvent extends ChatEventData {
+    data: AgentTypingStartedData;
+    type: typeof ChatEvent.AGENT_TYPING_STARTED;
+}
 
 declare enum ApplicationType {
     BROWSER = "browser"
@@ -21,6 +58,7 @@ export declare type AssignedAgentChangedData = yup.InferType<typeof caseInboxAss
     inboxAssignee: User | null;
     previousInboxAssignee: User | null;
     routingQueue: RoutingQueue | null;
+    routingMode?: ContactRoutingMode;
     preferredUserForNextAssign?: User | null;
 };
 
@@ -50,14 +88,6 @@ declare const attachmentSchema: yup.ObjectSchema<{
     canBeStored: boolean;
     id: string | undefined;
 }>;
-
-declare type Author = {
-    id: CustomerIdentityIdOnExternalPlatform;
-    name: string;
-    nickname: string;
-    image?: string;
-    customFields?: Array<CustomField>;
-};
 
 export declare interface AuthorizationToken {
     token: string;
@@ -153,6 +183,7 @@ declare const brandSchema: yup.ObjectSchema<{
     id: number;
     tenantId: string | null;
     businessUnitId: number | null;
+    timezone: string | null;
 }>;
 
 declare type BrowserFingerprint = {
@@ -188,8 +219,9 @@ declare type CaseCreatedData = yup.InferType<typeof caseCreatedEventDataSchema> 
     brand: Brand;
     case: Case;
     channel: Channel;
-    thread: Thread_2;
+    thread: ThreadView;
     routingQueue?: RoutingQueue | null;
+    routingMode?: ContactRoutingMode;
     preferredUserForNextAssign?: User | null;
 };
 
@@ -198,6 +230,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         id: any;
         tenantId: any;
         businessUnitId: any;
+        timezone: any;
     };
     case: object & {
         id: any;
@@ -220,6 +253,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         recipientsCustomers: any;
         recipients: any;
         routableType: any;
+        proficiency: any;
     };
     channel: object & {
         id: any;
@@ -287,6 +321,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         isDeleted: any;
         skillId: any;
     }) | null | undefined;
+    routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
         id: any;
         incontactId: any;
@@ -315,6 +350,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         id: any;
         tenantId: any;
         businessUnitId: any;
+        timezone: any;
     };
     case: object & {
         id: any;
@@ -337,6 +373,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         recipientsCustomers: any;
         recipients: any;
         routableType: any;
+        proficiency: any;
     };
     channel: object & {
         id: any;
@@ -425,6 +462,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         isDeleted: any;
         skillId: any;
     }) | null;
+    routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
         id: any;
         incontactId: any;
@@ -518,6 +556,10 @@ declare const caseSchema: yup.ObjectSchema<{
     }[];
     recipients: Recipient[];
     routableType: string | undefined;
+    proficiency: object & {
+        from: any;
+        to: any;
+    };
 }>;
 
 declare enum CaseStatus {
@@ -535,6 +577,7 @@ declare type CaseStatusChangedData = yup.InferType<typeof caseStatusChangedEvent
     case: Case;
     channel: Channel;
     routingQueue?: RoutingQueue | null;
+    routingMode?: ContactRoutingMode;
     preferredUserForNextAssign?: User | null;
 };
 
@@ -543,6 +586,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         id: any;
         tenantId: any;
         businessUnitId: any;
+        timezone: any;
     };
     case: object & {
         id: any;
@@ -565,6 +609,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         recipientsCustomers: any;
         recipients: any;
         routableType: any;
+        proficiency: any;
     };
     channel: object & {
         id: any;
@@ -625,6 +670,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         isDeleted: any;
         skillId: any;
     }) | null | undefined;
+    routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
         id: any;
         incontactId: any;
@@ -644,6 +690,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
 declare type Channel = yup.InferType<typeof channelSchema> & {
     id: ChannelId;
     idOnExternalPlatform: ChannelIdOnExternalPlatform;
+    contentFormat: ContentFormat;
 };
 
 declare enum ChannelAvailability {
@@ -739,6 +786,8 @@ export declare const ChatEvent: {
     readonly CASE_STATUS_CHANGED: PushUpdateEventType.CASE_STATUS_CHANGED;
     readonly CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED: PushUpdateEventType.CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
     readonly CONTACT_PREFERRED_USER_CHANGED: PushUpdateEventType.CONTACT_PREFERRED_USER_CHANGED;
+    readonly CONTACT_PROFICIENCY_CHANGED: PushUpdateEventType.CONTACT_PROFICIENCY_CHANGED;
+    readonly CONTACT_PRIORITY_CHANGED: PushUpdateEventType.CONTACT_PRIORITY_CHANGED;
     readonly CONTACT_SYNC: PushUpdateEventType.CONTACT_SYNC;
     readonly CHANNEL_CREATED: PushUpdateEventType.CHANNEL_CREATED;
     readonly CHANNEL_DELETED: PushUpdateEventType.CHANNEL_DELETED;
@@ -753,6 +802,7 @@ export declare const ChatEvent: {
     readonly MESSAGE_READ_CHANGED: PushUpdateEventType.MESSAGE_READ_CHANGED;
     readonly MESSAGE_SEEN_BY_END_USER: PushUpdateEventType.MESSAGE_SEEN_BY_END_USER;
     readonly MESSAGE_SEEN_BY_USER: PushUpdateEventType.MESSAGE_SEEN_BY_USER;
+    readonly MESSAGE_SENT: PushUpdateEventType.MESSAGE_SENT;
     readonly MESSAGE_UPDATED: PushUpdateEventType.MESSAGE_UPDATED;
     readonly PAGE_VIEW_CREATED: PushUpdateEventType.PAGE_VIEW_CREATED;
     readonly ROUTING_QUEUE_CREATED: PushUpdateEventType.ROUTING_QUEUE_CREATED;
@@ -771,6 +821,7 @@ export declare const ChatEvent: {
     readonly CONTACT_INBOX_PRE_ASSIGNEE_CHANGED: PushUpdateEventType.CONTACT_INBOX_PRE_ASSIGNEE_CHANGED;
     readonly CONTACT_RECIPIENTS_CHANGED: PushUpdateEventType.CONTACT_RECIPIENTS_CHANGED;
     readonly MESSAGE_PREVIEW_CREATED: PushUpdateEventType.MESSAGE_PREVIEW_CREATED;
+    readonly EVENT_IN_S3: PushUpdateEventType.EVENT_IN_S3;
 };
 
 export declare interface ChatEventData {
@@ -804,7 +855,7 @@ declare class ChatSdk {
      * @param authorizationCode - authorization code
      * @param visitorId - visitor id
      */
-    authorize(authorizationCode?: string, visitorId?: string): Promise<ConsumerAuthorizationSuccessPayloadData>;
+    authorize(authorizationCode?: string, visitorId?: string): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
     /**
      * Generate Authorization Token from the given url
      *
@@ -834,7 +885,7 @@ declare class ChatSdk {
      * Get list of available threads
      * @returns list of threads
      */
-    getTheadList(): Promise<Array<IThread> | null>;
+    getThreadList(): Promise<Array<ThreadView> | null>;
     /**
      * Get access to a websocket connection
      * @returns WebSocketClient instance
@@ -852,13 +903,13 @@ declare class ChatSdk {
      * @param threadIdOnExternalPlatform - thread id on external platform
      * @returns thread session data
      */
-    recoverThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): Promise<ThreadRecoveredChatEvent>;
+    recoverThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): AbortablePromise<ThreadRecoveredChatEvent>;
     /**
      * Recover livechat thread data
      * @param threadIdOnExternalPlatform - thread id on external platform
      * @returns thread livechat session data
      */
-    recoverLivechatThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): Promise<ThreadRecoveredChatEvent>;
+    recoverLivechatThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): AbortablePromise<ThreadRecoveredChatEvent>;
     /**
      * Setup Environment endpoints
      */
@@ -869,11 +920,14 @@ export { ChatSdk }
 export default ChatSdk;
 
 export declare interface ChatSDKOptions {
+    appName?: string;
+    appVersion?: string | number;
     authorizationCode?: string;
     brandId: BrandId;
     channelId: ChannelId;
     customEnvironment?: EnvironmentEndpoints;
     customerId: CustomerIdentityIdOnExternalPlatform;
+    customerImage?: string;
     customerName?: string;
     environment: EnvironmentName;
     onError?: (error: Error) => void;
@@ -931,6 +985,7 @@ declare interface Contact {
     contactId: string;
     customFields: Array<CustomField>;
     customerContactId: string;
+    customerStatistics: CustomerStatistics;
     detailUrl: string;
     id: ContactNumber;
     inboxAssignee: UserId | null;
@@ -941,13 +996,13 @@ declare interface Contact {
     ownerAssignee: UserId | null;
     ownerAssigneeUser: User | null;
     recipients: Array<Recipient>;
-    recipientsCustomers: Array<CustomerRecipient>;
     routingQueueId: RoutingQueueId | null;
     routingQueuePriority: number;
     status: CaseStatus;
     statusUpdatedAt: string;
     threadId: ThreadId;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
+    userStatistics: UserStatistics_2;
 }
 
 export declare interface ContactCreatedChatEvent extends ChatEventData {
@@ -959,22 +1014,253 @@ export declare type ContactCreatedData = CaseCreatedData;
 
 declare type ContactNumber = Flavor<string, 'ContactNumber'>;
 
+export declare interface ContactRecipientsChangedChatEvent extends ChatEventData {
+    data: ContactRecipientsChangedData;
+    type: PushUpdateEventType.CONTACT_RECIPIENTS_CHANGED;
+}
+
+export declare type ContactRecipientsChangedData = Override<yup.InferType<typeof contactRecipientsChangedDataSchema>, {
+    brand: Brand;
+    channel: Channel;
+    contact: Case;
+}>;
+
+declare const contactRecipientsChangedDataSchema: yup.ObjectSchema<{
+    brand: object & {
+        id: any;
+        tenantId: any;
+        businessUnitId: any;
+        timezone: any;
+    };
+    contact: object & {
+        id: any;
+        threadId: any;
+        threadIdOnExternalPlatform: any;
+        consumerContactStorageId: any;
+        status: any;
+        direction: any;
+        routingQueueId: any;
+        routingQueuePriority: any;
+        inboxAssignee: any;
+        inboxAssigneeUser: any;
+        inboxPreAssigneeUser: any;
+        ownerAssignee: any;
+        ownerAssigneeUser: any;
+        endUserRecipients: any;
+        detailUrl: any;
+        authorEndUserIdentity: any;
+        statistics: any;
+        recipientsCustomers: any;
+        recipients: any;
+        routableType: any;
+        proficiency: any;
+    };
+    channel: object & {
+        id: any;
+        name: any;
+        integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
+        idOnExternalPlatform: any;
+        realExternalPlatformId: any;
+        externalPlatformAvatar: any;
+        canAgentInviteCustomersToContact: any;
+        canReplyToAnyMessage: any;
+        canSaveResponse: any;
+        contentFormat: any;
+        externalPlatformIcon: any;
+        hasAbilityToDelete: any;
+        hasAbilityToForwardMessage: any;
+        hasAbilityToHide: any;
+        hasAbilityToChangeFrom: any;
+        hasAbilityToChangeRecipient: any;
+        hasAbilityToLike: any;
+        hasAbilityToQuoteMessage: any;
+        hasAbilityToSendFiles: any;
+        hasAbilityToShare: any;
+        hasAbilityToTag: any;
+        hasCcAndBcc: any;
+        hasCustomerOnThirdParty: any;
+        hasEditableTitle: any;
+        hasMultipleRecipient: any;
+        hasMultipleThreadsPerEndUser: any;
+        hasOutboundFlow: any;
+        hasOutboundTemplates: any;
+        hasPostAsPlaceholder: any;
+        hasPublishing: any;
+        hasReply: any;
+        hasTreeStructure: any;
+        hasVisibleRecipients: any;
+        hasVisibleTitle: any;
+        channelIntegrationId: any;
+        isAutomaticSignatureAttached: any;
+        isCaseBasedStorage: any;
+        isHidden: any;
+        isDeleted: any;
+        isLiveChat: any;
+        isPostWritable: any;
+        isPrivate: any;
+        mediaType: any;
+        nicknameOnExternalPlatform: any;
+        ownerUserId: any;
+        replyPrefixMentionTemplate: any;
+        studioScript: any;
+        translationGroup: any;
+        wysiwygEnabled: any;
+    };
+}>;
+
 declare enum ContactRoutableType {
     ROUTABLE = "ROUTABLE",
     NOT_ROUTABLE = "NOT_ROUTABLE"
 }
 
-declare interface ContactStatusChangedChatEvent extends ChatEventData {
-    data: CaseStatusChangedData;
+declare enum ContactRoutingMode {
+    FINDMATCH = "findmatch",
+    RESOLVER = "resolver",
+    LEGACY = "legacy"
+}
+
+export declare interface ContactStatusChangedChatEvent extends ChatEventData {
+    data: ContactStatusChangedData;
     type: typeof ChatEvent.CONTACT_STATUS_CHANGED;
 }
 
-declare interface ContactStatusChangedChatEvent_2 extends ChatEventData {
-    data: CaseStatusChangedData;
+export declare type ContactStatusChangedData = CaseStatusChangedData;
+
+declare type ContactStorageId = Flavor<string, 'ContactStorageId'>;
+
+export declare interface ContactToRoutingQueueAssignmentChangedChatEvent extends ChatEventData {
+    data: ContactToRoutingQueueAssignmentChangedData;
     type: typeof ChatEvent.CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
 }
 
-declare type ContactStorageId = Flavor<string, 'ContactStorageId'>;
+declare type ContactToRoutingQueueAssignmentChangedData = Override<yup.InferType<typeof contactToRoutingQueueAssignmentChangedEventDataSchema>, {
+    brand: Brand;
+    case: Case;
+    channel: Channel;
+    routingQueue: RoutingQueue | null;
+    routingMode?: ContactRoutingMode;
+    previousRoutingQueue: RoutingQueue | null;
+    preferredUserForNextAssign?: User | null;
+}>;
+
+declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectSchema<{
+    brand: object & {
+        id: any;
+        tenantId: any;
+        businessUnitId: any;
+        timezone: any;
+    };
+    case: object & {
+        id: any;
+        threadId: any;
+        threadIdOnExternalPlatform: any;
+        consumerContactStorageId: any;
+        status: any;
+        direction: any;
+        routingQueueId: any;
+        routingQueuePriority: any;
+        inboxAssignee: any;
+        inboxAssigneeUser: any;
+        inboxPreAssigneeUser: any;
+        ownerAssignee: any;
+        ownerAssigneeUser: any;
+        endUserRecipients: any;
+        detailUrl: any;
+        authorEndUserIdentity: any;
+        statistics: any;
+        recipientsCustomers: any;
+        recipients: any;
+        routableType: any;
+        proficiency: any;
+    };
+    channel: object & {
+        id: any;
+        name: any;
+        integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
+        idOnExternalPlatform: any;
+        realExternalPlatformId: any;
+        externalPlatformAvatar: any;
+        canAgentInviteCustomersToContact: any;
+        canReplyToAnyMessage: any;
+        canSaveResponse: any;
+        contentFormat: any;
+        externalPlatformIcon: any;
+        hasAbilityToDelete: any;
+        hasAbilityToForwardMessage: any;
+        hasAbilityToHide: any;
+        hasAbilityToChangeFrom: any;
+        hasAbilityToChangeRecipient: any;
+        hasAbilityToLike: any;
+        hasAbilityToQuoteMessage: any;
+        hasAbilityToSendFiles: any;
+        hasAbilityToShare: any;
+        hasAbilityToTag: any;
+        hasCcAndBcc: any;
+        hasCustomerOnThirdParty: any;
+        hasEditableTitle: any;
+        hasMultipleRecipient: any;
+        hasMultipleThreadsPerEndUser: any;
+        hasOutboundFlow: any;
+        hasOutboundTemplates: any;
+        hasPostAsPlaceholder: any;
+        hasPublishing: any;
+        hasReply: any;
+        hasTreeStructure: any;
+        hasVisibleRecipients: any;
+        hasVisibleTitle: any;
+        channelIntegrationId: any;
+        isAutomaticSignatureAttached: any;
+        isCaseBasedStorage: any;
+        isHidden: any;
+        isDeleted: any;
+        isLiveChat: any;
+        isPostWritable: any;
+        isPrivate: any;
+        mediaType: any;
+        nicknameOnExternalPlatform: any;
+        ownerUserId: any;
+        replyPrefixMentionTemplate: any;
+        studioScript: any;
+        translationGroup: any;
+        wysiwygEnabled: any;
+    };
+    routingQueue: (object & {
+        id: any;
+        name: any;
+        isSubqueue: any;
+        isDeleted: any;
+        skillId: any;
+    }) | null;
+    routingMode: string | undefined;
+    previousRoutingQueue: (object & {
+        id: any;
+        name: any;
+        isSubqueue: any;
+        isDeleted: any;
+        skillId: any;
+    }) | null;
+    preferredUserForNextAssign: yup.Shape<object | null | undefined, {
+        id: any;
+        incontactId: any;
+        agentId: any;
+        emailAddress: any;
+        loginUsername: any;
+        firstName: any;
+        surname: any;
+        nickname: any;
+        isBotUser: any;
+        isSurveyUser: any;
+        imageUrl: any;
+        publicImageUrl: any;
+    }>;
+}>;
+
+declare enum ContentFormat {
+    PLAIN = "plain",
+    HTML = "html"
+}
 
 declare type ContentRemoved = yup.InferType<typeof contentRemovedSchema>;
 
@@ -993,11 +1279,13 @@ export declare function createJoinGroupChatPayloadData(code: string): EventPaylo
 
 export declare function createLeaveGroupChatPayloadData(id: CaseId): EventPayloadData<LeaveGroupChatEventData>;
 
+export declare function createReconnectPayloadData(accessToken: AccessToken, visitorId?: string): EventPayloadData<ReconnectConsumerData>;
+
 export declare function createSendEmailInvitationToGroupChatPayloadData(caseId: CaseId, invitationCode: string, email: string): EventPayloadData<SendEmailInvitationToGroupChatEventData>;
 
 export declare class Customer {
     websocketClient: WebSocketClient | null;
-    constructor(id: CustomerIdentityIdOnExternalPlatform, name: string | undefined, websocketClient: WebSocketClient | null);
+    constructor(id: CustomerIdentityIdOnExternalPlatform, name: string | undefined, image: string | undefined, websocketClient: WebSocketClient | null);
     static setId(id: CustomerIdentityIdOnExternalPlatform): void;
     static getId(): CustomerIdentityIdOnExternalPlatform | null;
     static getName(): string | undefined;
@@ -1006,6 +1294,9 @@ export declare class Customer {
     getId(): CustomerIdentityIdOnExternalPlatform;
     getName(): string | undefined;
     setName(name?: string): void;
+    static getImage(): string | undefined;
+    static setImage(image?: string): void;
+    setImage(image?: string): void;
     /**
      * Set Customer Custom fields
      * @param customFields - custom fields object
@@ -1031,51 +1322,11 @@ export declare interface CustomerIdentity {
     image?: string;
 }
 
-declare type CustomerIdentity_2 = Override<yup.InferType<typeof customerIdentitySchema>, {
-    id: CustomerIdentityId;
-    idOnExternalPlatform: CustomerIdentityIdOnExternalPlatform_2;
-}>;
-
-declare type CustomerIdentityId = Flavor<string, 'CustomerIdentityId'>;
-
 export declare type CustomerIdentityIdOnExternalPlatform = Flavor<string, 'CustomerIdentityIdOnExternalPlatform'>;
 
-declare type CustomerIdentityIdOnExternalPlatform_2 = Flavor<string, 'CustomerIdentityIdOnExternalPlatform'>;
-
-declare const customerIdentitySchema: yup.ObjectSchema<{
-    idOnExternalPlatform: string;
-    firstName: string;
-    lastName: string;
-    nickname: string;
-    image: string;
-    externalPlatformId: string;
-}>;
-
-declare type CustomerRecipient = Override<yup.InferType<typeof customerRecipientSchema>, {
-    id: EndUserIdentityId;
-    identities: Array<CustomerIdentity_2>;
-}>;
-
-declare const customerRecipientSchema: yup.ObjectSchema<{
-    fullName: string;
-    firstName: string;
-    surname: string | null;
-    id: string;
-    identities: (object & {
-        idOnExternalPlatform: any;
-        firstName: any;
-        lastName: any;
-        nickname: any;
-        image: any;
-        externalPlatformId: any;
-    })[];
-    image: string;
-    customFields: (object & {
-        ident: any;
-        value: any;
-        updatedAt: any;
-    })[];
-}>;
+export declare interface CustomerReconnectSuccessPayloadData {
+    reconnected: true;
+}
 
 declare const customerSchema: yup.ObjectSchema<{
     firstName: string;
@@ -1086,6 +1337,10 @@ declare const customerSchema: yup.ObjectSchema<{
         value: any;
     }[];
 }>;
+
+declare interface CustomerStatistics {
+    unseenMessagesCount: number;
+}
 
 declare type CustomField = yup.InferType<typeof customFieldSchema>;
 
@@ -1186,21 +1441,31 @@ declare const inboxAssigneeResponseTimeSchema: yup.ObjectSchema<{
     isRunning: boolean;
 }>;
 
+export declare function isAgentTypingEndedEvent(event: ChatEventData): event is AgentTypingEndedEvent;
+
+export declare function isAgentTypingStartedEvent(event: ChatEventData): event is AgentTypingStartedEvent;
+
 export declare function isAssignedAgentChangedEvent(event: ChatEventData): event is AssignedAgentChangedEvent;
 
 export declare const isAuthSuccessEvent: (payload: ChatEventData) => payload is AuthorizeConsumerEventSuccessResponse;
 
 export declare function isContactCreatedEvent(event: ChatEventData): event is ContactCreatedChatEvent;
 
+export declare function isContactRecipientsChangedEvent(event: unknown): event is ContactRecipientsChangedChatEvent;
+
 export declare function isContactStatusChangedEvent(event: ChatEventData): event is ContactStatusChangedChatEvent;
 
-export declare function isContactToRoutingQueueAssignmentChangedEvent(event: ChatEventData): event is ContactStatusChangedChatEvent_2;
+export declare function isContactToRoutingQueueAssignmentChangedEvent(event: ChatEventData): event is ContactToRoutingQueueAssignmentChangedChatEvent;
+
+export declare function isCustomerReconnectSuccessPayloadData(payload: unknown): payload is CustomerReconnectSuccessPayloadData;
 
 export declare const isLoadMetadataSuccessPayload: (response: ChatEventData) => response is LoadThreadMetadataChatEvent;
 
 export declare function isMessage(item: unknown): item is Message;
 
 export declare function isMessageCreatedEvent(event: unknown): event is MessageCreatedEvent;
+
+export declare function isMessageSentEvent(event: unknown): event is MessageSentEvent;
 
 export declare function isMoreMessagesLoadedEvent(event: ChatEventData): event is MoreMessagesLoadedEvent;
 
@@ -1213,30 +1478,6 @@ export declare function isThreadArchivedSuccessPayload(response: ChatEventData):
 export declare const isThreadListFetchedPostbackData: (data: unknown) => data is ThreadListFetchedPostbackData;
 
 export declare function isTokenRefreshedSuccessResponse(response: unknown): response is TokenRefreshedSuccessResponse;
-
-export declare interface IThread {
-    attachments: Array<any>;
-    author: Author;
-    canAddMoreMessages: boolean;
-    channelId: ChannelId;
-    content: string;
-    createdAt: string;
-    id: PostId;
-    idOnExternalPlatform: string;
-    image: string;
-    isOwn: boolean;
-    likes: number;
-    recipients: Array<any>;
-    tagIds: Array<number>;
-    threadName: string;
-    ticketNumber: string;
-    title: string;
-    unseenMessagesCount: number;
-    unseenByEndUserMessagesCount: number;
-    unseenByUserMessagesCount: number;
-    updatedAt: string;
-    url: string;
-}
 
 declare interface JoinGroupChatEventData extends AwsInputEventData {
     invitation: {
@@ -1273,37 +1514,35 @@ export declare interface LoadThreadMetadataChatEvent extends ChatEventData {
     type: AwsResponseEventType.THREAD_METADATA_LOADED;
 }
 
-export declare type Message = yup.InferType<typeof messageSchema> & {
+export declare type Message = Override<yup.InferType<typeof messageSchema>, {
+    attachments: Array<Attachment_2>;
+    authorEndUserIdentity: EndUserIdentity | null;
+    authorNameRemoved: ContentRemoved;
+    authorUser: User | null;
+    contactNumber: ContactNumber;
+    contentRemoved: ContentRemoved;
+    delivered: Array<MessageDelivered>;
+    direction: MessageDirection;
     id: MessageId;
     idOnExternalPlatform: MessageIdOnExternalPlatform;
-    threadId: ThreadId;
-    threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
-    postId: PostId;
-    contactNumber: ContactNumber;
     messageContent: MessageContent;
-    authorUser: User | null;
-    authorEndUserIdentity: EndUserIdentity | null;
-    attachments: Array<Attachment_2>;
-    direction: MessageDirection;
-    authorNameRemoved: ContentRemoved;
-    contentRemoved: ContentRemoved;
-    replyChannel: Channel | null;
+    postId: PostId;
     recipients: Array<Recipient>;
+    replyChannel: Channel | null;
+    seen: Array<MessageSeen>;
     sentiment: Sentiment;
     tags: Array<Tag>;
-    user?: User;
+    threadId: ThreadId;
     userStatistics: UserStatistics;
-    seen: Array<MessageSeen>;
-    delivered: Array<MessageDelivered>;
-};
+    user?: User;
+    threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
+}>;
 
 declare type MessageContent = Override<yup.InferType<typeof messageContentSchema>, {
     type: MessageType;
-    text: string | MessageContentText;
 }>;
 
 declare const messageContentSchema: yup.ObjectSchema<{
-    text: any;
     type: string;
     payload: {
         text: any;
@@ -1314,20 +1553,12 @@ declare const messageContentSchema: yup.ObjectSchema<{
     isAutoTranslated: boolean;
 }>;
 
-declare type MessageContentText = yup.InferType<typeof messageContentTextSchema>;
-
-declare const messageContentTextSchema: yup.ObjectSchema<{
-    content: string;
-    mimeType: string;
-    text: string;
-}>;
-
-declare type MessageCreatedData = yup.InferType<typeof messageCreatedDataSchema> & {
+export declare type MessageCreatedData = yup.InferType<typeof messageCreatedDataSchema> & {
     brand: Brand;
     message: Message;
     case: Case;
     channel: Channel;
-    thread: Thread_2;
+    thread: ThreadView;
 };
 
 declare const messageCreatedDataSchema: yup.ObjectSchema<{
@@ -1335,6 +1566,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         id: any;
         tenantId: any;
         businessUnitId: any;
+        timezone: any;
     };
     message: object & {
         id: any;
@@ -1392,6 +1624,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         recipientsCustomers: any;
         recipients: any;
         routableType: any;
+        proficiency: any;
     };
     channel: object & {
         id: any;
@@ -1454,7 +1687,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
     };
 }>;
 
-declare interface MessageCreatedEvent extends ChatEventData {
+export declare interface MessageCreatedEvent extends ChatEventData {
     data: MessageCreatedData;
     type: PushUpdateEventType.MESSAGE_CREATED;
 }
@@ -1503,7 +1736,6 @@ declare const messageSchema: yup.ObjectSchema<{
         idOnExternalPlatform: any;
     } | null;
     messageContent: object & {
-        text: any;
         type: any;
         payload: any;
         fallbackText: any;
@@ -1591,6 +1823,8 @@ declare const messageSchema: yup.ObjectSchema<{
         name: any;
         isPrimary: any;
         isPrivate: any;
+        anonymizedAt: any;
+        anonymizedReason: any;
     })[];
     title: string;
     replyChannel: (object & {
@@ -1672,6 +1906,43 @@ declare const messageSeenSchema: yup.ObjectSchema<{
     endUserId: string;
     seenAt: Date;
 }>;
+
+export declare type MessageSentData = Override<yup.InferType<typeof messageSentDataSchema>, {
+    brand: Brand;
+    message: SentMessage;
+    thread: ThreadView;
+}>;
+
+declare const messageSentDataSchema: yup.ObjectSchema<{
+    brand: {
+        id: any;
+        tenantId: any;
+        businessUnitId: any;
+        timezone: any;
+    };
+    message: {
+        attachments: any;
+        authorEndUserIdentity: any;
+        authorUser: any;
+        createdAt: any;
+        direction: any;
+        idOnExternalPlatform: any;
+        messageContent: any;
+        threadIdOnExternalPlatform: any;
+    };
+    thread: {
+        id: any;
+        idOnExternalPlatform: any;
+        threadName: any;
+        channelId: any;
+        canAddMoreMessages: any;
+    };
+}>;
+
+export declare interface MessageSentEvent extends ChatEventData {
+    data: MessageSentData;
+    type: PushUpdateEventType.MESSAGE_SENT;
+}
 
 export declare interface MessageSuccessEventData extends ChatEventData {
     id: string;
@@ -1763,7 +2034,8 @@ declare enum PushUpdateEventObject {
     CONSUMER_CONTACT = "ConsumerContact",
     CONTACT = "Contact",
     MESSAGE_NOTE = "MessageNote",
-    MESSAGE_PREVIEW = "MessagePreview"
+    MESSAGE_PREVIEW = "MessagePreview",
+    S3_OBJECT = "S3Object"
 }
 
 declare enum PushUpdateEventType {
@@ -1781,6 +2053,8 @@ declare enum PushUpdateEventType {
     CONTACT_STATUS_CHANGED = "CaseStatusChanged",
     CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED = "CaseToRoutingQueueAssignmentChanged",
     CONTACT_PREFERRED_USER_CHANGED = "ContactPreferredUserChanged",
+    CONTACT_PROFICIENCY_CHANGED = "ContactProficiencyChanged",
+    CONTACT_PRIORITY_CHANGED = "ContactPriorityChanged",
     CONTACT_SYNC = "ContactSync",
     CHANNEL_CREATED = "ChannelCreated",
     CHANNEL_DELETED = "ChannelDeleted",
@@ -1795,6 +2069,7 @@ declare enum PushUpdateEventType {
     MESSAGE_READ_CHANGED = "MessageReadChanged",
     MESSAGE_SEEN_BY_END_USER = "MessageSeenByEndUser",
     MESSAGE_SEEN_BY_USER = "MessageSeenByUser",
+    MESSAGE_SENT = "MessageSent",
     MESSAGE_UPDATED = "MessageUpdated",
     PAGE_VIEW_CREATED = "PageViewCreated",
     ROUTING_QUEUE_CREATED = "RoutingQueueCreated",
@@ -1812,7 +2087,8 @@ declare enum PushUpdateEventType {
     FIRE_PROACTIVE = "FireProactiveAction",
     CONTACT_INBOX_PRE_ASSIGNEE_CHANGED = "ConsumerContactInboxPreAssigneeChanged",
     CONTACT_RECIPIENTS_CHANGED = "ContactRecipientsChanged",
-    MESSAGE_PREVIEW_CREATED = "MessagePreviewCreated"
+    MESSAGE_PREVIEW_CREATED = "MessagePreviewCreated",
+    EVENT_IN_S3 = "EventInS3"
 }
 
 declare type Recipient = yup.InferType<typeof recipientSchema> & {
@@ -1824,7 +2100,15 @@ declare const recipientSchema: yup.ObjectSchema<{
     name: string;
     isPrimary: boolean;
     isPrivate: boolean;
+    anonymizedAt: string | null;
+    anonymizedReason: string | null;
 }>;
+
+declare interface ReconnectConsumerData extends AwsInputEventData {
+    accessToken: {
+        token: string;
+    } | null;
+}
 
 export declare type RemoveListenerFunction = () => void;
 
@@ -1862,6 +2146,184 @@ declare interface SendEmailInvitationToGroupChatEventData extends AwsInputEventD
         idOnExternalPlatform: string;
     }>;
 }
+
+declare type SenderTypingEndedData = Override<yup.InferType<typeof senderTypingEndedDataSchema>, {
+    brand: Brand;
+    channel: Channel;
+    user: User;
+    thread: ThreadView;
+}>;
+
+declare const senderTypingEndedDataSchema: yup.ObjectSchema<{
+    brand: object & {
+        id: any;
+        tenantId: any;
+        businessUnitId: any;
+        timezone: any;
+    };
+    channel: object & {
+        id: any;
+        name: any;
+        integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
+        idOnExternalPlatform: any;
+        realExternalPlatformId: any;
+        externalPlatformAvatar: any;
+        canAgentInviteCustomersToContact: any;
+        canReplyToAnyMessage: any;
+        canSaveResponse: any;
+        contentFormat: any;
+        externalPlatformIcon: any;
+        hasAbilityToDelete: any;
+        hasAbilityToForwardMessage: any;
+        hasAbilityToHide: any;
+        hasAbilityToChangeFrom: any;
+        hasAbilityToChangeRecipient: any;
+        hasAbilityToLike: any;
+        hasAbilityToQuoteMessage: any;
+        hasAbilityToSendFiles: any;
+        hasAbilityToShare: any;
+        hasAbilityToTag: any;
+        hasCcAndBcc: any;
+        hasCustomerOnThirdParty: any;
+        hasEditableTitle: any;
+        hasMultipleRecipient: any;
+        hasMultipleThreadsPerEndUser: any;
+        hasOutboundFlow: any;
+        hasOutboundTemplates: any;
+        hasPostAsPlaceholder: any;
+        hasPublishing: any;
+        hasReply: any;
+        hasTreeStructure: any;
+        hasVisibleRecipients: any;
+        hasVisibleTitle: any;
+        channelIntegrationId: any;
+        isAutomaticSignatureAttached: any;
+        isCaseBasedStorage: any;
+        isHidden: any;
+        isDeleted: any;
+        isLiveChat: any;
+        isPostWritable: any;
+        isPrivate: any;
+        mediaType: any;
+        nicknameOnExternalPlatform: any;
+        ownerUserId: any;
+        replyPrefixMentionTemplate: any;
+        studioScript: any;
+        translationGroup: any;
+        wysiwygEnabled: any;
+    };
+    thread: object & {
+        id: any;
+        idOnExternalPlatform: any;
+        threadName: any;
+        channelId: any;
+        canAddMoreMessages: any;
+    };
+    user: object & {
+        id: any;
+        incontactId: any;
+        agentId: any;
+        emailAddress: any;
+        loginUsername: any;
+        firstName: any;
+        surname: any;
+        nickname: any;
+        isBotUser: any;
+        isSurveyUser: any;
+        imageUrl: any;
+        publicImageUrl: any;
+    };
+}>;
+
+declare type SenderTypingStartedData = Override<yup.InferType<typeof senderTypingStartedDataSchema>, {
+    brand: Brand;
+    channel: Channel;
+    user: User;
+    thread: ThreadView;
+}>;
+
+declare const senderTypingStartedDataSchema: yup.ObjectSchema<{
+    brand: object & {
+        id: any;
+        tenantId: any;
+        businessUnitId: any;
+        timezone: any;
+    };
+    channel: object & {
+        id: any;
+        name: any;
+        integrationBoxIdentifier: any;
+        integrationBoxIdent: any;
+        idOnExternalPlatform: any;
+        realExternalPlatformId: any;
+        externalPlatformAvatar: any;
+        canAgentInviteCustomersToContact: any;
+        canReplyToAnyMessage: any;
+        canSaveResponse: any;
+        contentFormat: any;
+        externalPlatformIcon: any;
+        hasAbilityToDelete: any;
+        hasAbilityToForwardMessage: any;
+        hasAbilityToHide: any;
+        hasAbilityToChangeFrom: any;
+        hasAbilityToChangeRecipient: any;
+        hasAbilityToLike: any;
+        hasAbilityToQuoteMessage: any;
+        hasAbilityToSendFiles: any;
+        hasAbilityToShare: any;
+        hasAbilityToTag: any;
+        hasCcAndBcc: any;
+        hasCustomerOnThirdParty: any;
+        hasEditableTitle: any;
+        hasMultipleRecipient: any;
+        hasMultipleThreadsPerEndUser: any;
+        hasOutboundFlow: any;
+        hasOutboundTemplates: any;
+        hasPostAsPlaceholder: any;
+        hasPublishing: any;
+        hasReply: any;
+        hasTreeStructure: any;
+        hasVisibleRecipients: any;
+        hasVisibleTitle: any;
+        channelIntegrationId: any;
+        isAutomaticSignatureAttached: any;
+        isCaseBasedStorage: any;
+        isHidden: any;
+        isDeleted: any;
+        isLiveChat: any;
+        isPostWritable: any;
+        isPrivate: any;
+        mediaType: any;
+        nicknameOnExternalPlatform: any;
+        ownerUserId: any;
+        replyPrefixMentionTemplate: any;
+        studioScript: any;
+        translationGroup: any;
+        wysiwygEnabled: any;
+    };
+    thread: object & {
+        id: any;
+        idOnExternalPlatform: any;
+        threadName: any;
+        channelId: any;
+        canAddMoreMessages: any;
+    };
+    user: object & {
+        id: any;
+        incontactId: any;
+        agentId: any;
+        emailAddress: any;
+        loginUsername: any;
+        firstName: any;
+        surname: any;
+        nickname: any;
+        isBotUser: any;
+        isSurveyUser: any;
+        imageUrl: any;
+        publicImageUrl: any;
+    };
+}>;
 
 export declare function sendJoinGroupChatEvent(joinGroupChatPayloadData: EventPayloadData<JoinGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
 
@@ -1905,6 +2367,62 @@ declare enum Sentiment {
     NEGATIVE = "negative"
 }
 
+declare type SentMessage = Override<yup.InferType<typeof sentMessageSchema>, {
+    attachments: Array<Attachment_2>;
+    authorEndUserIdentity: EndUserIdentity | null;
+    authorUser: User | null;
+    direction: MessageDirection;
+    idOnExternalPlatform: MessageIdOnExternalPlatform;
+    messageContent: MessageContent;
+    threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
+}>;
+
+declare const sentMessageSchema: yup.ObjectSchema<{
+    attachments: {
+        friendlyName: any;
+        securedPermanentUrl: any;
+        url: any;
+        mimeType: any;
+        previewUrl: any;
+        isInline: any;
+        canBeStored: any;
+        id: any;
+    }[];
+    authorEndUserIdentity: {
+        id: any;
+        idOnExternalPlatform: any;
+        fullName: any;
+        firstName: any;
+        lastName: any;
+        nickname: any;
+        image: any;
+    } | null;
+    authorUser: {
+        id: any;
+        incontactId: any;
+        agentId: any;
+        emailAddress: any;
+        loginUsername: any;
+        firstName: any;
+        surname: any;
+        nickname: any;
+        isBotUser: any;
+        isSurveyUser: any;
+        imageUrl: any;
+        publicImageUrl: any;
+    } | null;
+    createdAt: string;
+    direction: string;
+    idOnExternalPlatform: string;
+    messageContent: {
+        type: any;
+        payload: any;
+        fallbackText: any;
+        isAutoTranslated: any;
+    };
+    threadIdOnExternalPlatform: string;
+}>;
+
 declare interface SetPositionInQueuePayload {
     eventType: AwsResponseEventType.SET_POSITION_IN_QUEUE;
     eventId: EventId;
@@ -1937,7 +2455,11 @@ declare const statisticsSchema: yup.ObjectSchema<{
     }) | null;
 }>;
 
-declare type Tag = yup.InferType<typeof tagSchema>;
+declare type Tag = yup.InferType<typeof tagSchema> & {
+    id: TagId;
+};
+
+declare type TagId = Flavor<number, 'TagId'>;
 
 declare const tagSchema: yup.ObjectSchema<{
     id: number;
@@ -2045,13 +2567,6 @@ export declare class Thread {
     private _registerEventHandlers;
 }
 
-declare type Thread_2 = yup.InferType<typeof threadSchema> & {
-    id: ThreadId;
-    idOnExternalPlatform: ThreadIdOnExternalPlatform;
-    channelId?: ChannelId;
-    canAddMoreMessages: boolean;
-};
-
 declare interface ThreadArchivedEvent extends ChatEventData {
     type: AwsResponseEventType.THREAD_ARCHIVED;
 }
@@ -2061,15 +2576,15 @@ declare type ThreadId = Flavor<string, 'ThreadId'>;
 export declare type ThreadIdOnExternalPlatform = Flavor<string, 'ThreadIdOnExternalPlatform'>;
 
 declare interface ThreadListFetchedPostbackData extends AwsResponseEventPostbackData {
-    threads: IThread[];
+    threads: ThreadView[];
 }
 
-declare interface ThreadMetadataLoadedPostbackData extends AwsResponseEventPostbackData {
+export declare interface ThreadMetadataLoadedPostbackData extends AwsResponseEventPostbackData {
     lastMessage: Message;
     ownerAssignee: User;
 }
 
-declare interface ThreadRecoveredChatEvent extends ChatEventData {
+export declare interface ThreadRecoveredChatEvent extends ChatEventData {
     data: ThreadRecoveredPostbackData;
 }
 
@@ -2096,6 +2611,13 @@ declare const threadSchema: yup.ObjectSchema<{
     channelId: string;
     canAddMoreMessages: boolean | null;
 }>;
+
+export declare type ThreadView = yup.InferType<typeof threadSchema> & {
+    id: ThreadId;
+    idOnExternalPlatform: ThreadIdOnExternalPlatform;
+    channelId?: ChannelId;
+    canAddMoreMessages: boolean;
+};
 
 declare interface TokenRefreshedPostbackData extends AwsResponseEventPostbackData {
     accessToken: AccessToken;
@@ -2140,10 +2662,14 @@ declare const userSchema: yup.ObjectSchema<{
     isBotUser: boolean;
     isSurveyUser: boolean;
     imageUrl: string | undefined;
-    publicImageUrl: string | null;
+    publicImageUrl: string | null | undefined;
 }>;
 
 declare type UserStatistics = yup.InferType<typeof userStatisticsSchema>;
+
+declare interface UserStatistics_2 {
+    unseenMessagesCount: number;
+}
 
 declare const userStatisticsSchema: yup.ObjectSchema<{
     seenAt: Date | null;
