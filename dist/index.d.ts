@@ -205,7 +205,7 @@ declare type Case = yup.InferType<typeof caseSchema> & {
     threadId: ThreadId;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
     consumerContactStorageId: ContactStorageId;
-    status: CaseStatus;
+    status: ContactStatus;
     routingQueueId?: RoutingQueueId;
     authorEndUserIdentity?: EndUserIdentity;
     statistics: Statistics;
@@ -561,16 +561,6 @@ declare const caseSchema: yup.ObjectSchema<{
         to: any;
     };
 }>;
-
-declare enum CaseStatus {
-    NEW = "new",
-    OPEN = "open",
-    PENDING = "pending",
-    ESCALATED = "escalated",
-    RESOLVED = "resolved",
-    CLOSED = "closed",
-    TRASHED = "trashed"
-}
 
 declare type CaseStatusChangedData = yup.InferType<typeof caseStatusChangedEventDataSchema> & {
     brand: Brand;
@@ -951,7 +941,7 @@ export declare interface ConsumerAuthorizationSuccessPayloadData {
 }
 
 declare interface ConsumerContact {
-    status: CaseStatus;
+    status: ContactStatus;
     createdAt: string;
     statusUpdatedAt: string;
     isOwn: boolean;
@@ -980,7 +970,7 @@ declare type ConsumerContact_2 = {
     id: string;
 };
 
-declare interface Contact {
+export declare interface Contact {
     authorEndUserIdentity: EndUserIdentity | null;
     channelId: ChannelId;
     consumerContactStorageId: string;
@@ -1000,7 +990,7 @@ declare interface Contact {
     recipients: Array<Recipient>;
     routingQueueId: RoutingQueueId | null;
     routingQueuePriority: number;
-    status: CaseStatus;
+    status: ContactStatus;
     statusUpdatedAt: string;
     threadId: ThreadId;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
@@ -1120,6 +1110,16 @@ declare enum ContactRoutingMode {
     FINDMATCH = "findmatch",
     RESOLVER = "resolver",
     LEGACY = "legacy"
+}
+
+export declare enum ContactStatus {
+    NEW = "new",
+    OPEN = "open",
+    PENDING = "pending",
+    ESCALATED = "escalated",
+    RESOLVED = "resolved",
+    CLOSED = "closed",
+    TRASHED = "trashed"
 }
 
 export declare interface ContactStatusChangedChatEvent extends ChatEventData {
