@@ -46,6 +46,7 @@
 <a href="LivechatThread.html#onThreadEvent" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>on<wbr/>Thread<wbr/>Event</span></a>
 <a href="LivechatThread.html#recover" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>recover</span></a>
 <a href="LivechatThread.html#sendAttachments" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Attachments</span></a>
+<a href="LivechatThread.html#sendCustomFields" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Custom<wbr/>Fields</span></a>
 <a href="LivechatThread.html#sendMessage" class="tsd-index-link"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Message</span></a>
 <a href="LivechatThread.html#sendMessagePreview" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Message<wbr/>Preview</span></a>
 <a href="LivechatThread.html#sendOutboundMessage" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Outbound<wbr/>Message</span></a>
@@ -62,7 +63,7 @@
 <section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_LivechatThread"><span class="tsd-kind-constructor-signature">new <wbr/>Livechat<wbr/>Thread</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">idOnExternalPlatform</span>, <span class="tsd-kind-parameter">websocketClient</span>, <span class="tsd-kind-parameter">messageEmitter</span>, <span class="tsd-kind-parameter">isAuthorizationEnabled</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="LivechatThread.html" class="tsd-signature-type tsd-kind-class">LivechatThread</a><a href="#constructor.new_LivechatThread" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_LivechatThread"><span class="tsd-kind-constructor-signature">new <wbr/>Livechat<wbr/>Thread</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">idOnExternalPlatform</span>, <span class="tsd-kind-parameter">websocketClient</span>, <span class="tsd-kind-parameter">messageEmitter</span>, <span class="tsd-kind-parameter">customer</span>, <span class="tsd-kind-parameter">customFields</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">isAuthorizationEnabled</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="LivechatThread.html" class="tsd-signature-type tsd-kind-class">LivechatThread</a><a href="#constructor.new_LivechatThread" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
@@ -73,6 +74,10 @@
 <h5><span class="tsd-kind-parameter">websocketClient</span>: <a href="WebSocketClient.html" class="tsd-signature-type tsd-kind-class">WebSocketClient</a></h5></li>
 <li>
 <h5><span class="tsd-kind-parameter">messageEmitter</span>: <a href="../interfaces/IChatEventTarget.html" class="tsd-signature-type tsd-kind-interface">IChatEventTarget</a></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">customer</span>: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="Customer.html" class="tsd-signature-type tsd-kind-class">Customer</a></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">customFields</span>: <span class="tsd-signature-type ">CustomFieldsObject</span><span class="tsd-signature-symbol"> = {}</span></h5></li>
 <li>
 <h5><span class="tsd-kind-parameter">isAuthorizationEnabled</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="LivechatThread.html" class="tsd-signature-type tsd-kind-class">LivechatThread</a></h4><aside class="tsd-sources">
@@ -169,11 +174,11 @@
 <section class="tsd-panel tsd-member"><a id="recover" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>recover</span><a href="#recover" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="recover.recover-1"><span class="tsd-kind-call-signature">recover</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ThreadRecoveredPostbackData.html" class="tsd-signature-type tsd-kind-interface">ThreadRecoveredPostbackData</a><span class="tsd-signature-symbol">&gt;</span><a href="#recover.recover-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="recover.recover-1"><span class="tsd-kind-call-signature">recover</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">ThreadRecoveredData</span><span class="tsd-signature-symbol">&gt;</span><a href="#recover.recover-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Recover existing live chat</p>
 </div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ThreadRecoveredPostbackData.html" class="tsd-signature-type tsd-kind-interface">ThreadRecoveredPostbackData</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type ">ThreadRecoveredData</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Overrides <a href="Thread.html">Thread</a>.<a href="Thread.html#recover">recover</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="sendAttachments" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send<wbr/>Attachments</span><a href="#sendAttachments" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
@@ -197,6 +202,15 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/MessageSuccessEventData.html" class="tsd-signature-type tsd-kind-interface">MessageSuccessEventData</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/UploadFailResponse.html" class="tsd-signature-type tsd-kind-interface">UploadFailResponse</a><span class="tsd-signature-symbol">&gt;</span></h4><p>when upload failed UploadFailResponse contains allowed file size and file types</p>
 <aside class="tsd-sources">
 <p>Inherited from <a href="Thread.html">Thread</a>.<a href="Thread.html#sendAttachments">sendAttachments</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="sendCustomFields" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>send<wbr/>Custom<wbr/>Fields</span><a href="#sendCustomFields" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="sendCustomFields.sendCustomFields-1"><span class="tsd-kind-call-signature">send<wbr/>Custom<wbr/>Fields</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span><a href="#sendCustomFields.sendCustomFields-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Send current Custom Fields</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="Thread.html">Thread</a>.<a href="Thread.html#sendCustomFields">sendCustomFields</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="sendMessage" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send<wbr/>Message</span><a href="#sendMessage" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -278,9 +292,7 @@
 <li>
 <h5><span class="tsd-kind-parameter">contactNumber</span>: <span class="tsd-signature-type ">ContactNumber</span></h5></li>
 <li>
-<h5><span class="tsd-kind-parameter">email</span>: <span class="tsd-signature-type">string</span></h5>
-<div class="tsd-comment tsd-typography"><p>email</p>
-</div></li></ul></div>
+<h5><span class="tsd-kind-parameter">email</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <p>Inherited from <a href="Thread.html">Thread</a>.<a href="Thread.html#sendTranscript">sendTranscript</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="setCustomField" class="tsd-anchor"></a>
@@ -308,7 +320,7 @@
 <ul class="tsd-signatures tsd-is-inherited">
 <li class="tsd-signature tsd-anchor-link" id="setCustomFields.setCustomFields-1"><span class="tsd-kind-call-signature">set<wbr/>Custom<wbr/>Fields</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">customFields</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#setCustomFields.setCustomFields-1" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><use href="#icon-anchor-a"></use><use href="#icon-anchor-b"></use><use href="#icon-anchor-c"></use></svg></a></li>
 <li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Set thread custom fields</p>
+<div class="tsd-comment tsd-typography"><p>Set thread custom fields and send them</p>
 
 <h3>Example</h3><pre><code class="language-ts"><span class="hl-1">{ </span><span class="hl-10">indentName</span><span class="hl-1">: </span><span class="hl-3">&#39;value&#39;</span><span class="hl-1"> }</span>
 </code><button>Copy</button></pre>
@@ -317,7 +329,7 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">customFields</span>: <span class="tsd-signature-type ">CustomFields</span></h5>
+<h5><span class="tsd-kind-parameter">customFields</span>: <span class="tsd-signature-type ">CustomFieldsObject</span></h5>
 <div class="tsd-comment tsd-typography"><p>custom fields object</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
@@ -393,6 +405,7 @@
 <li><a href="#onThreadEvent" class="tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>on<wbr/>Thread<wbr/>Event</span></a></li>
 <li><a href="#recover" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>recover</span></a></li>
 <li><a href="#sendAttachments" class="tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Attachments</span></a></li>
+<li><a href="#sendCustomFields" class="tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Custom<wbr/>Fields</span></a></li>
 <li><a href="#sendMessage" class=""><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Message</span></a></li>
 <li><a href="#sendMessagePreview" class="tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Message<wbr/>Preview</span></a></li>
 <li><a href="#sendOutboundMessage" class="tsd-is-inherited"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><use href="#icon-2048-path"></use><use href="#icon-2048-text"></use></svg><span>send<wbr/>Outbound<wbr/>Message</span></a></li>

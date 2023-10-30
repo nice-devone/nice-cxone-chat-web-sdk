@@ -848,6 +848,7 @@ declare class ChatSdk {
     private _messageEmitter;
     private isAuthorizationEnabled;
     private _threadCache;
+    private _contactCustomFieldsQueue;
     constructor(options: ChatSDKOptions);
     onErrorHandler(error: unknown): void;
     /**
@@ -897,7 +898,6 @@ declare class ChatSdk {
      * @returns success
      */
     sendOfflineMessage(offlineMessageData: OfflineMessageData): Promise<MessageSuccessEventData>;
-    private _sendRefreshTokenEvent;
     /**
      * Recover thread data
      * @param threadIdOnExternalPlatform - thread id on external platform
@@ -910,6 +910,8 @@ declare class ChatSdk {
      * @returns thread livechat session data
      */
     recoverLivechatThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): AbortablePromise<ThreadRecoveredChatEvent>;
+    private _getContactCustomFieldsFromQueue;
+    private _sendRefreshTokenEvent;
     /**
      * Setup Environment endpoints
      */
@@ -1284,31 +1286,53 @@ export declare function createReconnectPayloadData(accessToken: AccessToken, vis
 export declare function createSendEmailInvitationToGroupChatPayloadData(caseId: CaseId, invitationCode: string, email: string): EventPayloadData<SendEmailInvitationToGroupChatEventData>;
 
 export declare class Customer {
-    websocketClient: WebSocketClient | null;
+    protected _websocketClient: WebSocketClient | null;
+    protected _customFields: CustomFieldsMap;
+    protected _exists: boolean;
     constructor(id: CustomerIdentityIdOnExternalPlatform, name: string | undefined, image: string | undefined, websocketClient: WebSocketClient | null);
     static setId(id: CustomerIdentityIdOnExternalPlatform): void;
     static getId(): CustomerIdentityIdOnExternalPlatform | null;
     static getName(): string | undefined;
     static setName(name?: string): void;
     static getIdOrCreateNewOne(): CustomerIdentityIdOnExternalPlatform;
+    static getImage(): string | undefined;
+    static setImage(image?: string): void;
     getId(): CustomerIdentityIdOnExternalPlatform;
     getName(): string | undefined;
     setName(name?: string): void;
-    static getImage(): string | undefined;
-    static setImage(image?: string): void;
     setImage(image?: string): void;
-    /**
-     * Set Customer Custom fields
-     * @param customFields - custom fields object
-     * @example setCustomFields(\{ indentName: 'value' \})
-     */
-    setCustomFields(customFields: CustomFields): Promise<ChatEventData>;
+    setExists(exists: boolean): void;
     /**
      * Set Customer Custom field
      * @param name - Custom field name
      * @param value - Custom field value
      */
-    setCustomField(name: string, value: CustomField['value']): Promise<ChatEventData>;
+    setCustomField(name: CustomField['ident'], value: CustomField['value']): Promise<ChatEventData> | undefined;
+    /**
+     * Set Customer Custom fields
+     * @param customFields - custom fields object
+     * @example setCustomFields(\{ identName: 'value', identName2: 'value2' \})
+     */
+    setCustomFields(customFields: CustomFieldsObject): Promise<ChatEventData> | undefined;
+    /**
+     * Get Customer Custom fields (as object)
+     */
+    getCustomFields(): CustomFieldsObject;
+    /**
+     * Set Customer Custom fields from an array of custom fields
+     * @param customFields - custom fields array
+     */
+    setCustomFieldsFromArray(customFields: Array<CustomField>): void;
+    /**
+     * Get Customer Custom fields (as array of CustomField)
+     */
+    getCustomFieldsArray(): Array<CustomField>;
+    /**
+     * Send Customer Custom fields
+     * - call this only after the first message or recover event
+     * @returns Promise<ChatEventData>
+     */
+    sendCustomFields(): Promise<ChatEventData>;
 }
 
 declare type Customer_2 = Override<yup.InferType<typeof customerSchema>, {
@@ -1344,12 +1368,14 @@ declare interface CustomerStatistics {
 
 declare type CustomField = yup.InferType<typeof customFieldSchema>;
 
-declare type CustomFields = Record<CustomField['ident'], CustomField['value']>;
-
 declare const customFieldSchema: yup.ObjectSchema<{
     ident: string;
     value: string | null;
 }>;
+
+declare type CustomFieldsMap = Map<Ident, Value>;
+
+declare type CustomFieldsObject = Record<Ident, Value>;
 
 declare interface DestinationInput {
     id: ChatWindowId;
@@ -1430,6 +1456,8 @@ export declare interface IChatEventTarget extends EventTarget {
     removeEventListener<K extends ChatEventType>(type: K, callback: (event: ChatCustomEvent) => void, options?: boolean | EventListenerOptions | undefined): void;
 }
 
+declare type Ident = CustomField['ident'];
+
 declare type IdentityIdOnExternalPlatform = CustomerIdentityIdOnExternalPlatform | ChannelIdOnExternalPlatform;
 
 declare type InboxAssigneeResponseTime = yup.InferType<typeof inboxAssigneeResponseTimeSchema>;
@@ -1494,11 +1522,11 @@ declare interface LeaveGroupChatEventData extends AwsInputEventData {
 export declare class LivechatThread extends Thread {
     protected _isInitialized: boolean;
     protected _canSendMessage: boolean;
-    constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, isAuthorizationEnabled?: boolean);
+    constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, customer: Customer | null, customFields?: CustomFieldsObject, isAuthorizationEnabled?: boolean);
     /**
      *  Recover existing live chat
      */
-    recover(): Promise<ThreadRecoveredPostbackData>;
+    recover(): Promise<ThreadRecoveredData>;
     sendMessage(messageData: SendMessageEventData): Promise<MessageSuccessEventData>;
     /**
      * Start livechat
@@ -2355,7 +2383,6 @@ export declare interface SendMessageEventData extends AwsInputEventData {
 declare interface SendMessageOptions {
     browserFingerprint?: BrowserFingerprint;
     messageId?: MessageId;
-    threadCustomFields?: CustomFields;
 }
 
 declare interface SendOutboundEventData extends Omit<SendMessageEventData, 'consumer'> {
@@ -2474,13 +2501,14 @@ export declare class Thread {
     protected _exists: boolean;
     protected _messageEmitter: IChatEventTarget;
     protected _typingTimeoutID: ReturnType<typeof setTimeout> | undefined;
-    protected _threadCustomFieldsQueue: CustomFields;
     protected _isAuthorizationEnabled: boolean;
-    constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, isAuthorizationEnabled?: boolean);
+    protected _customer: Customer | null;
+    protected _customFields: CustomFieldsMap;
+    constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, customer: Customer | null, customFields?: CustomFieldsObject, isAuthorizationEnabled?: boolean);
     /**
      *  Recover existing chat
      */
-    recover(): Promise<ThreadRecoveredPostbackData>;
+    recover(): Promise<ThreadRecoveredData>;
     /**
      * Send message
      * @param messageData - message data
@@ -2531,17 +2559,21 @@ export declare class Thread {
     getMetadata(): Promise<LoadThreadMetadataChatEvent>;
     onThreadEvent(type: ChatEventType, handler: EventListenerFunction): RemoveListenerFunction;
     /**
-     * Set thread custom fields
+     * Send current Custom Fields
+     */
+    sendCustomFields(): Promise<ChatEventData>;
+    /**
+     * Set thread custom fields and send them
      * @param customFields - custom fields object
      * @example \{ indentName: 'value' \}
      */
-    setCustomFields(customFields: CustomFields): Promise<void>;
+    setCustomFields(customFields: CustomFieldsObject): Promise<void>;
     /**
      * Set thread custom field
      * @param name - custom field name
      * @param value - custom field value
      */
-    setCustomField(name: string, value: CustomField['value']): Promise<void>;
+    setCustomField(name: CustomField['ident'], value: CustomField['value']): Promise<void>;
     /**
      * Set thread as archived
      * @returns true if success otherwise throw error response
@@ -2560,9 +2592,9 @@ export declare class Thread {
     sendMessagePreview(text: string): Promise<void>;
     /**
      * Send conversation transcript to email
-     * @param email - email
      */
     sendTranscript(contactNumber: ContactNumber, email: string): Promise<ChatEventData>;
+    protected _setThreadAndCustomerExists(): void;
     private _mergeCustomFieldsAndAccessTokenWithMessageData;
     private _registerEventHandlers;
 }
@@ -2586,6 +2618,10 @@ export declare interface ThreadMetadataLoadedPostbackData extends AwsResponseEve
 
 export declare interface ThreadRecoveredChatEvent extends ChatEventData {
     data: ThreadRecoveredPostbackData;
+}
+
+declare interface ThreadRecoveredData extends Omit<ThreadRecoveredPostbackData, 'consumerContact' | 'contact'> {
+    contact: ThreadRecoveredPostbackData['consumerContact'] | ThreadRecoveredPostbackData['contact'];
 }
 
 export declare interface ThreadRecoveredPostbackData extends AwsResponseEventPostbackData {
@@ -2679,6 +2715,8 @@ declare const userStatisticsSchema: yup.ObjectSchema<{
         reflectingBusinessHours: any;
     } | null;
 }>;
+
+declare type Value = CustomField['value'];
 
 declare type VisitorId = Flavor<string, 'VisitorId'>;
 
