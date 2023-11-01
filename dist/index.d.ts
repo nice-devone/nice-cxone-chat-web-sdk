@@ -1499,7 +1499,7 @@ export declare function isMoreMessagesLoadedEvent(event: ChatEventData): event i
 
 export declare const isRecoverSuccessEvent: (response: ChatEventData) => response is ThreadRecoveredChatEvent;
 
-export declare const isSetPositionInQueuePayload: (detail: unknown) => detail is SetPositionInQueuePayload;
+export declare const isSetPositionInQueueEvent: (event: unknown) => event is SetPositionInQueueChatEvent;
 
 export declare function isThreadArchivedSuccessPayload(response: ChatEventData): response is ThreadArchivedEvent;
 
@@ -2450,10 +2450,10 @@ declare const sentMessageSchema: yup.ObjectSchema<{
     threadIdOnExternalPlatform: string;
 }>;
 
-declare interface SetPositionInQueuePayload {
-    eventType: AwsResponseEventType.SET_POSITION_IN_QUEUE;
-    eventId: EventId;
+export declare interface SetPositionInQueueChatEvent extends ChatEventData {
     data: SetPositionInQueuePayloadData;
+    id: EventId;
+    type: AwsResponseEventType.SET_POSITION_IN_QUEUE;
 }
 
 declare interface SetPositionInQueuePayloadData {
