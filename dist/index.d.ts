@@ -67,12 +67,7 @@ export declare interface AssignedAgentChangedEvent extends ChatEventData {
     type: typeof ChatEvent.ASSIGNED_AGENT_CHANGED;
 }
 
-declare interface Attachment {
-    url: string;
-    friendlyName: string;
-}
-
-declare type Attachment_2 = Override<yup.InferType<typeof attachmentSchema>, {
+declare type Attachment = Override<yup.InferType<typeof attachmentSchema>, {
     id: AttachmentId;
 }>;
 
@@ -88,6 +83,11 @@ declare const attachmentSchema: yup.ObjectSchema<{
     canBeStored: boolean;
     id: string | undefined;
 }>;
+
+declare type AttachmentUpload = {
+    url: string;
+    friendlyName: string;
+};
 
 export declare interface AuthorizationToken {
     token: string;
@@ -957,12 +957,7 @@ declare interface ConsumerContact {
         name: string;
         surname: string;
     };
-    recipients: [{
-        idOnExternalPlatform: string;
-        isPrimary: boolean;
-        isPrivate: boolean;
-        name: string;
-    }];
+    recipients: Array<Recipient>;
     customFields: Array<CustomField>;
 }
 
@@ -1543,7 +1538,7 @@ export declare interface LoadThreadMetadataChatEvent extends ChatEventData {
 }
 
 export declare type Message = Override<yup.InferType<typeof messageSchema>, {
-    attachments: Array<Attachment_2>;
+    attachments: Array<Attachment>;
     authorEndUserIdentity: EndUserIdentity | null;
     authorNameRemoved: ContentRemoved;
     authorUser: User | null;
@@ -2366,17 +2361,17 @@ export declare interface SendMessageEventData extends AwsInputEventData {
         threadName?: string;
     };
     consumer: {
-        customFields: CustomField[];
+        customFields: Array<CustomField>;
     };
     consumerContact: {
-        customFields: CustomField[];
+        customFields: Array<CustomField>;
     };
     idOnExternalPlatform: MessageId;
     messageContent: {
         type: MessageType;
         payload: MessagePayload;
     };
-    attachments: Attachment[];
+    attachments: Array<AttachmentUpload>;
     browserFingerprint: BrowserFingerprint;
 }
 
@@ -2395,7 +2390,7 @@ declare enum Sentiment {
 }
 
 declare type SentMessage = Override<yup.InferType<typeof sentMessageSchema>, {
-    attachments: Array<Attachment_2>;
+    attachments: Array<Attachment>;
     authorEndUserIdentity: EndUserIdentity | null;
     authorUser: User | null;
     direction: MessageDirection;
