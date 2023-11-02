@@ -67,11 +67,11 @@ export declare interface AssignedAgentChangedEvent extends ChatEventData {
     type: typeof ChatEvent.ASSIGNED_AGENT_CHANGED;
 }
 
-declare type Attachment = Override<yup.InferType<typeof attachmentSchema>, {
+export declare type Attachment = Override<yup.InferType<typeof attachmentSchema>, {
     id: AttachmentId;
 }>;
 
-declare type AttachmentId = Flavor<string, 'AttachmentId'>;
+export declare type AttachmentId = Flavor<string, 'AttachmentId'>;
 
 declare const attachmentSchema: yup.ObjectSchema<{
     friendlyName: string;
@@ -990,6 +990,7 @@ export declare interface Contact {
     threadId: ThreadId;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
     userStatistics: UserStatistics_2;
+    endUser: EndUser | null;
 }
 
 export declare interface ContactCreatedChatEvent extends ChatEventData {
@@ -1383,6 +1384,10 @@ declare enum DeviceType {
     TABLET = "tablet"
 }
 
+declare type EndUser = yup.InferType<typeof endUserSchema> & {
+    id: EndUserIdentityId;
+};
+
 declare type EndUserIdentity = Override<yup.InferType<typeof endUserIdentitySchema>, {
     id: EndUserIdentityId;
     idOnExternalPlatform: CustomerIdentityIdOnExternalPlatform;
@@ -1398,6 +1403,13 @@ declare const endUserIdentitySchema: yup.ObjectSchema<{
     lastName: string;
     nickname: string;
     image: string;
+}>;
+
+declare const endUserSchema: yup.ObjectSchema<{
+    id: string;
+    firstName: string;
+    surname: string;
+    fullName: string;
 }>;
 
 export declare interface EnvironmentEndpoints {
