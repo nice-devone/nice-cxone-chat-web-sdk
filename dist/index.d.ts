@@ -89,6 +89,10 @@ declare type AttachmentUpload = {
     friendlyName: string;
 };
 
+export declare class AuthorizationError extends ChatSDKError {
+    constructor(message: string, data: MessageFailedEventData['error'] | undefined);
+}
+
 export declare interface AuthorizationToken {
     token: string;
 }
@@ -173,9 +177,9 @@ declare interface BasicChannelInfo {
     };
 }
 
-declare type Brand = yup.InferType<typeof brandSchema> & {
+declare type Brand = Override<yup.InferType<typeof brandSchema>, {
     id: BrandId;
-};
+}>;
 
 export declare type BrandId = Flavor<number, 'BrandId'>;
 
@@ -184,6 +188,7 @@ declare const brandSchema: yup.ObjectSchema<{
     tenantId: string | null;
     businessUnitId: number | null;
     timezone: string | null;
+    friendlyName: string;
 }>;
 
 declare type BrowserFingerprint = {
@@ -231,6 +236,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     case: object & {
         id: any;
@@ -259,7 +265,6 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -351,6 +356,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     case: object & {
         id: any;
@@ -379,7 +385,6 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -577,6 +582,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     case: object & {
         id: any;
@@ -605,7 +611,6 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -696,7 +701,6 @@ declare const channelSchema: yup.ObjectSchema<{
     id: string;
     name: string;
     integrationBoxIdentifier: string | null;
-    integrationBoxIdent: string;
     idOnExternalPlatform: string;
     realExternalPlatformId: string;
     externalPlatformAvatar: string;
@@ -845,6 +849,8 @@ declare class ChatSdk {
      * Send Authorization Event
      * @param authorizationCode - authorization code
      * @param visitorId - visitor id
+     * @throws AuthorizationError
+     *  * This exception is thrown when the authorization or refresh token fails
      */
     authorize(authorizationCode?: string, visitorId?: string): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
     /**
@@ -886,6 +892,8 @@ declare class ChatSdk {
      * Send the Offline Message
      * @param offlineMessageData - offline message data (name, email, message)
      * @returns success
+     * @throws SendMessageFailedError
+     *  * This exception is thrown when a message fails to send. The error contains (`error.data`) a response from the backend with details.
      */
     sendOfflineMessage(offlineMessageData: OfflineMessageData): Promise<MessageSuccessEventData>;
     /**
@@ -910,6 +918,13 @@ declare class ChatSdk {
 }
 export { ChatSdk }
 export default ChatSdk;
+
+declare class ChatSDKError extends Error {
+    name: string;
+    data: unknown;
+    constructor(error: unknown, data?: unknown);
+    private _getErrorMessage;
+}
 
 export declare interface ChatSDKOptions {
     appName?: string;
@@ -961,10 +976,6 @@ declare interface ConsumerContact {
     customFields: Array<CustomField>;
 }
 
-declare type ConsumerContact_2 = {
-    id: string;
-};
-
 export declare interface Contact {
     authorEndUserIdentity: EndUserIdentity | null;
     channelId: ChannelId;
@@ -989,7 +1000,9 @@ export declare interface Contact {
     statusUpdatedAt: string;
     threadId: ThreadId;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
-    userStatistics: UserStatistics_2;
+    userStatistics: {
+        unseenMessagesCount: number;
+    };
     endUser: EndUser | null;
 }
 
@@ -1019,6 +1032,7 @@ declare const contactRecipientsChangedDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     contact: object & {
         id: any;
@@ -1047,7 +1061,6 @@ declare const contactRecipientsChangedDataSchema: yup.ObjectSchema<{
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -1148,6 +1161,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     case: object & {
         id: any;
@@ -1176,7 +1190,6 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -1270,7 +1283,9 @@ declare const contentRemovedSchema: yup.ObjectSchema<{
 export declare function createCreateInvitationToGroupChatPayloadData(id: CaseId): EventPayloadData<CreateInvitationToGroupChatEventData>;
 
 declare interface CreateInvitationToGroupChatEventData extends AwsInputEventData {
-    contact: ConsumerContact_2;
+    contact: {
+        id: ContactNumber;
+    };
 }
 
 export declare function createJoinGroupChatPayloadData(code: string): EventPayloadData<JoinGroupChatEventData>;
@@ -1331,10 +1346,6 @@ export declare class Customer {
     sendCustomFields(): Promise<ChatEventData>;
 }
 
-declare type Customer_2 = Override<yup.InferType<typeof customerSchema>, {
-    customFields: Array<CustomField>;
-}>;
-
 export declare interface CustomerIdentity {
     idOnExternalPlatform: CustomerIdentityIdOnExternalPlatform;
     firstName?: string;
@@ -1361,6 +1372,10 @@ declare const customerSchema: yup.ObjectSchema<{
 declare interface CustomerStatistics {
     unseenMessagesCount: number;
 }
+
+export declare type CustomerView = Override<yup.InferType<typeof customerSchema>, {
+    customFields: Array<CustomField>;
+}>;
 
 declare type CustomField = yup.InferType<typeof customFieldSchema>;
 
@@ -1500,6 +1515,8 @@ export declare function isMessage(item: unknown): item is Message;
 
 export declare function isMessageCreatedEvent(event: unknown): event is MessageCreatedEvent;
 
+export declare function isMessageReadChangedEvent(event: unknown): event is MessageReadChangedEvent;
+
 export declare function isMessageSentEvent(event: unknown): event is MessageSentEvent;
 
 export declare function isMoreMessagesLoadedEvent(event: ChatEventData): event is MoreMessagesLoadedEvent;
@@ -1531,7 +1548,10 @@ export declare class LivechatThread extends Thread {
     protected _canSendMessage: boolean;
     constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, customer: Customer | null, customFields?: CustomFieldsObject, isAuthorizationEnabled?: boolean);
     /**
-     *  Recover existing live chat
+     * Recover existing live chat
+     * @returns Promise ThreadRecoveredData
+     * @throws ThreadRecoverFailedError
+     *  * This exception is thrown when the recover fails or the thread does not exist.
      */
     recover(): Promise<ThreadRecoveredData>;
     sendMessage(messageData: SendMessageEventData): Promise<MessageSuccessEventData>;
@@ -1602,6 +1622,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     message: object & {
         id: any;
@@ -1665,7 +1686,6 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -1758,6 +1778,85 @@ declare type MessagePayload = {
     postback?: string | null;
     elements?: Array<any> | null;
 };
+
+declare type MessageReadChangedData = Override<yup.InferType<typeof messageReadChangedDataSchema>, {
+    brand: Brand;
+    message: Message;
+    contact: Contact;
+}>;
+
+declare const messageReadChangedDataSchema: yup.ObjectSchema<{
+    brand: {
+        id: any;
+        tenantId: any;
+        businessUnitId: any;
+        timezone: any;
+        friendlyName: any;
+    };
+    message: {
+        id: any;
+        idOnExternalPlatform: any;
+        threadId: any;
+        threadIdOnExternalPlatform: any;
+        postId: any;
+        contactNumber: any;
+        replyToMessage: any;
+        messageContent: any;
+        hasAdditionalMessageContent: any;
+        reactionStatistics: any;
+        tags: any;
+        sentiment: any;
+        createdAt: any;
+        direction: any;
+        isRead: any;
+        isReplyAllowed: any;
+        readAt: any;
+        authorUser: any;
+        attachments: any;
+        authorNameRemoved: any;
+        contentRemoved: any;
+        deletedOnExternalPlatform: any;
+        isHiddenOnExternalPlatform: any;
+        authorEndUserIdentity: any;
+        url: any;
+        user: any;
+        recipients: any;
+        title: any;
+        replyChannel: any;
+        customerStatistics: any;
+        userStatistics: any;
+        seen: any;
+        delivered: any;
+    };
+    contact: {
+        id: any;
+        threadId: any;
+        threadIdOnExternalPlatform: any;
+        consumerContactStorageId: any;
+        status: any;
+        direction: any;
+        routingQueueId: any;
+        routingQueuePriority: any;
+        inboxAssignee: any;
+        inboxAssigneeUser: any;
+        inboxPreAssigneeUser: any;
+        ownerAssignee: any;
+        ownerAssigneeUser: any;
+        endUserRecipients: any;
+        detailUrl: any;
+        authorEndUserIdentity: any;
+        statistics: any;
+        recipientsCustomers: any;
+        recipients: any;
+        routableType: any;
+        proficiency: any;
+    };
+}>;
+
+export declare interface MessageReadChangedEvent extends ChatEventData {
+    data: MessageReadChangedData;
+    type: PushUpdateEventType.MESSAGE_READ_CHANGED;
+}
 
 declare const messageSchema: yup.ObjectSchema<{
     id: string;
@@ -1866,7 +1965,6 @@ declare const messageSchema: yup.ObjectSchema<{
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -1954,6 +2052,7 @@ declare const messageSentDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     message: {
         attachments: any;
@@ -2173,7 +2272,9 @@ export declare function sendCreateInvitationToGroupChatEvent(createInvitationPay
 export declare function sendEmailInvitationToGroupChatEvent(createInvitationPayloadData: EventPayloadData<SendEmailInvitationToGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
 
 declare interface SendEmailInvitationToGroupChatEventData extends AwsInputEventData {
-    contact: ConsumerContact_2;
+    contact: {
+        id: ContactNumber;
+    };
     invitation: {
         code: string;
     };
@@ -2195,12 +2296,12 @@ declare const senderTypingEndedDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     channel: object & {
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -2284,12 +2385,12 @@ declare const senderTypingStartedDataSchema: yup.ObjectSchema<{
         tenantId: any;
         businessUnitId: any;
         timezone: any;
+        friendlyName: any;
     };
     channel: object & {
         id: any;
         name: any;
         integrationBoxIdentifier: any;
-        integrationBoxIdent: any;
         idOnExternalPlatform: any;
         realExternalPlatformId: any;
         externalPlatformAvatar: any;
@@ -2385,6 +2486,9 @@ export declare interface SendMessageEventData extends AwsInputEventData {
     };
     attachments: Array<AttachmentUpload>;
     browserFingerprint: BrowserFingerprint;
+}
+
+export declare class SendMessageFailedError extends ChatSDKError {
 }
 
 declare interface SendMessageOptions {
@@ -2513,12 +2617,17 @@ export declare class Thread {
     protected _customFields: CustomFieldsMap;
     constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, customer: Customer | null, customFields?: CustomFieldsObject, isAuthorizationEnabled?: boolean);
     /**
-     *  Recover existing chat
+     * Recover existing chat
+     * @returns Promise<ThreadRecoveredData>
+     * @throws ThreadRecoverFailedError
+     *  * This exception is thrown when the recover fails or the thread does not exist.
      */
     recover(): Promise<ThreadRecoveredData>;
     /**
      * Send message
      * @param messageData - message data
+     * @throws SendMessageFailedError
+     *  * This exception is thrown when a message fails to send. The error contains (`error.data`) a response from the backend with details.
      */
     sendMessage(messageData: SendMessageEventData): Promise<MessageSuccessEventData>;
     /**
@@ -2530,11 +2639,15 @@ export declare class Thread {
     /**
      * Send Outbound Message
      * @param messageData - message data
+     * @throws SendMessageFailedError
+     *  * This exception is thrown when a message fails to send. The error contains (`error.data`) a response from the backend with details.
      */
     sendOutboundMessage(messageData: SendOutboundEventData): Promise<MessageSuccessEventData>;
     /**
      * Load previous messages
-     * @returns previous messages
+     * @returns Promise MoreMessagesLoadedEvent | null
+     * @throws LoadMoreMessagesFailedError
+     *  * This exception is thrown when the attempt to load more messages fails.
      */
     loadMoreMessages(): Promise<MoreMessagesLoadedEvent | null>;
     /**
@@ -2547,9 +2660,10 @@ export declare class Thread {
      * Raw function to send attachments
      * @param files - An object of this type is returned by the files' property of the HTML <input> element; this lets you access the list of files selected with the <input type="file"> element.
      * @param options - options
-     * @returns when upload failed UploadFailResponse contains allowed file size and file types
+     * @throws UploadAttachmentError
+     *  * This exception is thrown when the file upload fails. The `error.data` contains information about allowed file size and types.
      */
-    sendAttachments(files: FileList, options?: SendMessageOptions): Promise<MessageSuccessEventData | UploadFailResponse>;
+    sendAttachments(files: FileList, options?: SendMessageOptions): Promise<MessageSuccessEventData>;
     /**
      * Send start and stop typing events. It sends stop typing event after the timeout. Repeated calls resets this timeout.
      * @param timeout - The timeout in milliseconds.
@@ -2562,6 +2676,8 @@ export declare class Thread {
     /**
      * Get Thread Metadata
      * @returns response otherwise throw an error response
+     * @throws GetMetadataFailedError
+     *  * This exception is thrown when getting thread metadata failed.
      */
     getMetadata(): Promise<LoadThreadMetadataChatEvent>;
     onThreadEvent(type: ChatEventType, handler: EventListenerFunction): RemoveListenerFunction;
@@ -2583,13 +2699,17 @@ export declare class Thread {
     setCustomField(name: CustomField['ident'], value: CustomField['value']): Promise<void>;
     /**
      * Set thread as archived
-     * @returns true if success otherwise throw error response
+     * @returns Promise true
+     * @throws ArchiveThreadFailedError
+     *  * This exception is thrown when the archive thread failed.
      */
     archive(): Promise<true>;
     /**
      * Set thread name
      * @param name - New name of the Thread
-     * @returns if success returns true otherwise throw an error response
+     * @returns Promise true
+     * @throws SetThreadNameFailedError
+     *  * This exception is thrown when the set thread name failed.
      */
     setName(name: string): Promise<true>;
     /**
@@ -2602,6 +2722,7 @@ export declare class Thread {
      */
     sendTranscript(contactNumber: ContactNumber, email: string): Promise<ChatEventData>;
     protected _setThreadAndCustomerExists(): void;
+    protected _clearCustomFieldsOnContactStatusChangedToClosed(event: ChatCustomEvent): void;
     private _mergeCustomFieldsAndAccessTokenWithMessageData;
     private _registerEventHandlers;
 }
@@ -2644,7 +2765,10 @@ export declare interface ThreadRecoveredPostbackData extends AwsResponseEventPos
         threadName: string;
     };
     contactHistory: Array<PushUpdateEventFields>;
-    customer: Customer_2;
+    customer: CustomerView;
+}
+
+export declare class ThreadRecoverFailedError extends ChatSDKError {
 }
 
 declare const threadSchema: yup.ObjectSchema<{
@@ -2671,6 +2795,9 @@ declare interface TokenRefreshedSuccessResponse {
     type: AwsResponseEventType.TOKEN_REFRESHED;
 }
 
+export declare class UploadAttachmentError extends ChatSDKError {
+}
+
 export declare interface UploadFailResponse {
     allowedFileSize: string;
     allowedFileTypes: Array<{
@@ -2686,7 +2813,8 @@ declare type User = yup.InferType<typeof userSchema> & {
 declare interface UserFromApiData {
     firstName: string;
     id: number;
-    image?: string;
+    image: string;
+    imagePublic: string;
     nickname: string | null;
     surname: string;
 }
@@ -2705,14 +2833,10 @@ declare const userSchema: yup.ObjectSchema<{
     isBotUser: boolean;
     isSurveyUser: boolean;
     imageUrl: string | undefined;
-    publicImageUrl: string | null | undefined;
+    publicImageUrl: string | undefined;
 }>;
 
 declare type UserStatistics = yup.InferType<typeof userStatisticsSchema>;
-
-declare interface UserStatistics_2 {
-    unseenMessagesCount: number;
-}
 
 declare const userStatisticsSchema: yup.ObjectSchema<{
     seenAt: Date | null;
@@ -2764,13 +2888,13 @@ export declare class WebSocketClient {
      * @param eventType - websocket event
      * @param handlerCallback - event handler
      */
-    on(eventType: WebSocketClientEvent_2, handlerCallback: (event: CustomEvent) => void): void;
+    on(eventType: WebSocketClientEvent, handlerCallback: (event: CustomEvent) => void): void;
     /**
      * Unregister event handler to websocket event
      * @param eventType - websocket event
      * @param handlerCallback - event handler
      */
-    off(eventType: WebSocketClientEvent_2, handlerCallback: (event: CustomEvent) => void): void;
+    off(eventType: WebSocketClientEvent, handlerCallback: (event: CustomEvent) => void): void;
     /**
      * Handle error from event listeners with onError callback or throw error
      */
@@ -2782,9 +2906,7 @@ export declare class WebSocketClientError extends Error {
     constructor(message: string, reason?: string);
 }
 
-export declare const WebSocketClientEvent: typeof WebSocketClientEvent_2;
-
-declare enum WebSocketClientEvent_2 {
+export declare enum WebSocketClientEvent {
     CLOSE = "close",
     ERROR = "error",
     MESSAGE = "message",
