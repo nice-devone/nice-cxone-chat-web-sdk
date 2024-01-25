@@ -243,6 +243,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         threadId: any;
         threadIdOnExternalPlatform: any;
         consumerContactStorageId: any;
+        createdAt: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -325,6 +326,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         isSubqueue: any;
         isDeleted: any;
         skillId: any;
+        isAcceptRejectFlowEnabled: any;
     }) | null | undefined;
     routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
@@ -363,6 +365,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         threadId: any;
         threadIdOnExternalPlatform: any;
         consumerContactStorageId: any;
+        createdAt: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -466,6 +469,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         isSubqueue: any;
         isDeleted: any;
         skillId: any;
+        isAcceptRejectFlowEnabled: any;
     }) | null;
     routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
@@ -489,6 +493,7 @@ declare const caseSchema: yup.ObjectSchema<{
     threadId: string;
     threadIdOnExternalPlatform: string;
     consumerContactStorageId: string;
+    createdAt: string;
     status: string;
     direction: string;
     routingQueueId: string;
@@ -589,6 +594,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         threadId: any;
         threadIdOnExternalPlatform: any;
         consumerContactStorageId: any;
+        createdAt: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -664,6 +670,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         isSubqueue: any;
         isDeleted: any;
         skillId: any;
+        isAcceptRejectFlowEnabled: any;
     }) | null | undefined;
     routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
@@ -1004,6 +1011,7 @@ export declare interface Contact {
         unseenMessagesCount: number;
     };
     endUser: EndUser | null;
+    createdAt: string;
 }
 
 export declare interface ContactCreatedChatEvent extends ChatEventData {
@@ -1039,6 +1047,7 @@ declare const contactRecipientsChangedDataSchema: yup.ObjectSchema<{
         threadId: any;
         threadIdOnExternalPlatform: any;
         consumerContactStorageId: any;
+        createdAt: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -1168,6 +1177,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         threadId: any;
         threadIdOnExternalPlatform: any;
         consumerContactStorageId: any;
+        createdAt: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -1243,6 +1253,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         isSubqueue: any;
         isDeleted: any;
         skillId: any;
+        isAcceptRejectFlowEnabled: any;
     }) | null;
     routingMode: string | undefined;
     previousRoutingQueue: (object & {
@@ -1251,6 +1262,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         isSubqueue: any;
         isDeleted: any;
         skillId: any;
+        isAcceptRejectFlowEnabled: any;
     }) | null;
     preferredUserForNextAssign: yup.Shape<object | null | undefined, {
         id: any;
@@ -1664,6 +1676,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         threadId: any;
         threadIdOnExternalPlatform: any;
         consumerContactStorageId: any;
+        createdAt: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -1833,6 +1846,7 @@ declare const messageReadChangedDataSchema: yup.ObjectSchema<{
         threadId: any;
         threadIdOnExternalPlatform: any;
         consumerContactStorageId: any;
+        createdAt: any;
         status: any;
         direction: any;
         routingQueueId: any;
@@ -2091,7 +2105,8 @@ export declare enum MessageType {
     QUICK_REPLIES = "QUICK_REPLIES",
     RICH_LINK = "RICH_LINK",
     LIST_PICKER = "LIST_PICKER",
-    ADAPTIVE_CARD = "ADAPTIVE_CARD"
+    ADAPTIVE_CARD = "ADAPTIVE_CARD",
+    TIME_PICKER = "TIME_PICKER"
 }
 
 export declare interface MoreMessagesLoadedEvent extends ChatEventData {
@@ -2258,6 +2273,7 @@ declare const routingQueueSchema: yup.ObjectSchema<{
     isSubqueue: boolean;
     isDeleted: boolean;
     skillId: number | null | undefined;
+    isAcceptRejectFlowEnabled: boolean | null | undefined;
 }>;
 
 /**

@@ -74,7 +74,7 @@ Customers might end the chat by calling <code>endChat()</code> method.</p>
 </code><button>Copy</button></pre>
 <a id="md:assignemnt" class="tsd-anchor"></a><h3><a href="#md:assignemnt">Assignemnt</a></h3><pre><code class="language-ts"><span class="hl-3">sdk</span><span class="hl-0">.</span><span class="hl-7">onChatEvent</span><span class="hl-0">(</span><span class="hl-3">ChatEvent</span><span class="hl-0">.</span><span class="hl-6">ASSIGNED_AGENT_CHANGED</span><span class="hl-0">, (</span><span class="hl-3">event</span><span class="hl-0">: </span><span class="hl-9">CustomEvent</span><span class="hl-0">&lt;</span><span class="hl-9">ChatEventData</span><span class="hl-0">&gt;) </span><span class="hl-5">=&gt;</span><span class="hl-0"> {</span><br/><span class="hl-0">    </span><span class="hl-5">const</span><span class="hl-0"> </span><span class="hl-6">agentName</span><span class="hl-0"> = </span><span class="hl-7">parseAgentName</span><span class="hl-0">((</span><span class="hl-3">event</span><span class="hl-0">.</span><span class="hl-3">detail</span><span class="hl-0">.</span><span class="hl-3">data</span><span class="hl-0"> </span><span class="hl-2">as</span><span class="hl-0"> </span><span class="hl-9">AssignedAgentChangedData</span><span class="hl-0">).</span><span class="hl-3">inboxAssignee</span><span class="hl-0">);</span><br/><span class="hl-0">});</span>
 </code><button>Copy</button></pre>
-<a id="md:sdk-development" class="tsd-anchor"></a><h2><a href="#md:sdk-development">SDK Development</a></h2><p><a href="DEVELOPMENT.md">SDK Development instructions</a></p>
+<a id="md:socket-events" class="tsd-anchor"></a><h2><a href="#md:socket-events">Socket events</a></h2><p><a href="docs_events/EVENTS.md">Socket events documentation</a></p>
 </div></div>
 <div class="col-sidebar">
 <div class="page-menu">
@@ -125,7 +125,7 @@ Customers might end the chat by calling <code>endChat()</code> method.</p>
 <li><a href="#md:attachements"><span>Attachements</span></a></li>
 <li><a href="#md:typing"><span>Typing</span></a></li>
 <li><a href="#md:assignemnt"><span>Assignemnt</span></a></li></ul></li>
-<li><a href="#md:sdk-development"><span>SDK <wbr/>Development</span></a></li></ul></li></ul></li></ul></div></details></div>
+<li><a href="#md:socket-events"><span>Socket events</span></a></li></ul></li></ul></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="modules.html" class="current"><svg class="tsd-kind-icon" width="24" height="24" viewBox="0 0 24 24"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6" id="icon-4-path"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)" id="icon-4-text"></path></svg><span>Cx<wbr/>One chat web SDK</span></a>
 <ul class="tsd-small-nested-navigation">
