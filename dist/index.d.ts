@@ -2653,6 +2653,13 @@ export declare class Thread {
      */
     sendTextMessage(messageText: string, options?: SendMessageOptions): Promise<MessageSuccessEventData>;
     /**
+     * Send postback message
+     * @param postback - postback
+     * @param messageText - text of message
+     * @param options - options
+     */
+    sendPostbackMessage(postback: string, messageText: string, options?: SendMessageOptions): Promise<MessageSuccessEventData>;
+    /**
      * Send Outbound Message
      * @param messageData - message data
      * @throws SendMessageFailedError
