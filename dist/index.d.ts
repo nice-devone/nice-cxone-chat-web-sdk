@@ -1573,6 +1573,13 @@ export declare class LivechatThread extends Thread {
      */
     startChat(initialMessageText?: string): Promise<MessageSuccessEventData | void>;
     endChat(): Promise<void>;
+    /**
+     * Load previous messages
+     * @returns Promise MoreMessagesLoadedEvent | null
+     * @throws LoadMoreMessagesFailedError
+     *  * This exception is thrown when the attempt to load more messages fails.
+     */
+    loadMoreMessages(): Promise<MoreMessagesLoadedEvent | null>;
     private _registerLivechatEventHandlers;
 }
 
@@ -1607,6 +1614,7 @@ export declare type Message = Override<yup.InferType<typeof messageSchema>, {
 
 declare type MessageContent = Override<yup.InferType<typeof messageContentSchema>, {
     type: MessageType;
+    parameters: MessageParameters;
 }>;
 
 declare const messageContentSchema: yup.ObjectSchema<{
@@ -1616,8 +1624,12 @@ declare const messageContentSchema: yup.ObjectSchema<{
         postback: any;
         elements: any;
     };
+    postback: string | null | undefined;
     fallbackText: string;
     isAutoTranslated: boolean;
+    parameters: [] | {
+        isInitialMessage?: boolean | undefined;
+    };
 }>;
 
 export declare type MessageCreatedData = yup.InferType<typeof messageCreatedDataSchema> & {
@@ -1786,9 +1798,15 @@ declare type MessageId = Flavor<string, 'MessageId'>;
 
 declare type MessageIdOnExternalPlatform = Flavor<string, 'MessageIdOnExternalPlatform'>;
 
+declare type MessageParameters = yup.InferType<typeof messageParametersSchema>;
+
+declare const messageParametersSchema: yup.MixedSchema<[] | {
+    isInitialMessage?: boolean | undefined;
+}>;
+
 declare type MessagePayload = {
     text?: string | null;
-    postback?: string | null;
+    postback?: Postback;
     elements?: Array<any> | null;
 };
 
@@ -1886,8 +1904,10 @@ declare const messageSchema: yup.ObjectSchema<{
     messageContent: object & {
         type: any;
         payload: any;
+        postback: any;
         fallbackText: any;
         isAutoTranslated: any;
+        parameters: any;
     };
     hasAdditionalMessageContent: boolean;
     reactionStatistics: object & {
@@ -2127,6 +2147,8 @@ export declare interface OfflineMessageData {
 
 declare type Override<T1, T2> = Omit<T1, keyof T2> & T2;
 
+declare type Postback = string | null;
+
 /** @deprecated use ContactStorageId */
 declare type PostId = ThreadId;
 
@@ -2148,7 +2170,8 @@ declare enum PushUpdateContextInitiatorType {
     EXTERNAL = "external",
     WORKFLOW = "workflow",
     WORKFLOW_JOB = "workflowJob",
-    ROUTING = "routing"
+    ROUTING = "routing",
+    UNIFIED_ROUTING = "unifiedRouting"
 }
 
 declare type PushUpdateEventFields = Override<yup.InferType<typeof pushUpdateEventFieldsSchema>, {
@@ -2499,6 +2522,7 @@ export declare interface SendMessageEventData extends AwsInputEventData {
     messageContent: {
         type: MessageType;
         payload: MessagePayload;
+        postback?: Postback;
     };
     attachments: Array<AttachmentUpload>;
     browserFingerprint: BrowserFingerprint;
@@ -2571,8 +2595,10 @@ declare const sentMessageSchema: yup.ObjectSchema<{
     messageContent: {
         type: any;
         payload: any;
+        postback: any;
         fallbackText: any;
         isAutoTranslated: any;
+        parameters: any;
     };
     threadIdOnExternalPlatform: string;
 }>;
@@ -2631,6 +2657,8 @@ export declare class Thread {
     protected _isAuthorizationEnabled: boolean;
     protected _customer: Customer | null;
     protected _customFields: CustomFieldsMap;
+    private _typingForPreviewTimeoutID;
+    private _typingPreviewText;
     constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, customer: Customer | null, customFields?: CustomFieldsObject, isAuthorizationEnabled?: boolean);
     /**
      * Recover existing chat
@@ -2690,12 +2718,29 @@ export declare class Thread {
     /**
      * Send start and stop typing events. It sends stop typing event after the timeout. Repeated calls resets this timeout.
      * @param timeout - The timeout in milliseconds.
+     * @param onSendCallback - Callback to be called after the stop typing event is sent.
      */
-    keystroke(timeout?: number): void;
+    keystroke(timeout?: number, onSendCallback?: () => void): void;
     /**
      * Manually send the stop typing event and clear the keystroke timeout.
      */
     stopTyping(): void;
+    private _stopTypingCallback;
+    /**
+     * Send typing event for message preview after the timeout.
+     * @param currentText - current text
+     * @param timeout - timeout in milliseconds
+     * @returns void
+     *
+     */
+    keystrokeForPreview(currentText: string, timeout?: number): void;
+    /**
+     * Manually send the stop typing event for message preview and clear the keystroke timeout.
+     * @param shouldSendPreview - should send preview
+     * @returns void
+     *
+     */
+    stopTypingForPreview(shouldSendPreview?: boolean): void;
     /**
      * Get Thread Metadata
      * @returns response otherwise throw an error response
