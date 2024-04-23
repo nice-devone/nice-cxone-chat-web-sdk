@@ -6,8 +6,9 @@
 
 ## Requirements
 
-- TypeScript 4.9+
-- your custom application bundler (webpack, create-react-app, etc.)
+- TypeScript **4.9**
+- Runtime: **ES2022** (`WebSocket`, `Intl`, `Promise`, `EventTarget`, `CustomEvent`, `JSON`, `Date`, etc.)
+- Custom application bundler (webpack, create-react-app, etc.)
 
 ## Quickstart
 
@@ -177,4 +178,3 @@ sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, (event: CustomEvent<ChatEventD
 
 ## Socket events
 [Socket events documentation](docs_events/EVENTS.md)
-

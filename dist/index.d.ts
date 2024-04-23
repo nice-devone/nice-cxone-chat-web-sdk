@@ -828,6 +828,7 @@ export declare const ChatEvent: {
 export declare interface ChatEventData {
     context?: [] | PushUpdateContext;
     createdAt: Date;
+    createdAtWithMilliseconds?: Date;
     data: unknown;
     error?: MessageFailedEventData['error'];
     id: string;
