@@ -33,14 +33,14 @@ export declare type Agent = User;
 
 export declare type AgentId = UserId;
 
-export declare type AgentTypingEndedData = SenderTypingEndedData;
+export declare type AgentTypingEndedData = TypingEventData;
 
 export declare interface AgentTypingEndedEvent extends ChatEventData {
     data: AgentTypingEndedData;
     type: typeof ChatEvent.AGENT_TYPING_ENDED;
 }
 
-export declare type AgentTypingStartedData = SenderTypingStartedData;
+export declare type AgentTypingStartedData = TypingEventData;
 
 export declare interface AgentTypingStartedEvent extends ChatEventData {
     data: AgentTypingStartedData;
@@ -90,6 +90,7 @@ declare type AttachmentUpload = {
 };
 
 export declare class AuthorizationError extends ChatSDKError {
+    data: MessageFailedEventData['error'] | undefined;
     constructor(message: string, data: MessageFailedEventData['error'] | undefined);
 }
 
@@ -179,9 +180,44 @@ declare interface BasicChannelInfo {
 
 declare type Brand = Override<yup.InferType<typeof brandSchema>, {
     id: BrandId;
+    tenantId: TenantId;
 }>;
 
 export declare type BrandId = Flavor<number, 'BrandId'>;
+
+declare type BrandInfoColors = {
+    buttonColor: string;
+    headerBgColor: string;
+    headerFontColor: string;
+    themeColor: string;
+    textColor: string;
+    widgetBgColor: string;
+    widgetFontColor: string;
+};
+
+declare type BrandInfoPopup = {
+    name: string;
+    url: string;
+    urlTimeout: number;
+    appearance: 'left' | 'center';
+    headlineText: string;
+    headlineColor: string | null;
+    secondLineText: string;
+    secondLineColor: string | null;
+    backgroundImage: string;
+};
+
+declare type BrandInfoPreContactForm = {
+    id: string;
+    name: string;
+    channels: Array<ChannelId>;
+    customFields: Array<PreContactFormCustomField>;
+};
+
+declare type BrandInfoWidget = {
+    appearance: 'bar' | 'bubble';
+    position: 'left' | 'right';
+};
 
 declare const brandSchema: yup.ObjectSchema<{
     id: number;
@@ -204,6 +240,13 @@ declare type BrowserFingerprint = {
     deviceType: DeviceType | null;
     applicationType: ApplicationType | null;
 };
+
+export declare interface BrowserFingerprintOptions {
+    country?: string | null;
+    ip?: string | null;
+    language?: string;
+    location?: string | null;
+}
 
 declare type Case = yup.InferType<typeof caseSchema> & {
     id: CaseId;
@@ -305,6 +348,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         isLiveChat: any;
         isPostWritable: any;
         isPrivate: any;
+        isTrackingMessageDeliveryStatus: any;
         mediaType: any;
         nicknameOnExternalPlatform: any;
         ownerUserId: any;
@@ -327,6 +371,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         isDeleted: any;
         skillId: any;
         isAcceptRejectFlowEnabled: any;
+        acceptRejectFlowRefusalTimeoutInSeconds: any;
     }) | null | undefined;
     routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
@@ -427,6 +472,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         isLiveChat: any;
         isPostWritable: any;
         isPrivate: any;
+        isTrackingMessageDeliveryStatus: any;
         mediaType: any;
         nicknameOnExternalPlatform: any;
         ownerUserId: any;
@@ -470,6 +516,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         isDeleted: any;
         skillId: any;
         isAcceptRejectFlowEnabled: any;
+        acceptRejectFlowRefusalTimeoutInSeconds: any;
     }) | null;
     routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
@@ -542,7 +589,16 @@ declare const caseSchema: yup.ObjectSchema<{
         imageUrl: any;
         publicImageUrl: any;
     }) | null;
-    endUserRecipients: Recipient[];
+    endUserRecipients: Override<    {
+    idOnExternalPlatform: string;
+    name: string;
+    isPrivate: boolean;
+    isPrimary: boolean;
+    anonymizedAt: string | null;
+    anonymizedReason: string | null;
+    }, {
+    idOnExternalPlatform: IdentityIdOnExternalPlatform;
+    }>[];
     detailUrl: string;
     authorEndUserIdentity: object & {
         id: any;
@@ -564,7 +620,16 @@ declare const caseSchema: yup.ObjectSchema<{
         image: any;
         customFields: any;
     }[];
-    recipients: Recipient[];
+    recipients: Override<    {
+    idOnExternalPlatform: string;
+    name: string;
+    isPrivate: boolean;
+    isPrimary: boolean;
+    anonymizedAt: string | null;
+    anonymizedReason: string | null;
+    }, {
+    idOnExternalPlatform: IdentityIdOnExternalPlatform;
+    }>[];
     routableType: string | undefined;
     proficiency: object & {
         from: any;
@@ -656,6 +721,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         isLiveChat: any;
         isPostWritable: any;
         isPrivate: any;
+        isTrackingMessageDeliveryStatus: any;
         mediaType: any;
         nicknameOnExternalPlatform: any;
         ownerUserId: any;
@@ -671,6 +737,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         isDeleted: any;
         skillId: any;
         isAcceptRejectFlowEnabled: any;
+        acceptRejectFlowRefusalTimeoutInSeconds: any;
     }) | null | undefined;
     routingMode: string | undefined;
     preferredUserForNextAssign: (object & {
@@ -695,14 +762,90 @@ declare type Channel = yup.InferType<typeof channelSchema> & {
     contentFormat: ContentFormat;
 };
 
-declare enum ChannelAvailability {
+export declare enum ChannelAvailability {
     ONLINE = "online",
     OFFLINE = "offline"
+}
+
+export declare interface ChannelAvailabilityResponse {
+    status: ChannelAvailability;
 }
 
 export declare type ChannelId = Flavor<string, 'ChannelId'>;
 
 declare type ChannelIdOnExternalPlatform = Flavor<string, 'ChannelIdOnExternalPlatform'>;
+
+export declare interface ChannelInfo {
+    availability: {
+        status: ChannelAvailability;
+    };
+    name: string;
+    isLiveChat: boolean;
+    settings: ChannelInfoSettings;
+    translations: {
+        [key: string]: string;
+    };
+    colors: BrandInfoColors;
+    widget: BrandInfoWidget;
+    popups: Array<BrandInfoPopup>;
+    customCss: string;
+    customJs: string;
+    customJsFiles: string;
+    channelIdOnExternalPlatform: string;
+    preContactForm: BrandInfoPreContactForm | null;
+    isAuthorizationEnabled: boolean;
+    webSecurityConfiguration: WebSecurityConfiguration;
+}
+
+declare interface ChannelInfoFeatures {
+    accessibleFormFields: boolean;
+    chatExtendedLogging: boolean;
+    chatOptimizeQueueCountingForChat: boolean;
+    chatRedesign: boolean;
+    chatWindowDragging: boolean;
+    disableAttachmentOnDfoChat: boolean;
+    displayChatWindowInCoBrowsing: boolean;
+    isCoBrowsingEnabled: boolean;
+    isCreditCardMaskingEnabled: boolean;
+    isEngagementMapperEnabled: boolean;
+    isFeatureAdaptiveCardsEnabled: boolean;
+    isFeatureDefaultTranslationsEnabled: boolean;
+    isFeatureGroupChatEnabled: boolean;
+    isFeatureImproveVisitorInactivityTrackingEnabled: boolean;
+    isFeatureQueueCountingEnabled: boolean;
+    isProactiveChatEnabled: boolean;
+    isWebAnalyticsEnabled: boolean;
+    liveChatLogoHidden: boolean;
+    splitChannelInfoAndAvailability: boolean;
+    translationKeyForContactCustomField: boolean;
+    useLoaderForChatWindow: boolean;
+    useStorageModuleInChat: boolean;
+}
+
+declare type ChannelInfoSettings = {
+    features: ChannelInfoFeatures;
+    fileRestrictions: FileRestrictionsSettings;
+    hasPageViews: boolean;
+    pushNotifications?: PushNotificationSettings;
+    liveChatShowOfflineForm: boolean;
+    liveChatOfflineForm: {
+        isEnabled: boolean;
+        isCustom: boolean;
+        html: string;
+    };
+    liveChatHiddenOnOffline: boolean;
+    liveChatAllowTranscript: boolean;
+    liveChatTranscriptChannelId: ChannelId;
+    hasMultipleThreadsPerEndUser: boolean;
+    liveChatAllowAudioNotification: boolean;
+    isGroupChatAllowed: boolean;
+    canCustomerInviteToGroupChat: boolean;
+    canAgentInviteToGroupChat: boolean;
+    platformChannelIdToSendInvitationCode: string;
+    emailInvitationContent: string;
+    emailInvitationLink: string;
+    enableChatTypingPreview: boolean;
+};
 
 declare const channelSchema: yup.ObjectSchema<{
     id: string;
@@ -747,6 +890,7 @@ declare const channelSchema: yup.ObjectSchema<{
     isLiveChat: boolean;
     isPostWritable: boolean;
     isPrivate: boolean;
+    isTrackingMessageDeliveryStatus: boolean;
     mediaType: number | undefined;
     nicknameOnExternalPlatform: string;
     ownerUserId: number;
@@ -755,6 +899,8 @@ declare const channelSchema: yup.ObjectSchema<{
     translationGroup: string;
     wysiwygEnabled: boolean;
 }>;
+
+export declare const CHAT_SDK_VERSION: string;
 
 declare class ChatCustomEvent<T extends ChatEventData = ChatEventData> extends CustomEvent<T> {
 }
@@ -842,17 +988,31 @@ export declare type ChatEventType = typeof ChatEvent[ChatEventKey];
 declare class ChatSdk {
     onError?: (error: Error) => void;
     onRawEvent?: (event: ChatCustomEvent) => void;
-    isLivechat: boolean;
-    channelId: ChannelId;
-    private websocketClient;
     private customer;
+    channelId: ChannelId;
+    private isAuthorizationEnabled;
+    isLivechat: boolean | undefined;
+    private websocketClient;
     private _incomingChatEventMiddleware;
     private _messageEmitter;
-    private isAuthorizationEnabled;
     private _threadCache;
     private _contactCustomFieldsQueue;
     constructor(options: ChatSDKOptions);
     onErrorHandler(error: unknown): void;
+    /**
+     * Get channel info
+     * Returns channel info like feature toggle status, translations, file upload restrictions, theme color settings etc.
+     * @returns ChannelInfo
+     * @throws ChatSDKError
+     */
+    getChannelInfo(): Promise<ChannelInfo>;
+    /**
+     * Get channel availability
+     * Returns channel availability Online/Offline
+     * @returns ChannelAvailabilityResponse
+     * @throws ChatSDKError
+     */
+    getChannelAvailability(): Promise<ChannelAvailabilityResponse>;
     /**
      * Send Authorization Event
      * @param authorizationCode - authorization code
@@ -860,7 +1020,7 @@ declare class ChatSdk {
      * @throws AuthorizationError
      *  * This exception is thrown when the authorization or refresh token fails
      */
-    authorize(authorizationCode?: string, visitorId?: string): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
+    authorize(authorizationCode?: string, visitorId?: VisitorId): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
     /**
      * Generate Authorization Token from the given url
      *
@@ -944,9 +1104,15 @@ export declare interface ChatSDKOptions {
     customerId: CustomerIdentityIdOnExternalPlatform;
     customerImage?: string;
     customerName?: string;
+    destinationId?: DestinationInput['id'];
     environment: EnvironmentName;
+    isAuthorizationEnabled?: boolean;
+    isLivechat?: boolean;
+    language?: string;
     onError?: (error: Error) => void;
     onRawEvent?: (event: ChatCustomEvent) => void;
+    visitId?: VisitId;
+    visitorId?: VisitorId;
 }
 
 declare type ChatWindowId = Flavor<string, 'ChatWindowId'>;
@@ -1110,6 +1276,7 @@ declare const contactRecipientsChangedDataSchema: yup.ObjectSchema<{
         isLiveChat: any;
         isPostWritable: any;
         isPrivate: any;
+        isTrackingMessageDeliveryStatus: any;
         mediaType: any;
         nicknameOnExternalPlatform: any;
         ownerUserId: any;
@@ -1240,6 +1407,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         isLiveChat: any;
         isPostWritable: any;
         isPrivate: any;
+        isTrackingMessageDeliveryStatus: any;
         mediaType: any;
         nicknameOnExternalPlatform: any;
         ownerUserId: any;
@@ -1255,6 +1423,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         isDeleted: any;
         skillId: any;
         isAcceptRejectFlowEnabled: any;
+        acceptRejectFlowRefusalTimeoutInSeconds: any;
     }) | null;
     routingMode: string | undefined;
     previousRoutingQueue: (object & {
@@ -1264,6 +1433,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         isDeleted: any;
         skillId: any;
         isAcceptRejectFlowEnabled: any;
+        acceptRejectFlowRefusalTimeoutInSeconds: any;
     }) | null;
     preferredUserForNextAssign: yup.Shape<object | null | undefined, {
         id: any;
@@ -1292,6 +1462,17 @@ declare const contentRemovedSchema: yup.ObjectSchema<{
     reason: string;
     removedAt: Date;
 }>;
+
+/**
+ * Consult the [W3C CSP documentation](https://www.w3.org/TR/CSP3/#csp-directives)
+ * for more information on the available directives.
+ */
+declare interface ContentSecurityPolicyDirectives {
+    'default-src'?: DirectiveValue;
+    'script-src'?: DirectiveValue;
+    'style-src'?: DirectiveValue;
+    [key: string]: DirectiveValue;
+}
 
 export declare function createCreateInvitationToGroupChatPayloadData(id: CaseId): EventPayloadData<CreateInvitationToGroupChatEventData>;
 
@@ -1392,6 +1573,30 @@ export declare type CustomerView = Override<yup.InferType<typeof customerSchema>
 
 declare type CustomField = yup.InferType<typeof customFieldSchema>;
 
+declare type CustomFieldDefinition = {
+    ident: string;
+    label: string;
+    type: CustomFieldType;
+    required: boolean;
+    values: Array<CustomFieldDefinitionPossibleValue>;
+    liveChatVisibility: 'visible' | 'hidden';
+    postDetailVisibility: 'visible' | 'hidden';
+    isEditable: boolean;
+    autocompleteAttribute?: string;
+} & CustomFieldDefinitionTranslation;
+
+declare type CustomFieldDefinitionPossibleValue = {
+    label?: string;
+    name: string;
+    value: string;
+    parentId?: string;
+} & CustomFieldDefinitionTranslation;
+
+declare interface CustomFieldDefinitionTranslation {
+    labelTranslationKey?: string;
+    ariaLabelTranslationKey?: string;
+}
+
 declare const customFieldSchema: yup.ObjectSchema<{
     ident: string;
     value: string | null;
@@ -1400,6 +1605,13 @@ declare const customFieldSchema: yup.ObjectSchema<{
 declare type CustomFieldsMap = Map<Ident, Value>;
 
 declare type CustomFieldsObject = Record<Ident, Value>;
+
+declare enum CustomFieldType {
+    TEXT = "text",
+    EMAIL = "email",
+    LIST = "list",
+    TREE = "tree"
+}
 
 declare interface DestinationInput {
     id: ChatWindowId;
@@ -1411,6 +1623,8 @@ declare enum DeviceType {
     OTHER = "other",
     TABLET = "tablet"
 }
+
+declare type DirectiveValue = Array<string> | undefined;
 
 declare type EndUser = yup.InferType<typeof endUserSchema> & {
     id: EndUserIdentityId;
@@ -1465,7 +1679,17 @@ export declare interface EventPayloadData<D extends AwsInputEventData> {
     data: D;
     destination?: DestinationInput;
     eventType: AwsInputEventType;
+    visit?: VisitInput;
     visitor?: VisitorInput;
+}
+
+declare interface FileRestrictionsSettings {
+    allowedFileSize: string;
+    allowedFileTypes: Array<{
+        description: string;
+        mimeType: string;
+    }>;
+    isAttachmentsEnabled: boolean;
 }
 
 declare type Flavor<T, FlavorT> = T & Flavoring<FlavorT>;
@@ -1473,6 +1697,12 @@ declare type Flavor<T, FlavorT> = T & Flavoring<FlavorT>;
 declare interface Flavoring<FlavorT> {
     _type?: FlavorT;
 }
+
+declare type ForwardedMessageReference = {
+    message: {
+        id: MessageId;
+    };
+};
 
 export { generateId }
 
@@ -1482,6 +1712,22 @@ export { generateId }
  * @returns message author name
  */
 export declare const getAuthor: (message: Message) => string;
+
+/**
+ * Get Customer Browser fingerprint
+ * @param options - options
+ */
+export declare const getBrowserFingerprint: (options?: BrowserFingerprintOptions) => BrowserFingerprint;
+
+export declare const getBrowserLanguage: () => string;
+
+export declare const getBrowserLocation: () => string;
+
+/**
+ * Get Device type
+ * @param deviceType - device type
+ */
+export declare function getDeviceType(deviceType?: string): DeviceType;
 
 export declare interface IChatEventTarget extends EventTarget {
     addEventListener<K extends ChatEventType>(type: K, listener: (event: ChatCustomEvent) => void, options?: boolean | AddEventListenerOptions): void;
@@ -1562,11 +1808,11 @@ export declare class LivechatThread extends Thread {
     constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, customer: Customer | null, customFields?: CustomFieldsObject, isAuthorizationEnabled?: boolean);
     /**
      * Recover existing live chat
-     * @returns Promise ThreadRecoveredData
+     * @returns AbortablePromise ThreadRecoveredData
      * @throws ThreadRecoverFailedError
      *  * This exception is thrown when the recover fails or the thread does not exist.
      */
-    recover(): Promise<ThreadRecoveredData>;
+    recover(): AbortablePromise<ThreadRecoveredData>;
     sendMessage(messageData: SendMessageEventData): Promise<MessageSuccessEventData>;
     /**
      * Start livechat
@@ -1598,6 +1844,7 @@ export declare type Message = Override<yup.InferType<typeof messageSchema>, {
     contentRemoved: ContentRemoved;
     delivered: Array<MessageDelivered>;
     direction: MessageDirection;
+    forward?: ForwardedMessageReference;
     id: MessageId;
     idOnExternalPlatform: MessageIdOnExternalPlatform;
     messageContent: MessageContent;
@@ -1611,16 +1858,18 @@ export declare type Message = Override<yup.InferType<typeof messageSchema>, {
     userStatistics: UserStatistics;
     user?: User;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
+    createdAtWithMilliseconds?: string;
 }>;
 
 declare type MessageContent = Override<yup.InferType<typeof messageContentSchema>, {
     type: MessageType;
     parameters: MessageParameters;
+    payload: MessagePayload_2;
 }>;
 
 declare const messageContentSchema: yup.ObjectSchema<{
     type: string;
-    payload: {
+    payload: object & {
         text: any;
         postback: any;
         elements: any;
@@ -1656,6 +1905,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         threadIdOnExternalPlatform: any;
         postId: any;
         contactNumber: any;
+        forward: any;
         replyToMessage: any;
         messageContent: any;
         hasAdditionalMessageContent: any;
@@ -1683,6 +1933,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         userStatistics: any;
         seen: any;
         delivered: any;
+        createdAtWithMilliseconds: any;
     };
     case: object & {
         id: any;
@@ -1751,6 +2002,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         isLiveChat: any;
         isPostWritable: any;
         isPrivate: any;
+        isTrackingMessageDeliveryStatus: any;
         mediaType: any;
         nicknameOnExternalPlatform: any;
         ownerUserId: any;
@@ -1811,6 +2063,14 @@ declare type MessagePayload = {
     elements?: Array<any> | null;
 };
 
+declare type MessagePayload_2 = yup.InferType<typeof messagePayloadSchema>;
+
+declare const messagePayloadSchema: yup.ObjectSchema<object & {
+    text: string | null;
+    postback: string | null;
+    elements: unknown[] | null;
+}>;
+
 declare type MessageReadChangedData = Override<yup.InferType<typeof messageReadChangedDataSchema>, {
     brand: Brand;
     message: Message;
@@ -1832,6 +2092,7 @@ declare const messageReadChangedDataSchema: yup.ObjectSchema<{
         threadIdOnExternalPlatform: any;
         postId: any;
         contactNumber: any;
+        forward: any;
         replyToMessage: any;
         messageContent: any;
         hasAdditionalMessageContent: any;
@@ -1859,6 +2120,7 @@ declare const messageReadChangedDataSchema: yup.ObjectSchema<{
         userStatistics: any;
         seen: any;
         delivered: any;
+        createdAtWithMilliseconds: any;
     };
     contact: {
         id: any;
@@ -1898,6 +2160,9 @@ declare const messageSchema: yup.ObjectSchema<{
     threadIdOnExternalPlatform: string;
     postId: string;
     contactNumber: string;
+    forward: {
+        message: any;
+    } | null;
     replyToMessage: {
         id: any;
         idOnExternalPlatform: any;
@@ -2039,6 +2304,7 @@ declare const messageSchema: yup.ObjectSchema<{
         isLiveChat: any;
         isPostWritable: any;
         isPrivate: any;
+        isTrackingMessageDeliveryStatus: any;
         mediaType: any;
         nicknameOnExternalPlatform: any;
         ownerUserId: any;
@@ -2065,6 +2331,7 @@ declare const messageSchema: yup.ObjectSchema<{
         endUserId: any;
         deliveredAt: any;
     })[];
+    createdAtWithMilliseconds: string | null | undefined;
 }>;
 
 declare type MessageSeen = yup.InferType<typeof messageSeenSchema>;
@@ -2152,6 +2419,19 @@ declare type Postback = string | null;
 
 /** @deprecated use ContactStorageId */
 declare type PostId = ThreadId;
+
+declare type PreContactFormCustomField = {
+    isRequired: boolean;
+    definition: Array<CustomFieldDefinition>;
+};
+
+declare interface PushNotificationSettings {
+    title: string;
+    body: string;
+    isActive: boolean;
+    pinpointProjectId?: string;
+    deeplink?: string;
+}
 
 declare type PushUpdateContext = {
     initiator?: PushUpdateContextInitiator;
@@ -2264,9 +2544,9 @@ declare enum PushUpdateEventType {
     EVENT_IN_S3 = "EventInS3"
 }
 
-declare type Recipient = yup.InferType<typeof recipientSchema> & {
+declare type Recipient = Override<yup.InferType<typeof recipientSchema>, {
     idOnExternalPlatform: IdentityIdOnExternalPlatform;
-};
+}>;
 
 declare const recipientSchema: yup.ObjectSchema<{
     idOnExternalPlatform: string;
@@ -2298,7 +2578,13 @@ declare const routingQueueSchema: yup.ObjectSchema<{
     isDeleted: boolean;
     skillId: number | null | undefined;
     isAcceptRejectFlowEnabled: boolean | null | undefined;
+    acceptRejectFlowRefusalTimeoutInSeconds: number | null | undefined;
 }>;
+
+export declare class SdkVersionNotSupported extends Error {
+    name: string;
+    message: string;
+}
 
 /**
  * Send chat event
@@ -2322,184 +2608,6 @@ declare interface SendEmailInvitationToGroupChatEventData extends AwsInputEventD
         idOnExternalPlatform: string;
     }>;
 }
-
-declare type SenderTypingEndedData = Override<yup.InferType<typeof senderTypingEndedDataSchema>, {
-    brand: Brand;
-    channel: Channel;
-    user: User;
-    thread: ThreadView;
-}>;
-
-declare const senderTypingEndedDataSchema: yup.ObjectSchema<{
-    brand: object & {
-        id: any;
-        tenantId: any;
-        businessUnitId: any;
-        timezone: any;
-        friendlyName: any;
-    };
-    channel: object & {
-        id: any;
-        name: any;
-        integrationBoxIdentifier: any;
-        idOnExternalPlatform: any;
-        realExternalPlatformId: any;
-        externalPlatformAvatar: any;
-        canAgentInviteCustomersToContact: any;
-        canReplyToAnyMessage: any;
-        canSaveResponse: any;
-        contentFormat: any;
-        externalPlatformIcon: any;
-        hasAbilityToDelete: any;
-        hasAbilityToForwardMessage: any;
-        hasAbilityToHide: any;
-        hasAbilityToChangeFrom: any;
-        hasAbilityToChangeRecipient: any;
-        hasAbilityToLike: any;
-        hasAbilityToQuoteMessage: any;
-        hasAbilityToSendFiles: any;
-        hasAbilityToShare: any;
-        hasAbilityToTag: any;
-        hasCcAndBcc: any;
-        hasCustomerOnThirdParty: any;
-        hasEditableTitle: any;
-        hasMultipleRecipient: any;
-        hasMultipleThreadsPerEndUser: any;
-        hasOutboundFlow: any;
-        hasOutboundTemplates: any;
-        hasPostAsPlaceholder: any;
-        hasPublishing: any;
-        hasReply: any;
-        hasTreeStructure: any;
-        hasVisibleRecipients: any;
-        hasVisibleTitle: any;
-        channelIntegrationId: any;
-        isAutomaticSignatureAttached: any;
-        isCaseBasedStorage: any;
-        isHidden: any;
-        isDeleted: any;
-        isLiveChat: any;
-        isPostWritable: any;
-        isPrivate: any;
-        mediaType: any;
-        nicknameOnExternalPlatform: any;
-        ownerUserId: any;
-        replyPrefixMentionTemplate: any;
-        studioScript: any;
-        translationGroup: any;
-        wysiwygEnabled: any;
-    };
-    thread: object & {
-        id: any;
-        idOnExternalPlatform: any;
-        threadName: any;
-        channelId: any;
-        canAddMoreMessages: any;
-    };
-    user: object & {
-        id: any;
-        incontactId: any;
-        agentId: any;
-        emailAddress: any;
-        loginUsername: any;
-        firstName: any;
-        surname: any;
-        nickname: any;
-        isBotUser: any;
-        isSurveyUser: any;
-        imageUrl: any;
-        publicImageUrl: any;
-    };
-}>;
-
-declare type SenderTypingStartedData = Override<yup.InferType<typeof senderTypingStartedDataSchema>, {
-    brand: Brand;
-    channel: Channel;
-    user: User;
-    thread: ThreadView;
-}>;
-
-declare const senderTypingStartedDataSchema: yup.ObjectSchema<{
-    brand: object & {
-        id: any;
-        tenantId: any;
-        businessUnitId: any;
-        timezone: any;
-        friendlyName: any;
-    };
-    channel: object & {
-        id: any;
-        name: any;
-        integrationBoxIdentifier: any;
-        idOnExternalPlatform: any;
-        realExternalPlatformId: any;
-        externalPlatformAvatar: any;
-        canAgentInviteCustomersToContact: any;
-        canReplyToAnyMessage: any;
-        canSaveResponse: any;
-        contentFormat: any;
-        externalPlatformIcon: any;
-        hasAbilityToDelete: any;
-        hasAbilityToForwardMessage: any;
-        hasAbilityToHide: any;
-        hasAbilityToChangeFrom: any;
-        hasAbilityToChangeRecipient: any;
-        hasAbilityToLike: any;
-        hasAbilityToQuoteMessage: any;
-        hasAbilityToSendFiles: any;
-        hasAbilityToShare: any;
-        hasAbilityToTag: any;
-        hasCcAndBcc: any;
-        hasCustomerOnThirdParty: any;
-        hasEditableTitle: any;
-        hasMultipleRecipient: any;
-        hasMultipleThreadsPerEndUser: any;
-        hasOutboundFlow: any;
-        hasOutboundTemplates: any;
-        hasPostAsPlaceholder: any;
-        hasPublishing: any;
-        hasReply: any;
-        hasTreeStructure: any;
-        hasVisibleRecipients: any;
-        hasVisibleTitle: any;
-        channelIntegrationId: any;
-        isAutomaticSignatureAttached: any;
-        isCaseBasedStorage: any;
-        isHidden: any;
-        isDeleted: any;
-        isLiveChat: any;
-        isPostWritable: any;
-        isPrivate: any;
-        mediaType: any;
-        nicknameOnExternalPlatform: any;
-        ownerUserId: any;
-        replyPrefixMentionTemplate: any;
-        studioScript: any;
-        translationGroup: any;
-        wysiwygEnabled: any;
-    };
-    thread: object & {
-        id: any;
-        idOnExternalPlatform: any;
-        threadName: any;
-        channelId: any;
-        canAddMoreMessages: any;
-    };
-    user: object & {
-        id: any;
-        incontactId: any;
-        agentId: any;
-        emailAddress: any;
-        loginUsername: any;
-        firstName: any;
-        surname: any;
-        nickname: any;
-        isBotUser: any;
-        isSurveyUser: any;
-        imageUrl: any;
-        publicImageUrl: any;
-    };
-}>;
 
 export declare function sendJoinGroupChatEvent(joinGroupChatPayloadData: EventPayloadData<JoinGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
 
@@ -2649,6 +2757,8 @@ declare const tagSchema: yup.ObjectSchema<{
     isActive: boolean;
 }>;
 
+declare type TenantId = Flavor<string, 'TenantId'>;
+
 export declare class Thread {
     idOnExternalPlatform: ThreadIdOnExternalPlatform;
     protected _websocketClient: WebSocketClient;
@@ -2663,11 +2773,11 @@ export declare class Thread {
     constructor(idOnExternalPlatform: ThreadIdOnExternalPlatform, websocketClient: WebSocketClient, messageEmitter: IChatEventTarget, customer: Customer | null, customFields?: CustomFieldsObject, isAuthorizationEnabled?: boolean);
     /**
      * Recover existing chat
-     * @returns Promise<ThreadRecoveredData>
+     * @returns AbortablePromise<ThreadRecoveredData>
      * @throws ThreadRecoverFailedError
      *  * This exception is thrown when the recover fails or the thread does not exist.
      */
-    recover(): Promise<ThreadRecoveredData>;
+    recover(): AbortablePromise<ThreadRecoveredData>;
     /**
      * Send message
      * @param messageData - message data
@@ -2817,7 +2927,7 @@ export declare interface ThreadRecoveredChatEvent extends ChatEventData {
     data: ThreadRecoveredPostbackData;
 }
 
-declare interface ThreadRecoveredData extends Omit<ThreadRecoveredPostbackData, 'consumerContact' | 'contact'> {
+export declare interface ThreadRecoveredData extends Omit<ThreadRecoveredPostbackData, 'consumerContact' | 'contact'> {
     contact: ThreadRecoveredPostbackData['consumerContact'] | ThreadRecoveredPostbackData['contact'];
 }
 
@@ -2862,6 +2972,14 @@ declare interface TokenRefreshedPostbackData extends AwsResponseEventPostbackDat
 declare interface TokenRefreshedSuccessResponse {
     data: TokenRefreshedPostbackData;
     type: AwsResponseEventType.TOKEN_REFRESHED;
+}
+
+declare interface TypingEventData {
+    brand: Brand;
+    channel: Channel;
+    thread: ThreadView;
+    user?: User;
+    direction?: 'inbound' | 'outbound';
 }
 
 export declare class UploadAttachmentError extends ChatSDKError {
@@ -2918,10 +3036,20 @@ declare const userStatisticsSchema: yup.ObjectSchema<{
 
 declare type Value = CustomField['value'];
 
+declare type VisitId = Flavor<string, 'VisitId'>;
+
+declare interface VisitInput {
+    id: VisitId;
+}
+
 declare type VisitorId = Flavor<string, 'VisitorId'>;
 
 declare interface VisitorInput {
     id: VisitorId;
+}
+
+declare interface WebSecurityConfiguration {
+    contentSecurityPolicy?: ContentSecurityPolicyDirectives;
 }
 
 /**
@@ -2931,10 +3059,11 @@ export declare class WebSocketClient {
     private brandId;
     private channelId;
     private customerId;
-    private options?;
-    private onError?;
+    private options;
+    private onError;
+    private visitorId;
     private _connection;
-    constructor(brandId: BrandId, channelId: ChannelId, customerId: CustomerIdentityIdOnExternalPlatform, options?: WebSocketClientOptions | undefined, onError?: ((error: Error) => void) | undefined);
+    constructor(brandId: BrandId, channelId: ChannelId, customerId: CustomerIdentityIdOnExternalPlatform, options: WebSocketClientOptions, onError: ((error: Error) => void) | undefined, visitorId: VisitorId);
     /**
      * Connect websocket
      */

@@ -48,6 +48,19 @@ const sdk = new ChatSdk({
 await sdk.authorize()
 ```
 
+### Channel Info
+It will return information about the initialized channel, including feature toggle status, translations, file upload restrictions, theme color settings, and more.
+```ts
+await sdk.getChannelInfo()
+```
+
+### Channel Availability Info
+It will return the online/offline status information for the current channel.
+```ts
+await sdk.getChannelAvailability()
+```
+
+
 ### Thread
 
 Get or create a Thread instance:
