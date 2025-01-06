@@ -7,7 +7,7 @@
 ## Requirements
 
 - TypeScript **4.9**
-- Runtime: **ES2022** (`WebSocket`, `Intl`, `Promise`, `EventTarget`, `CustomEvent`, `JSON`, `Date`, etc.)
+- Runtime: **ES2022** (`WebSocket`, `Intl`, `Promise`, `EventTarget`, `CustomEvent`, `JSON`, `Date`, `crypto`, etc.)
 - Custom application bundler (webpack, create-react-app, etc.)
 
 ## Quickstart
@@ -164,7 +164,7 @@ Send typing events. Can be called multiple times, for example on every keypress:
 
 ```ts
 thread.keystroke();
-// Optionally call stopTyping() when the user stops typing or leaves 
+// Optionally call stopTyping() when the user stops typing or leaves
 thread.stopTyping();
 ```
 

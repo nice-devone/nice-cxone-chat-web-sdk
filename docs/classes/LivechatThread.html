@@ -278,10 +278,18 @@
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="sendCustomFields" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send<wbr/>Custom<wbr/>Fields</span><a href="#sendCustomFields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="sendCustomFields.sendCustomFields-1"><span class="tsd-kind-call-signature">send<wbr/>Custom<wbr/>Fields</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span><a href="#sendCustomFields.sendCustomFields-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="sendCustomFields.sendCustomFields-1"><span class="tsd-kind-call-signature">send<wbr/>Custom<wbr/>Fields</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selectedFieldIDs</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span><a href="#sendCustomFields.sendCustomFields-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Send current Custom Fields</p>
 </div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">selectedFieldIDs</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>it will send only custom fields with these IDs, if provided. Otherwise, it will send all custom fields.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
 <p>Inherited from <a href="Thread.html">Thread</a>.<a href="Thread.html#sendCustomFields">sendCustomFields</a></p></aside></li></ul></section>
@@ -304,7 +312,7 @@
 <div class="tsd-comment tsd-typography">
 <h4>Throws</h4><p>SendMessageFailedError</p>
 <ul>
-<li>This exception is thrown when a message fails to send. The error contains (<code>error.data</code>) a response from the backend with details.</li>
+<li>This exception is thrown when a message fails to send. The error can contain (<code>error.data</code>) a response from the backend with details.</li>
 </ul>
 </div><aside class="tsd-sources">
 <p>Overrides <a href="Thread.html">Thread</a>.<a href="Thread.html#sendMessage">sendMessage</a></p></aside></li></ul></section>
@@ -588,6 +596,8 @@
 <li><a href="AbortError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-128"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-class)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M11.898 16.1201C11.098 16.1201 10.466 15.8961 10.002 15.4481C9.53803 15.0001 9.30603 14.3841 9.30603 13.6001V9.64012C9.30603 8.85612 9.53803 8.24012 10.002 7.79212C10.466 7.34412 11.098 7.12012 11.898 7.12012C12.682 7.12012 13.306 7.34812 13.77 7.80412C14.234 8.25212 14.466 8.86412 14.466 9.64012H13.386C13.386 9.14412 13.254 8.76412 12.99 8.50012C12.734 8.22812 12.37 8.09212 11.898 8.09212C11.426 8.09212 11.054 8.22412 10.782 8.48812C10.518 8.75212 10.386 9.13212 10.386 9.62812V13.6001C10.386 14.0961 10.518 14.4801 10.782 14.7521C11.054 15.0161 11.426 15.1481 11.898 15.1481C12.37 15.1481 12.734 15.0161 12.99 14.7521C13.254 14.4801 13.386 14.0961 13.386 13.6001H14.466C14.466 14.3761 14.234 14.9921 13.77 15.4481C13.306 15.8961 12.682 16.1201 11.898 16.1201Z" fill="var(--color-text)"></path></g></svg><span>Abort<wbr/>Error</span></a></li>
 <li><a href="AbortablePromise.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Abortable<wbr/>Promise</span></a></li>
 <li><a href="AuthorizationError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Authorization<wbr/>Error</span></a></li>
+<li><a href="CacheStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage</span></a></li>
+<li><a href="CacheStorageError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage<wbr/>Error</span></a></li>
 <li><a href="ChatSdk.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Chat<wbr/>Sdk</span></a></li>
 <li><a href="Customer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Customer</span></a></li>
 <li><a href="LivechatThread.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Livechat<wbr/>Thread</span></a></li>
@@ -606,6 +616,7 @@
 <li><a href="../interfaces/AuthorizeConsumerEventSuccessResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorize<wbr/>Consumer<wbr/>Event<wbr/>Success<wbr/>Response</span></a></li>
 <li><a href="../interfaces/AuthorizeConsumerEventSuccessResponseData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorize<wbr/>Consumer<wbr/>Event<wbr/>Success<wbr/>Response<wbr/>Data</span></a></li>
 <li><a href="../interfaces/BrowserFingerprintOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Browser<wbr/>Fingerprint<wbr/>Options</span></a></li>
+<li><a href="../interfaces/CachedStorageItem.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Cached<wbr/>Storage<wbr/>Item</span></a></li>
 <li><a href="../interfaces/ChannelAvailabilityResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Channel<wbr/>Availability<wbr/>Response</span></a></li>
 <li><a href="../interfaces/ChannelInfo.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Channel<wbr/>Info</span></a></li>
 <li><a href="../interfaces/ChatEventData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Chat<wbr/>Event<wbr/>Data</span></a></li>
@@ -620,6 +631,7 @@
 <li><a href="../interfaces/CustomerReconnectSuccessPayloadData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Customer<wbr/>Reconnect<wbr/>Success<wbr/>Payload<wbr/>Data</span></a></li>
 <li><a href="../interfaces/EnvironmentEndpoints.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Environment<wbr/>Endpoints</span></a></li>
 <li><a href="../interfaces/EventPayloadData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Event<wbr/>Payload<wbr/>Data</span></a></li>
+<li><a href="../interfaces/ICacheStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>ICache<wbr/>Storage</span></a></li>
 <li><a href="../interfaces/IChatEventTarget.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IChat<wbr/>Event<wbr/>Target</span></a></li>
 <li><a href="../interfaces/LoadThreadMetadataChatEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Load<wbr/>Thread<wbr/>Metadata<wbr/>Chat<wbr/>Event</span></a></li>
 <li><a href="../interfaces/MessageCreatedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Created<wbr/>Event</span></a></li>
@@ -664,7 +676,7 @@
 <li><a href="../functions/createLeaveGroupChatPayloadData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>create<wbr/>Leave<wbr/>Group<wbr/>Chat<wbr/>Payload<wbr/>Data</span></a></li>
 <li><a href="../functions/createReconnectPayloadData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>create<wbr/>Reconnect<wbr/>Payload<wbr/>Data</span></a></li>
 <li><a href="../functions/createSendEmailInvitationToGroupChatPayloadData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>create<wbr/>Send<wbr/>Email<wbr/>Invitation<wbr/>To<wbr/>Group<wbr/>Chat<wbr/>Payload<wbr/>Data</span></a></li>
-<li><a href="../functions/generateId.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>generate<wbr/>Id</span></a></li>
+<li><a href="../functions/generateId.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>generate<wbr/>Id</span></a></li>
 <li><a href="../functions/getAuthor.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Author</span></a></li>
 <li><a href="../functions/getBrowserFingerprint.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Browser<wbr/>Fingerprint</span></a></li>
 <li><a href="../functions/getBrowserLanguage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Browser<wbr/>Language</span></a></li>
