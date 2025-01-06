@@ -1075,10 +1075,17 @@ declare class ChatSdk {
     #private;
     onError?: (error: Error) => void;
     onRawEvent?: (event: ChatCustomEvent) => void;
-    isLivechat: boolean | undefined;
+    private customer;
     channelId: ChannelId;
+    private isAuthorizationEnabled;
+    isLivechat: boolean | undefined;
+    private websocketClient;
+    private _incomingChatEventMiddleware;
+    private _messageEmitter;
+    private _threadCache;
+    private _contactCustomFieldsQueue;
     constructor(options: ChatSDKOptions);
-    ready(): Promise<void>;
+    onErrorHandler(error: unknown): void;
     /**
      * Get channel info
      * Returns channel info like feature toggle status, translations, file upload restrictions, theme color settings etc.
@@ -1095,7 +1102,6 @@ declare class ChatSdk {
     getChannelAvailability(): Promise<ChannelAvailabilityResponse>;
     /**
      * Send Authorization Event
-     * @deprecated - use Secured Session flow instead (SDK option `securedSession`)
      * @param authorizationCode - authorization code
      * @param visitorId - visitor id
      * @throws AuthorizationError
@@ -1157,13 +1163,19 @@ declare class ChatSdk {
      * @returns thread livechat session data
      */
     recoverLivechatThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): AbortablePromise<ThreadRecoveredChatEvent>;
+    private _getContactCustomFieldsFromQueue;
+    private _sendRefreshTokenEvent;
+    /**
+     * Setup Environment endpoints
+     */
+    private _initEnvironment;
+    private _initWS;
     /**
      * Reset the ChatSdk session and clear it from customer data
      * - it disconnects the WS connection and creates a new one
      * - generates new IDs if not provided
      */
-    resetSession(customerId?: CustomerIdentityIdOnExternalPlatform, customerName?: string, customerImage?: string, visitorId?: VisitorId, visitId?: VisitId): Promise<void>;
-    _getContactCustomFieldsFromQueue(): CustomFieldsObject;
+    resetSession(customerId?: CustomerIdentityIdOnExternalPlatform, customerName?: string, customerImage?: string, visitorId?: VisitorId, visitId?: VisitId): void;
 }
 export { ChatSdk }
 export default ChatSdk;
@@ -1183,7 +1195,7 @@ export declare interface ChatSDKOptions {
     cacheStorage: ICacheStorage | null;
     channelId: ChannelId;
     customEnvironment?: EnvironmentEndpoints;
-    customerId?: CustomerIdentityIdOnExternalPlatform;
+    customerId: CustomerIdentityIdOnExternalPlatform;
     customerImage?: string;
     customerName?: string;
     destinationId?: DestinationInput['id'];
@@ -1593,7 +1605,6 @@ export declare class Customer {
     static getIdOrCreateNewOne(): CustomerIdentityIdOnExternalPlatform;
     static getImage(): string | undefined;
     static setImage(image?: string): void;
-    static destroy(): void;
     getId(): CustomerIdentityIdOnExternalPlatform;
     getName(): string | undefined;
     setName(name?: string): void;
@@ -1630,6 +1641,7 @@ export declare class Customer {
      * @returns Promise<ChatEventData>
      */
     sendCustomFields(): Promise<ChatEventData>;
+    destroy(): void;
 }
 
 export declare interface CustomerIdentity {
@@ -3224,8 +3236,7 @@ export declare enum WebSocketClientEvent {
     CLOSE = "close",
     ERROR = "error",
     MESSAGE = "message",
-    OPEN = "open",
-    AUTHORIZATION_FAILED = "authorizationFailed"
+    OPEN = "open"
 }
 
 declare interface WebSocketClientOptions {
