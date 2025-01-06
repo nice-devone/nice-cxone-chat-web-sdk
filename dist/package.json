@@ -1,6 +1,6 @@
 {
   "name": "@nice-devone/nice-cxone-chat-web-sdk",
-  "version": "2.0.0-rc.8",
+  "version": "2.0.0-rc.9",
   "description": "Web SDK for DFO Chat",
   "author": "NICE Ltd.",
   "main": "index.js",
