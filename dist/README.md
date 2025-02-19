@@ -42,10 +42,11 @@ const sdk = new ChatSdk({
 });
 ```
 
-### Authorization
+### Connect to server
 
+By default, the SDK will not automatically connect to the server. You need to call the `connect()` method to establish a connection.
 ```ts
-await sdk.authorize()
+await sdk.connect()
 ```
 
 ### Channel Info
@@ -181,7 +182,7 @@ thread.onThreadEvent(ChatEvent.AGENT_TYPING_STOPPED, (event: CustomEvent<ChatEve
 });
 ```
 
-### Assignemnt
+### Assignment
 
 ```ts
 sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, (event: CustomEvent<ChatEventData>) => {

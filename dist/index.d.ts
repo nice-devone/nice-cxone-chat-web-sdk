@@ -877,6 +877,7 @@ export declare interface ChannelInfo {
     preContactForm: BrandInfoPreContactForm | null;
     isAuthorizationEnabled: boolean;
     isSecuredCookieEnabled: boolean;
+    isUnsecuredConnectionAllowed: boolean;
     webSecurityConfiguration: WebSecurityConfiguration;
 }
 
@@ -890,8 +891,6 @@ declare interface ChannelInfoFeatures {
     displayChatWindowInCoBrowsing: boolean;
     isCoBrowsingEnabled: boolean;
     isCreditCardMaskingEnabled: boolean;
-    isFeatureAdaptiveCardsEnabled: boolean;
-    isFeatureDefaultTranslationsEnabled: boolean;
     isFeatureGroupChatEnabled: boolean;
     isFeatureImproveVisitorInactivityTrackingEnabled: boolean;
     isFeatureQueueCountingEnabled: boolean;
@@ -900,9 +899,9 @@ declare interface ChannelInfoFeatures {
     liveChatLogoHidden: boolean;
     securedSessions: boolean;
     splitChannelInfoAndAvailability: boolean;
-    translationKeyForContactCustomField: boolean;
     useLoaderForChatWindow: boolean;
     useStorageModuleInChat: boolean;
+    chatInitializationWithoutWebsocket: boolean;
 }
 
 declare type ChannelInfoSettings = {
@@ -1075,17 +1074,17 @@ declare class ChatSdk {
     #private;
     onError?: (error: Error) => void;
     onRawEvent?: (event: ChatCustomEvent) => void;
-    private customer;
-    channelId: ChannelId;
-    private isAuthorizationEnabled;
     isLivechat: boolean | undefined;
-    private websocketClient;
-    private _incomingChatEventMiddleware;
-    private _messageEmitter;
-    private _threadCache;
-    private _contactCustomFieldsQueue;
+    channelId: ChannelId;
     constructor(options: ChatSDKOptions);
-    onErrorHandler(error: unknown): void;
+    /**
+     * Initiate a WebSocket connection
+     * @param authorizationCode - authorization code
+     * @returns Promise<boolean> - true if the connection was created, false if the connection already exists
+     * @throws ChatSDKError
+     */
+    connect(authorizationCode?: string): Promise<boolean>;
+    ready(): Promise<void>;
     /**
      * Get channel info
      * Returns channel info like feature toggle status, translations, file upload restrictions, theme color settings etc.
@@ -1102,6 +1101,7 @@ declare class ChatSdk {
     getChannelAvailability(): Promise<ChannelAvailabilityResponse>;
     /**
      * Send Authorization Event
+     * @deprecated - use Secured Session flow instead (SDK option `securedSession` and {@link ChatSdk.connect})
      * @param authorizationCode - authorization code
      * @param visitorId - visitor id
      * @throws AuthorizationError
@@ -1126,7 +1126,7 @@ declare class ChatSdk {
     /**
      * Get Customer instance
      */
-    getCustomer(): Customer | null;
+    getCustomer(): Customer;
     /**
      * Get Thread instance by id
      * @param id - thread id
@@ -1163,19 +1163,13 @@ declare class ChatSdk {
      * @returns thread livechat session data
      */
     recoverLivechatThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): AbortablePromise<ThreadRecoveredChatEvent>;
-    private _getContactCustomFieldsFromQueue;
-    private _sendRefreshTokenEvent;
-    /**
-     * Setup Environment endpoints
-     */
-    private _initEnvironment;
-    private _initWS;
     /**
      * Reset the ChatSdk session and clear it from customer data
      * - it disconnects the WS connection and creates a new one
      * - generates new IDs if not provided
      */
-    resetSession(customerId?: CustomerIdentityIdOnExternalPlatform, customerName?: string, customerImage?: string, visitorId?: VisitorId, visitId?: VisitId): void;
+    resetSession(customerId?: CustomerIdentityIdOnExternalPlatform, customerName?: string, customerImage?: string, visitorId?: VisitorId, visitId?: VisitId): Promise<void>;
+    _getContactCustomFieldsFromQueue(): CustomFieldsObject;
 }
 export { ChatSdk }
 export default ChatSdk;
@@ -1187,27 +1181,36 @@ declare class ChatSDKError extends Error {
     private _getErrorMessage;
 }
 
-export declare interface ChatSDKOptions {
+export declare type ChatSDKOptions = ChatSDKOptionsDefinedEnvironment | ChatSDKOptionsCustomEnvironment;
+
+declare interface ChatSDKOptionsBase {
     appName?: string;
     appVersion?: string | number;
     authorizationCode?: string;
     brandId: BrandId;
     cacheStorage: ICacheStorage | null;
     channelId: ChannelId;
-    customEnvironment?: EnvironmentEndpoints;
-    customerId: CustomerIdentityIdOnExternalPlatform;
+    customerId?: CustomerIdentityIdOnExternalPlatform;
     customerImage?: string;
     customerName?: string;
     destinationId?: DestinationInput['id'];
-    environment: EnvironmentName;
     isAuthorizationEnabled?: boolean;
     isLivechat?: boolean;
     language?: string;
     onError?: (error: Error) => void;
     onRawEvent?: (event: ChatCustomEvent) => void;
-    securedSession?: boolean;
+    securedSession?: SecureSessionsType;
     visitId?: VisitId;
     visitorId?: VisitorId;
+}
+
+declare interface ChatSDKOptionsCustomEnvironment extends ChatSDKOptionsBase {
+    customEnvironment: EnvironmentEndpoints;
+    environment: EnvironmentName.custom;
+}
+
+declare interface ChatSDKOptionsDefinedEnvironment extends ChatSDKOptionsBase {
+    environment: Exclude<EnvironmentName, EnvironmentName.custom>;
 }
 
 declare type ChatWindowId = Flavor<string, 'ChatWindowId'>;
@@ -1577,6 +1580,10 @@ declare interface ContentSecurityPolicyDirectives {
     [key: string]: DirectiveValue;
 }
 
+export declare const createAttachmentPayload: (file: File, brandId: BrandId, channelId: ChannelId) => Promise<AttachmentUpload>;
+
+export declare const createAttachmentUploadMessageData: (files: FileList | Array<File> | Array<AttachmentUpload>, threadIdOnExternalPlatform: ThreadIdOnExternalPlatform, options?: SendMessageOptions) => Promise<SendMessageEventData>;
+
 export declare function createCreateInvitationToGroupChatPayloadData(id: CaseId): EventPayloadData<CreateInvitationToGroupChatEventData>;
 
 declare interface CreateInvitationToGroupChatEventData extends AwsInputEventData {
@@ -1593,23 +1600,24 @@ export declare function createReconnectPayloadData(accessToken: AccessToken, vis
 
 export declare function createSendEmailInvitationToGroupChatPayloadData(caseId: CaseId, invitationCode: string, email: string): EventPayloadData<SendEmailInvitationToGroupChatEventData>;
 
+export declare const createTemporaryAttachmentsUpload: (files: FileList | Array<File>, brandId: BrandId, channelId: ChannelId) => Promise<Array<AttachmentUpload>>;
+
 export declare class Customer {
-    protected _websocketClient: WebSocketClient | null;
-    protected _customFields: CustomFieldsMap;
-    protected _exists: boolean;
-    constructor(id: CustomerIdentityIdOnExternalPlatform, name: string | undefined, image: string | undefined, websocketClient: WebSocketClient | null);
-    static setId(id: CustomerIdentityIdOnExternalPlatform): void;
-    static getId(): CustomerIdentityIdOnExternalPlatform | null;
-    static getName(): string | undefined;
-    static setName(name?: string): void;
-    static getIdOrCreateNewOne(): CustomerIdentityIdOnExternalPlatform;
-    static getImage(): string | undefined;
-    static setImage(image?: string): void;
-    getId(): CustomerIdentityIdOnExternalPlatform;
-    getName(): string | undefined;
-    setName(name?: string): void;
-    setImage(image?: string): void;
+    #private;
+    id: CustomerIdentityIdOnExternalPlatform | null;
+    name: string | null;
+    image: string | null;
+    constructor(id?: CustomerIdentityIdOnExternalPlatform, name?: string, image?: string, websocketClient?: WebSocketClient | null);
+    getIdOrCreateNewOne(): CustomerIdentityIdOnExternalPlatform;
+    destroy(): void;
+    getId(): CustomerIdentityIdOnExternalPlatform | null;
+    setId(customerIdentityIdOnExternalPlatform: CustomerIdentityIdOnExternalPlatform): void;
+    getName(): string | null;
+    setName(name: string): void;
+    getImage(): string | null;
+    setImage(image: string): void;
     setExists(exists: boolean): void;
+    setWebsocketClient(websocketClient: WebSocketClient): void;
     /**
      * Set Customer Custom field
      * @param name - Custom field name
@@ -1641,7 +1649,6 @@ export declare class Customer {
      * @returns Promise<ChatEventData>
      */
     sendCustomFields(): Promise<ChatEventData>;
-    destroy(): void;
 }
 
 export declare interface CustomerIdentity {
@@ -1866,6 +1873,8 @@ export declare function isAgentTypingEndedEvent(event: ChatEventData): event is 
 export declare function isAgentTypingStartedEvent(event: ChatEventData): event is AgentTypingStartedEvent;
 
 export declare function isAssignedAgentChangedEvent(event: ChatEventData): event is AssignedAgentChangedEvent;
+
+export declare const isAttachmentUpload: (files: FileList | Array<File> | Array<AttachmentUpload>) => files is AttachmentUpload[];
 
 export declare const isAuthSuccessEvent: (payload: ChatEventData) => payload is AuthorizeConsumerEventSuccessResponse;
 
@@ -2713,6 +2722,14 @@ export declare class SdkVersionNotSupported extends Error {
     message: string;
 }
 
+export declare enum SecureSessions {
+    ANONYMOUS = "anonymous",
+    SECURED_COOKIES = "securedCookies",
+    THIRD_PARTY = "thirdParty"
+}
+
+export declare type SecureSessionsType = SecureSessions | null;
+
 /**
  * Send chat event
  * @param payloadData - payload data
@@ -2952,7 +2969,7 @@ export declare class Thread {
      * @throws UploadAttachmentError
      *  * This exception is thrown when the file upload fails. The `error.data` contains information about allowed file size and types.
      */
-    sendAttachments(files: FileList, options?: SendMessageOptions): Promise<MessageSuccessEventData>;
+    sendAttachments(files: FileList | Array<File> | Array<AttachmentUpload>, options?: SendMessageOptions): Promise<MessageSuccessEventData>;
     /**
      * Send start and stop typing events. It sends stop typing event after the timeout. Repeated calls resets this timeout.
      * @param timeout - The timeout in milliseconds.
@@ -3185,17 +3202,13 @@ declare interface WebSecurityConfiguration {
  */
 export declare class WebSocketClient {
     #private;
-    private brandId;
-    private channelId;
-    private customerId;
-    private options;
     private onError;
-    private visitorId;
-    constructor(brandId: BrandId, channelId: ChannelId, customerId: CustomerIdentityIdOnExternalPlatform, options: WebSocketClientOptions, onError: ((error: Error) => void) | undefined, visitorId: VisitorId);
+    private socketURLGetter;
+    constructor(onError: ((error: Error) => void) | undefined, socketURLGetter: () => Promise<string>);
     /**
      * Connect websocket
      */
-    connect(token?: string): Promise<void>;
+    connect(): Promise<void>;
     /**
      * Disconnect websocket
      */
@@ -3203,7 +3216,7 @@ export declare class WebSocketClient {
     /**
      * Reconnect websocket
      */
-    reconnect(token?: string): void;
+    reconnect(): void;
     /**
      * Send data to active connection
      * @param data - data to send
@@ -3236,15 +3249,8 @@ export declare enum WebSocketClientEvent {
     CLOSE = "close",
     ERROR = "error",
     MESSAGE = "message",
-    OPEN = "open"
-}
-
-declare interface WebSocketClientOptions {
-    forceSecureProtocol?: boolean;
-    host?: string;
-    onError?: (error: WebSocketClientError) => void;
-    port?: string;
-    prefix?: string;
+    OPEN = "open",
+    AUTHORIZATION_FAILED = "authorizationFailed"
 }
 
 export { }
