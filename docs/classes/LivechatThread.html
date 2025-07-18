@@ -46,6 +46,7 @@
 <a href="LivechatThread.html#loadMoreMessages" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>load<wbr/>More<wbr/>Messages</span></a>
 <a href="LivechatThread.html#onThreadEvent" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>on<wbr/>Thread<wbr/>Event</span></a>
 <a href="LivechatThread.html#recover" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>recover</span></a>
+<a href="LivechatThread.html#removeCustomField" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>remove<wbr/>Custom<wbr/>Field</span></a>
 <a href="LivechatThread.html#sendAttachments" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Attachments</span></a>
 <a href="LivechatThread.html#sendCustomFields" class="tsd-index-link tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Custom<wbr/>Fields</span></a>
 <a href="LivechatThread.html#sendMessage" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Message</span></a>
@@ -80,7 +81,7 @@
 <li>
 <h5><span class="tsd-kind-parameter">customer</span>: <span class="tsd-signature-type">null</span><span class="tsd-signature-symbol"> | </span><a href="Customer.html" class="tsd-signature-type tsd-kind-class">Customer</a></h5></li>
 <li>
-<h5><span class="tsd-kind-parameter">customFields</span>: <span class="tsd-signature-type ">CustomFieldsObject</span><span class="tsd-signature-symbol"> = {}</span></h5></li>
+<h5><span class="tsd-kind-parameter">customFields</span>: <a href="../types/CustomFieldsObject.html" class="tsd-signature-type tsd-kind-type-alias">CustomFieldsObject</a><span class="tsd-signature-symbol"> = {}</span></h5></li>
 <li>
 <h5><span class="tsd-kind-parameter">isAuthorizationEnabled</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="LivechatThread.html" class="tsd-signature-type tsd-kind-class">LivechatThread</a></h4><aside class="tsd-sources">
@@ -246,6 +247,24 @@
 </ul>
 </div><aside class="tsd-sources">
 <p>Overrides <a href="Thread.html">Thread</a>.<a href="Thread.html#recover">recover</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-inherited"><a id="removeCustomField" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>remove<wbr/>Custom<wbr/>Field</span><a href="#removeCustomField" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="removeCustomField.removeCustomField-1"><span class="tsd-kind-call-signature">remove<wbr/>Custom<wbr/>Field</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">ident</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#removeCustomField.removeCustomField-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Remove thread custom fields</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">ident</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>custom field ident</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="Thread.html">Thread</a>.<a href="Thread.html#removeCustomField">removeCustomField</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="sendAttachments" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send<wbr/>Attachments</span><a href="#sendAttachments" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
@@ -278,7 +297,7 @@
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="sendCustomFields" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send<wbr/>Custom<wbr/>Fields</span><a href="#sendCustomFields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="sendCustomFields.sendCustomFields-1"><span class="tsd-kind-call-signature">send<wbr/>Custom<wbr/>Fields</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selectedFieldIDs</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span><a href="#sendCustomFields.sendCustomFields-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="sendCustomFields.sendCustomFields-1"><span class="tsd-kind-call-signature">send<wbr/>Custom<wbr/>Fields</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">selectedFieldIdents</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ChatEventData.html" class="tsd-signature-type tsd-kind-interface">ChatEventData</a><span class="tsd-signature-symbol">&gt;</span><a href="#sendCustomFields.sendCustomFields-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Send current Custom Fields</p>
 </div>
@@ -286,7 +305,7 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">selectedFieldIDs</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">selectedFieldIdents</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
 <div class="tsd-comment tsd-typography"><p>it will send only custom fields with these IDs, if provided. Otherwise, it will send all custom fields.</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
@@ -428,7 +447,7 @@
 <section class="tsd-panel tsd-member tsd-is-inherited"><a id="setCustomField" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>set<wbr/>Custom<wbr/>Field</span><a href="#setCustomField" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited">
-<li class="tsd-signature tsd-anchor-link" id="setCustomField.setCustomField-1"><span class="tsd-kind-call-signature">set<wbr/>Custom<wbr/>Field</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span>, <span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#setCustomField.setCustomField-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="setCustomField.setCustomField-1"><span class="tsd-kind-call-signature">set<wbr/>Custom<wbr/>Field</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">ident</span>, <span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#setCustomField.setCustomField-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Set thread custom field</p>
 </div>
@@ -436,7 +455,7 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></h5>
+<h5><span class="tsd-kind-parameter">ident</span>: <span class="tsd-signature-type">string</span></h5>
 <div class="tsd-comment tsd-typography"><p>custom field name</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li>
@@ -459,13 +478,13 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><span class="tsd-kind-parameter">customFields</span>: <span class="tsd-signature-type ">CustomFieldsObject</span></h5>
+<h5><span class="tsd-kind-parameter">customFields</span>: <a href="../types/CustomFieldsObject.html" class="tsd-signature-type tsd-kind-type-alias">CustomFieldsObject</a></h5>
 <div class="tsd-comment tsd-typography"><p>custom fields object</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography">
-<h4>Example</h4><pre><code class="language-ts"><span class="hl-1">{ </span><span class="hl-10">indentName</span><span class="hl-1">: </span><span class="hl-2">&#39;value&#39;</span><span class="hl-1"> }</span>
+<h4>Example</h4><pre><code class="language-ts"><span class="hl-1">{ </span><span class="hl-10">ident</span><span class="hl-1">: </span><span class="hl-2">&#39;value&#39;</span><span class="hl-1"> }</span>
 </code><button>Copy</button></pre>
 </div><aside class="tsd-sources">
 <p>Inherited from <a href="Thread.html">Thread</a>.<a href="Thread.html#setCustomFields">setCustomFields</a></p></aside></li></ul></section>
@@ -569,6 +588,7 @@
 <li><a href="#loadMoreMessages" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>load<wbr/>More<wbr/>Messages</span></a></li>
 <li><a href="#onThreadEvent" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>on<wbr/>Thread<wbr/>Event</span></a></li>
 <li><a href="#recover" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>recover</span></a></li>
+<li><a href="#removeCustomField" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>remove<wbr/>Custom<wbr/>Field</span></a></li>
 <li><a href="#sendAttachments" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Attachments</span></a></li>
 <li><a href="#sendCustomFields" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Custom<wbr/>Fields</span></a></li>
 <li><a href="#sendMessage" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Message</span></a></li>
@@ -599,8 +619,10 @@
 <li><a href="AuthorizationError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Authorization<wbr/>Error</span></a></li>
 <li><a href="CacheStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage</span></a></li>
 <li><a href="CacheStorageError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage<wbr/>Error</span></a></li>
+<li><a href="ChatSDKError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>ChatSDKError</span></a></li>
 <li><a href="ChatSdk.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Chat<wbr/>Sdk</span></a></li>
 <li><a href="Customer.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Customer</span></a></li>
+<li><a href="IpAddressBlockedError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Ip<wbr/>Address<wbr/>Blocked<wbr/>Error</span></a></li>
 <li><a href="LivechatThread.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Livechat<wbr/>Thread</span></a></li>
 <li><a href="SdkVersionNotSupported.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Sdk<wbr/>Version<wbr/>Not<wbr/>Supported</span></a></li>
 <li><a href="SendMessageFailedError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Send<wbr/>Message<wbr/>Failed<wbr/>Error</span></a></li>
@@ -661,6 +683,7 @@
 <li><a href="../types/ContactCreatedData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Contact<wbr/>Created<wbr/>Data</span></a></li>
 <li><a href="../types/ContactRecipientsChangedData.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Contact<wbr/>Recipients<wbr/>Changed<wbr/>Data</span></a></li>
 <li><a href="../types/ContactStatusChangedData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Contact<wbr/>Status<wbr/>Changed<wbr/>Data</span></a></li>
+<li><a href="../types/CustomFieldsObject.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Custom<wbr/>Fields<wbr/>Object</span></a></li>
 <li><a href="../types/CustomerIdentityIdOnExternalPlatform.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Customer<wbr/>Identity<wbr/>Id<wbr/>On<wbr/>External<wbr/>Platform</span></a></li>
 <li><a href="../types/CustomerView.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Customer<wbr/>View</span></a></li>
 <li><a href="../types/EventListenerFunction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Event<wbr/>Listener<wbr/>Function</span></a></li>
@@ -686,7 +709,10 @@
 <li><a href="../functions/getBrowserFingerprint.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Browser<wbr/>Fingerprint</span></a></li>
 <li><a href="../functions/getBrowserLanguage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Browser<wbr/>Language</span></a></li>
 <li><a href="../functions/getBrowserLocation.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Browser<wbr/>Location</span></a></li>
+<li><a href="../functions/getCustomFieldsArray.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Custom<wbr/>Fields<wbr/>Array</span></a></li>
+<li><a href="../functions/getCustomFieldsFromArray.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Custom<wbr/>Fields<wbr/>From<wbr/>Array</span></a></li>
 <li><a href="../functions/getDeviceType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Device<wbr/>Type</span></a></li>
+<li><a href="../functions/getValidLanguage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>get<wbr/>Valid<wbr/>Language</span></a></li>
 <li><a href="../functions/isAgentTypingEndedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Agent<wbr/>Typing<wbr/>Ended<wbr/>Event</span></a></li>
 <li><a href="../functions/isAgentTypingStartedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Agent<wbr/>Typing<wbr/>Started<wbr/>Event</span></a></li>
 <li><a href="../functions/isAssignedAgentChangedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Assigned<wbr/>Agent<wbr/>Changed<wbr/>Event</span></a></li>
@@ -708,6 +734,8 @@
 <li><a href="../functions/isThreadArchivedSuccessPayload.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Thread<wbr/>Archived<wbr/>Success<wbr/>Payload</span></a></li>
 <li><a href="../functions/isThreadListFetchedPostbackData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Thread<wbr/>List<wbr/>Fetched<wbr/>Postback<wbr/>Data</span></a></li>
 <li><a href="../functions/isTokenRefreshedSuccessResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Token<wbr/>Refreshed<wbr/>Success<wbr/>Response</span></a></li>
+<li><a href="../functions/isWindowClosing.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>is<wbr/>Window<wbr/>Closing</span></a></li>
+<li><a href="../functions/registerWindowUnload.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>register<wbr/>Window<wbr/>Unload</span></a></li>
 <li><a href="../functions/sendChatEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>send<wbr/>Chat<wbr/>Event</span></a></li>
 <li><a href="../functions/sendCreateInvitationToGroupChatEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>send<wbr/>Create<wbr/>Invitation<wbr/>To<wbr/>Group<wbr/>Chat<wbr/>Event</span></a></li>
 <li><a href="../functions/sendEmailInvitationToGroupChatEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-64"></use></svg><span>send<wbr/>Email<wbr/>Invitation<wbr/>To<wbr/>Group<wbr/>Chat<wbr/>Event</span></a></li>

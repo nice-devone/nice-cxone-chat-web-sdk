@@ -19,7 +19,7 @@ export declare class AbortablePromise<T> extends Promise<T> implements Abortable
     static from: <P>(promise: Promise<P>) => AbortablePromise<P>;
 }
 
-export declare class AbortError extends Error {
+export declare class AbortError extends ChatSDKError {
     constructor(message?: string);
 }
 
@@ -427,6 +427,7 @@ declare const caseCreatedEventDataSchema: yup.ObjectSchema<{
         translationGroup: any;
         wysiwygEnabled: any;
         pointOfContactId: any;
+        channelNumber: any;
     };
     thread: object & {
         id: any;
@@ -555,6 +556,7 @@ declare const caseInboxAssigneeChangedEventDataSchema: yup.ObjectSchema<{
         translationGroup: any;
         wysiwygEnabled: any;
         pointOfContactId: any;
+        channelNumber: any;
     };
     inboxAssignee: object & {
         id: any;
@@ -811,6 +813,7 @@ declare const caseStatusChangedEventDataSchema: yup.ObjectSchema<{
         translationGroup: any;
         wysiwygEnabled: any;
         pointOfContactId: any;
+        channelNumber: any;
     };
     routingQueue: (object & {
         id: any;
@@ -885,10 +888,8 @@ declare interface ChannelInfoFeatures {
     accessibleFormFields: boolean;
     chatExtendedLogging: boolean;
     chatOptimizeQueueCountingForChat: boolean;
-    chatRedesign: boolean;
-    chatWindowDragging: boolean;
     disableAttachmentOnDfoChat: boolean;
-    displayChatWindowInCoBrowsing: boolean;
+    enableClientSideEventsThrottling: boolean;
     isCoBrowsingEnabled: boolean;
     isCreditCardMaskingEnabled: boolean;
     isFeatureGroupChatEnabled: boolean;
@@ -899,7 +900,6 @@ declare interface ChannelInfoFeatures {
     liveChatLogoHidden: boolean;
     securedSessions: boolean;
     splitChannelInfoAndAvailability: boolean;
-    useLoaderForChatWindow: boolean;
     useStorageModuleInChat: boolean;
     chatInitializationWithoutWebsocket: boolean;
 }
@@ -927,6 +927,7 @@ declare type ChannelInfoSettings = {
     emailInvitationContent: string;
     emailInvitationLink: string;
     enableChatTypingPreview: boolean;
+    chatRedesign: boolean;
 };
 
 declare const channelSchema: yup.ObjectSchema<{
@@ -981,6 +982,7 @@ declare const channelSchema: yup.ObjectSchema<{
     translationGroup: string;
     wysiwygEnabled: boolean;
     pointOfContactId: number | null;
+    channelNumber: number | null;
 }>;
 
 export declare const CHAT_SDK_VERSION: string;
@@ -1104,10 +1106,11 @@ declare class ChatSdk {
      * @deprecated - use Secured Session flow instead (SDK option `securedSession` and {@link ChatSdk.connect})
      * @param authorizationCode - authorization code
      * @param visitorId - visitor id
+     * @param browserFingerprint - BrowserFingerprint object, use getBrowserFingerprint helper function to create it
      * @throws AuthorizationError
      *  * This exception is thrown when the authorization or refresh token fails
      */
-    authorize(authorizationCode?: string, visitorId?: VisitorId): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
+    authorize(authorizationCode?: string, visitorId?: VisitorId, browserFingerprint?: BrowserFingerprint): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
     /**
      * Generate Authorization Token from the given url
      *
@@ -1155,12 +1158,16 @@ declare class ChatSdk {
      * Recover thread data
      * @param threadIdOnExternalPlatform - thread id on external platform
      * @returns thread session data
+     * @throws ThreadRecoverFailedError
+     *  * This exception is thrown when the recover fails or the thread does not exist.
      */
     recoverThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): AbortablePromise<ThreadRecoveredChatEvent>;
     /**
      * Recover livechat thread data
      * @param threadIdOnExternalPlatform - thread id on external platform
      * @returns thread livechat session data
+     * @throws ThreadRecoverFailedError
+     *  * This exception is thrown when the recover fails or the thread does not exist.
      */
     recoverLivechatThreadData(threadIdOnExternalPlatform?: ThreadIdOnExternalPlatform | undefined): AbortablePromise<ThreadRecoveredChatEvent>;
     /**
@@ -1174,9 +1181,10 @@ declare class ChatSdk {
 export { ChatSdk }
 export default ChatSdk;
 
-declare class ChatSDKError extends Error {
+export declare class ChatSDKError extends Error {
     name: string;
     data: unknown;
+    additionalInfo?: unknown;
     constructor(error: unknown, data?: unknown);
     private _getErrorMessage;
 }
@@ -1195,6 +1203,7 @@ declare interface ChatSDKOptionsBase {
     customerName?: string;
     destinationId?: DestinationInput['id'];
     isAuthorizationEnabled?: boolean;
+    isClientSideEventsThrottlingEnabled?: boolean;
     isLivechat?: boolean;
     language?: string;
     onError?: (error: Error) => void;
@@ -1225,27 +1234,6 @@ export declare interface ConsumerAuthorizationSuccessPayloadData {
     customer?: {
         customFields: Array<CustomField>;
     };
-}
-
-declare interface ConsumerContact {
-    status: ContactStatus;
-    createdAt: string;
-    statusUpdatedAt: string;
-    isOwn: boolean;
-    sentiment: Sentiment;
-    ownerAssignee: UserId;
-    inboxAssignee: UserId;
-    caseId: CaseId;
-    postId: ThreadId;
-    agentName: string;
-    channelId: ChannelId;
-    customer: {
-        customerIdent: string;
-        name: string;
-        surname: string;
-    };
-    recipients: Array<Recipient>;
-    customFields: Array<CustomField>;
 }
 
 export declare interface Contact {
@@ -1386,6 +1374,7 @@ declare const contactRecipientsChangedDataSchema: yup.ObjectSchema<{
         translationGroup: any;
         wysiwygEnabled: any;
         pointOfContactId: any;
+        channelNumber: any;
     };
 }>;
 
@@ -1521,6 +1510,7 @@ declare const contactToRoutingQueueAssignmentChangedEventDataSchema: yup.ObjectS
         translationGroup: any;
         wysiwygEnabled: any;
         pointOfContactId: any;
+        channelNumber: any;
     };
     routingQueue: (object & {
         id: any;
@@ -1580,7 +1570,7 @@ declare interface ContentSecurityPolicyDirectives {
     [key: string]: DirectiveValue;
 }
 
-export declare const createAttachmentPayload: (file: File, brandId: BrandId, channelId: ChannelId) => Promise<AttachmentUpload>;
+export declare const createAttachmentPayload: (file: File, brandId: BrandId, channelId: ChannelId, abortSignal?: AbortSignal) => Promise<AttachmentUpload>;
 
 export declare const createAttachmentUploadMessageData: (files: FileList | Array<File> | Array<AttachmentUpload>, threadIdOnExternalPlatform: ThreadIdOnExternalPlatform, options?: SendMessageOptions) => Promise<SendMessageEventData>;
 
@@ -1600,7 +1590,7 @@ export declare function createReconnectPayloadData(accessToken: AccessToken, vis
 
 export declare function createSendEmailInvitationToGroupChatPayloadData(caseId: CaseId, invitationCode: string, email: string): EventPayloadData<SendEmailInvitationToGroupChatEventData>;
 
-export declare const createTemporaryAttachmentsUpload: (files: FileList | Array<File>, brandId: BrandId, channelId: ChannelId) => Promise<Array<AttachmentUpload>>;
+export declare const createTemporaryAttachmentsUpload: (files: FileList | Array<File>, brandId: BrandId, channelId: ChannelId, abortSignal?: AbortSignal) => Promise<Array<AttachmentUpload>>;
 
 export declare class Customer {
     #private;
@@ -1715,7 +1705,7 @@ declare const customFieldSchema: yup.ObjectSchema<{
 
 declare type CustomFieldsMap = Map<Ident, Value>;
 
-declare type CustomFieldsObject = Record<Ident, Value>;
+export declare type CustomFieldsObject = Record<Ident, Value>;
 
 declare enum CustomFieldType {
     TEXT = "text",
@@ -1835,11 +1825,17 @@ export declare const getBrowserLanguage: () => string;
 
 export declare const getBrowserLocation: () => string;
 
+export declare function getCustomFieldsArray(fields: CustomFieldsMap): Array<CustomField>;
+
+export declare function getCustomFieldsFromArray(fields: Array<CustomField>): CustomFieldsObject;
+
 /**
  * Get Device type
  * @param deviceType - device type
  */
 export declare function getDeviceType(deviceType?: string): DeviceType;
+
+export declare const getValidLanguage: (language: string) => string;
 
 export declare interface ICacheStorage {
     getItem<T = unknown>(key: string): T | null;
@@ -1867,6 +1863,10 @@ declare const inboxAssigneeResponseTimeSchema: yup.ObjectSchema<{
     slaEnabled: boolean;
     isRunning: boolean;
 }>;
+
+export declare class IpAddressBlockedError extends Error {
+    name: string;
+}
 
 export declare function isAgentTypingEndedEvent(event: ChatEventData): event is AgentTypingEndedEvent;
 
@@ -1909,6 +1909,8 @@ export declare function isThreadArchivedSuccessPayload(response: ChatEventData):
 export declare const isThreadListFetchedPostbackData: (data: unknown) => data is ThreadListFetchedPostbackData;
 
 export declare function isTokenRefreshedSuccessResponse(response: unknown): response is TokenRefreshedSuccessResponse;
+
+export declare function isWindowClosing(): boolean;
 
 declare interface JoinGroupChatEventData extends AwsInputEventData {
     invitation: {
@@ -1983,7 +1985,7 @@ export declare type Message = Override<yup.InferType<typeof messageSchema>, {
 
 declare type MessageContent = Override<yup.InferType<typeof messageContentSchema>, {
     type: MessageType;
-    parameters: MessageParameters;
+    parameters?: MessageParameters;
     payload: MessagePayload_2;
 }>;
 
@@ -1995,11 +1997,11 @@ declare const messageContentSchema: yup.ObjectSchema<{
         elements: any;
     };
     postback: string | null | undefined;
-    fallbackText: string;
-    isAutoTranslated: boolean;
+    fallbackText: string | undefined;
+    isAutoTranslated: boolean | undefined;
     parameters: [] | {
         isInitialMessage?: boolean | undefined;
-    };
+    } | undefined;
 }>;
 
 export declare type MessageCreatedData = yup.InferType<typeof messageCreatedDataSchema> & {
@@ -2135,6 +2137,7 @@ declare const messageCreatedDataSchema: yup.ObjectSchema<{
         translationGroup: any;
         wysiwygEnabled: any;
         pointOfContactId: any;
+        channelNumber: any;
     };
     thread: object & {
         id: any;
@@ -2446,6 +2449,7 @@ declare const messageSchema: yup.ObjectSchema<{
         translationGroup: any;
         wysiwygEnabled: any;
         pointOfContactId: any;
+        channelNumber: any;
     }) | null;
     customerStatistics: {
         seenAt: any;
@@ -2698,6 +2702,8 @@ declare interface ReconnectConsumerData extends AwsInputEventData {
         token: string;
     } | null;
 }
+
+export declare const registerWindowUnload: () => void;
 
 export declare type RemoveListenerFunction = () => void;
 
@@ -3006,21 +3012,26 @@ export declare class Thread {
     onThreadEvent(type: ChatEventType, handler: EventListenerFunction): RemoveListenerFunction;
     /**
      * Send current Custom Fields
-     * @param selectedFieldIDs - it will send only custom fields with these IDs, if provided. Otherwise, it will send all custom fields.
+     * @param selectedFieldIdents - it will send only custom fields with these IDs, if provided. Otherwise, it will send all custom fields.
      */
-    sendCustomFields(selectedFieldIDs?: Array<CustomField['ident']>): Promise<ChatEventData>;
+    sendCustomFields(selectedFieldIdents?: Array<CustomField['ident']>): Promise<ChatEventData>;
     /**
      * Set thread custom fields and send them
      * @param customFields - custom fields object
-     * @example \{ indentName: 'value' \}
+     * @example \{ ident: 'value' \}
      */
     setCustomFields(customFields: CustomFieldsObject): Promise<void>;
     /**
+     * Remove thread custom fields
+     * @param ident - custom field ident
+     */
+    removeCustomField(ident: CustomField['ident']): void;
+    /**
      * Set thread custom field
-     * @param name - custom field name
+     * @param ident - custom field name
      * @param value - custom field value
      */
-    setCustomField(name: CustomField['ident'], value: CustomField['value']): Promise<void>;
+    setCustomField(ident: CustomField['ident'], value: CustomField['value']): Promise<void>;
     /**
      * Set thread as archived
      * @returns Promise true
@@ -3047,6 +3058,8 @@ export declare class Thread {
     sendTranscript(contactNumber: ContactNumber, email: string): Promise<ChatEventData>;
     protected _setThreadAndCustomerExists(): void;
     protected _clearCustomFieldsOnContactStatusChangedToClosed(event: ChatCustomEvent): void;
+    private _mergeCustomFieldsWithMessageData;
+    private _mergeAccessTokenWithMessageData;
     private _mergeCustomFieldsAndAccessTokenWithMessageData;
     private _registerEventHandlers;
 }
@@ -3069,19 +3082,18 @@ export declare interface ThreadMetadataLoadedPostbackData extends AwsResponseEve
 }
 
 export declare interface ThreadRecoveredChatEvent extends ChatEventData {
-    data: ThreadRecoveredPostbackData;
+    data: ThreadRecoveredData;
 }
 
-export declare interface ThreadRecoveredData extends Omit<ThreadRecoveredPostbackData, 'consumerContact' | 'contact'> {
-    contact: ThreadRecoveredPostbackData['consumerContact'] | ThreadRecoveredPostbackData['contact'];
+export declare interface ThreadRecoveredData extends Omit<ThreadRecoveredPostbackData, 'contactHistory'> {
+    contactHistory: Array<ChatEventData>;
 }
 
 export declare interface ThreadRecoveredPostbackData extends AwsResponseEventPostbackData {
-    consumerContact?: ConsumerContact;
-    contact?: Contact;
+    contact: Contact;
     ownerAssignee: UserFromApiData | null;
     inboxAssignee: UserFromApiData | null;
-    messages: Message[];
+    messages: Array<Message>;
     messagesScrollToken: string;
     thread: {
         id: ThreadId;
