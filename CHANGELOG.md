@@ -1,8 +1,15 @@
 # Changelog
 
+## [2.2.0]
+
+### Changed
+
+- Removed the static `init` method from `CustomerInstance` as it was redundant. Access to the customer instance for low-level SDK usage is now only available via the `getInstance` method. The recommended way to get the customer instance remains `sdk.getCustomer()`.
+
 ## [2.1.0]
 
 ### Changed
+
 - Unify the response when a thread is not found. Both `recoverThreadData` and `recoverLivechatThreadData` now return `ThreadRecoverFailedError`
 - Custom fields are not sent with every message, but only with the first one. Any subsequent updates via thread.setCustomField will be sent as separate events.
 - Add the ability to remove custom fields before they are sent with the first message using `thread.removeCustomField(customFieldId)`.
