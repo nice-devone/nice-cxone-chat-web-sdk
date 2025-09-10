@@ -852,6 +852,24 @@ export declare enum ChannelAvailability {
     OFFLINE = "offline"
 }
 
+export declare type ChannelAvailabilityOptions = ChannelAvailabilityOptionsWithEnvironment | ChannelAvailabilityOptionsWithCustomEnvironment;
+
+declare interface ChannelAvailabilityOptionsBase {
+    [key: string]: unknown;
+    appName?: ChatSDKOptions['appName'];
+    appVersion?: ChatSDKOptions['appVersion'];
+    httpHeaders?: NetworkRequestMetadata['httpHeaders'];
+}
+
+declare interface ChannelAvailabilityOptionsWithCustomEnvironment extends ChannelAvailabilityOptionsBase {
+    customEnvironment: EnvironmentEndpoints;
+    environment: EnvironmentName.custom;
+}
+
+declare interface ChannelAvailabilityOptionsWithEnvironment extends ChannelAvailabilityOptionsBase {
+    environment: Exclude<EnvironmentName, EnvironmentName.custom>;
+}
+
 export declare interface ChannelAvailabilityResponse {
     status: ChannelAvailability;
 }
@@ -892,16 +910,33 @@ declare interface ChannelInfoFeatures {
     enableClientSideEventsThrottling: boolean;
     isCoBrowsingEnabled: boolean;
     isCreditCardMaskingEnabled: boolean;
-    isFeatureGroupChatEnabled: boolean;
     isFeatureImproveVisitorInactivityTrackingEnabled: boolean;
     isFeatureQueueCountingEnabled: boolean;
     isProactiveChatEnabled: boolean;
     isWebAnalyticsEnabled: boolean;
     liveChatLogoHidden: boolean;
     securedSessions: boolean;
-    splitChannelInfoAndAvailability: boolean;
     useStorageModuleInChat: boolean;
     chatInitializationWithoutWebsocket: boolean;
+    cxoneMpowerNewLogo254: boolean;
+}
+
+export declare type ChannelInfoOptions = ChannelInfoOptionsWithEnvironment | ChannelInfoOptionsWithCustomEnvironment;
+
+declare interface ChannelInfoOptionsBase {
+    [key: string]: unknown;
+    appName?: ChatSDKOptions['appName'];
+    appVersion?: ChatSDKOptions['appVersion'];
+    httpHeaders?: NetworkRequestMetadata['httpHeaders'];
+}
+
+declare interface ChannelInfoOptionsWithCustomEnvironment extends ChannelInfoOptionsBase {
+    customEnvironment: EnvironmentEndpoints;
+    environment: EnvironmentName.custom;
+}
+
+declare interface ChannelInfoOptionsWithEnvironment extends ChannelInfoOptionsBase {
+    environment: Exclude<EnvironmentName, EnvironmentName.custom>;
 }
 
 declare type ChannelInfoSettings = {
@@ -1114,6 +1149,7 @@ declare class ChatSdk {
     /**
      * Generate Authorization Token from the given url
      *
+     * @deprecated the additional message content is handled internally, there is no need to use this method
      * @param threadIdOnExternalPlatform - Thread Id
      * @param url - Authorization Service URL
      */
@@ -1206,6 +1242,7 @@ declare interface ChatSDKOptionsBase {
     isClientSideEventsThrottlingEnabled?: boolean;
     isLivechat?: boolean;
     language?: string;
+    networkRequestMetadata?: NetworkRequestMetadata;
     onError?: (error: Error) => void;
     onRawEvent?: (event: ChatCustomEvent) => void;
     securedSession?: SecureSessionsType;
@@ -1824,6 +1861,20 @@ export declare const getBrowserFingerprint: (options?: BrowserFingerprintOptions
 export declare const getBrowserLanguage: () => string;
 
 export declare const getBrowserLocation: () => string;
+
+/**
+ * Get channel availability
+ * Returns the availability status of a channel, indicating whether it is online or offline.
+ * @see {@link ChannelAvailabilityResponse}
+ */
+export declare function getChannelAvailability(brandId: BrandId, channelId: ChannelId, options: ChannelAvailabilityOptions): Promise<ChannelAvailabilityResponse>;
+
+/**
+ * Get channel info
+ * Returns channel info like feature toggle status, translations, file upload restrictions, theme color settings etc.
+ * @see {@link ChannelInfo}
+ */
+export declare function getChannelInfo(brandId: BrandId, channelId: ChannelId, language: string | undefined, options: ChannelInfoOptions): Promise<ChannelInfo>;
 
 export declare function getCustomFieldsArray(fields: CustomFieldsMap): Array<CustomField>;
 
@@ -2543,6 +2594,11 @@ declare interface MoreMessagesLoadedPostbackData extends AwsResponseEventPostbac
     messages: Message[];
     scrollToken: string;
     contactHistory: Array<PushUpdateEventFields>;
+}
+
+export declare interface NetworkRequestMetadata {
+    httpHeaders?: Record<string, string>;
+    websocketQuery?: Record<string, string>;
 }
 
 export declare interface OfflineMessageData {

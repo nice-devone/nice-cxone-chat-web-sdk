@@ -1,5 +1,15 @@
 # Changelog
 
+## [2.3.0]
+
+### Added
+
+- Introduced `requestMetadata` option in `ChatSDKOptions` to allow passing custom metadata with each request. This can be used for tracking or debugging purposes.
+- Add `getChannelInfo` and `getChannelAvailability` functions to retrieve channel information and availability status without requiring a SDK instance.
+- Add `NetworkRequestMetadata` type export to provide a structured way to define request metadata.
+- Deprecated the `generateAuthorizationToken` method due to internal handling of fetching additional message content. It is no longer necessary to handle additional message content manually. 
+- Changed the `MessageCreated` event to automatically download additional message content if necessary.
+
 ## [2.2.0]
 
 ### Changed
@@ -21,7 +31,7 @@
 
 - Introduced a new `connect()` method instead of auto-connecting in the constructor. Replace deprecated `authorize` calls in-place.
 - Implemented `resetSession()` to enable session resets.
-- Introduced `cacheStorage` option to enable caching mechanisms. Use `CacheStorage` class or provide your own implemting `ICacheStorage` interface.
+- Introduced `cacheStorage` option to enable caching mechanisms. Use `CacheStorage` class or provide your own implementing `ICacheStorage` interface.
 - Added `securedSession` option, set to appropriate type based on the Channel settings.
 
 ### Changed
