@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.0.0]
+
+### Changed
+
+- [BREAKING] Updated the `createdAt` and `createdAtWithMilliseconds` properties of `ChatEvent` to use the `string` type instead of `Date`.
+- ChatSDKError now contains original error as `cause` property for better error tracing.
+- Updated error types to extend from `ChatSDKError` for consistency.
+- Changed `Customer.setId` to always store the customer identity ID as a string by calling .toString() on the input value. This ensures consistent type handling for the id property.
+- Expand `ChatSDKOptions` with:
+  - `isThirdPartyCookiesSupported` - flag to set fallback authorization flow when Third Party cookies are blocked and `securedSession` is set to `SECURED_COOKIES`.
+  - `onAuthorization` - callback on successful (or failed) authorization
+  - `storage` - long term storage (eg. tokens), it can use `localStorage` directly, `null` to disable  
+  
+
 ## [2.3.0]
 
 ### Added
@@ -7,7 +21,7 @@
 - Introduced `requestMetadata` option in `ChatSDKOptions` to allow passing custom metadata with each request. This can be used for tracking or debugging purposes.
 - Add `getChannelInfo` and `getChannelAvailability` functions to retrieve channel information and availability status without requiring a SDK instance.
 - Add `NetworkRequestMetadata` type export to provide a structured way to define request metadata.
-- Deprecated the `generateAuthorizationToken` method due to internal handling of fetching additional message content. It is no longer necessary to handle additional message content manually. 
+- Deprecated the `generateAuthorizationToken` method due to internal handling of fetching additional message content. It is no longer necessary to handle additional message content manually.
 - Changed the `MessageCreated` event to automatically download additional message content if necessary.
 
 ## [2.2.0]
