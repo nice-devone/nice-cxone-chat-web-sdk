@@ -189,7 +189,7 @@ declare interface Brand {
     businessUnitId: number | null;
     friendlyName: string;
     id: BrandId;
-    tenantId: TenantId;
+    tenantId: TenantId | null;
     timezone: string | null;
 }
 
@@ -262,15 +262,17 @@ export declare interface CachedStorageItem {
  * - Uses Date.getTime() to calculate the expiration time.
  *
  * @param storage - The storage instance (e.g., localStorage or sessionStorage).
+ * @param keyPrefix - Optional key prefix
  */
 declare class CacheStorage_2 implements ICacheStorage {
     #private;
     /**
      * Create a new CacheStorage instance
      * @param storage - storage instance
+     * @param keyPrefix - Optional key prefix for storage keys
      * @throws CacheStorageError
      */
-    constructor(storage: Storage);
+    constructor(storage: Storage, keyPrefix?: string);
     /**
      * Get an item from the storage if not expired
      * @param key - key
@@ -1306,6 +1308,33 @@ declare interface LeaveGroupChatEventData extends AwsInputEventData {
     };
 }
 
+export declare interface ListPickerMessageContent extends MessageContentBase {
+    payload: ListPickerMessagePayload;
+    type: MessageType.LIST_PICKER;
+}
+
+export declare interface ListPickerMessagePayload {
+    actions: Array<ListPickerOption>;
+    text: {
+        content: string;
+    };
+    title: {
+        content: string;
+    };
+}
+
+declare interface ListPickerOption {
+    description?: string;
+    icon?: {
+        fileName: string;
+        mimeType: string;
+        url: string;
+    };
+    postback?: string;
+    text: string;
+    type: string;
+}
+
 export declare class LivechatThread extends Thread {
     protected _isInitialized: boolean;
     protected _canSendMessage: boolean;
@@ -1358,6 +1387,7 @@ export declare interface Message {
     id: MessageId;
     idOnExternalPlatform: MessageIdOnExternalPlatform;
     isHiddenOnExternalPlatform?: boolean;
+    isMadeByUser: boolean;
     isRead?: boolean;
     isReplyAllowed?: boolean;
     messageContent: MessageContent;
@@ -1382,11 +1412,12 @@ export declare interface Message {
     deletedOnExternalPlatform?: boolean;
 }
 
-declare interface MessageContent {
+export declare type MessageContent = MessageTextContent | QuickRepliesMessageContent | ListPickerMessageContent | RichLinkMessageContent;
+
+export declare interface MessageContentBase {
     fallbackText?: string;
     isAutoTranslated?: boolean;
     parameters?: MessageParameters;
-    payload: MessagePayload_2;
     postback?: string | null;
     type: MessageType;
 }
@@ -1435,17 +1466,17 @@ declare interface MessageParametersObject {
     isInitialMessage?: boolean;
 }
 
-declare type MessagePayload = {
-    text?: string | null;
-    postback?: Postback;
-    elements?: Array<any> | null;
-};
-
-declare interface MessagePayload_2 {
+export declare interface MessagePayload {
     elements?: unknown[] | null;
     postback?: string | null;
     text?: string | null;
 }
+
+declare type MessagePayload_2 = {
+    text?: string | null;
+    postback?: Postback;
+    elements?: Array<any> | null;
+};
 
 declare interface MessageReadChangedData {
     brand: Brand;
@@ -1477,6 +1508,10 @@ export declare interface MessageSentEvent extends ChatEventData {
 
 export declare interface MessageSuccessEventData extends ChatEventData {
     id: string;
+}
+
+export declare interface MessageTextContent extends MessageContentBase {
+    payload: MessagePayload;
 }
 
 export declare enum MessageType {
@@ -1641,6 +1676,22 @@ declare enum PushUpdateEventType {
     EVENT_IN_S3 = "EventInS3"
 }
 
+export declare interface QuickRepliesMessageContent extends MessageContentBase {
+    payload: QuickRepliesMessagePayload;
+    type: MessageType.QUICK_REPLIES;
+}
+
+export declare interface QuickRepliesMessagePayload {
+    text: {
+        content: string;
+    };
+    actions: Array<{
+        type: string;
+        text: string;
+        postback: string;
+    }>;
+}
+
 export declare type RawEventCallback = (event: ChatCustomEvent) => void;
 
 declare interface ReactionStatistics {
@@ -1678,6 +1729,23 @@ declare interface ReconnectConsumerData extends AwsInputEventData {
 export declare const registerWindowUnload: () => void;
 
 export declare type RemoveListenerFunction = () => void;
+
+export declare interface RichLinkMessageContent extends MessageContentBase {
+    payload: RichLinkMessagePayload;
+    type: MessageType.RICH_LINK;
+}
+
+export declare interface RichLinkMessagePayload {
+    media: {
+        fileName: string;
+        mimeType: string;
+        url: string;
+    };
+    title: {
+        content: string;
+    };
+    url: string;
+}
 
 declare interface RoutingQueue {
     acceptRejectFlowRefusalTimeoutInSeconds?: number | null;
@@ -1758,7 +1826,7 @@ export declare interface SendMessageEventData extends AwsInputEventData {
     idOnExternalPlatform: MessageId;
     messageContent: {
         type: MessageType;
-        payload: MessagePayload;
+        payload: MessagePayload_2;
         postback?: Postback;
     };
     attachments: Array<AttachmentUpload>;

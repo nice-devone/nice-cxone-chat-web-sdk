@@ -25,6 +25,8 @@
 </div>
 <div class="tsd-comment tsd-typography">
 <h4>Param</h4><p>The storage instance (e.g., localStorage or sessionStorage).</p>
+
+<h4>Param</h4><p>Optional key prefix</p>
 </div></section>
 <section class="tsd-panel tsd-hierarchy">
 <h4>Hierarchy</h4>
@@ -45,7 +47,8 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Properties</h3>
-<div class="tsd-index-list"><a href="CacheStorage.html#_storage" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>#storage</span></a>
+<div class="tsd-index-list"><a href="CacheStorage.html#_keyPrefix" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-1024"><rect fill="var(--color-icon-background)" stroke="#FF984D" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.354 16V7.24H12.174C12.99 7.24 13.638 7.476 14.118 7.948C14.606 8.412 14.85 9.036 14.85 9.82C14.85 10.604 14.606 11.232 14.118 11.704C13.638 12.168 12.99 12.4 12.174 12.4H10.434V16H9.354ZM10.434 11.428H12.174C12.646 11.428 13.022 11.284 13.302 10.996C13.59 10.7 13.734 10.308 13.734 9.82C13.734 9.324 13.59 8.932 13.302 8.644C13.022 8.356 12.646 8.212 12.174 8.212H10.434V11.428Z" fill="var(--color-text)"></path></g></svg><span>#key<wbr/>Prefix</span></a>
+<a href="CacheStorage.html#_storage" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>#storage</span></a>
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
@@ -58,7 +61,7 @@
 <section class="tsd-panel tsd-member"><a id="constructor" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><g stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" id="icon-anchor"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></g></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="constructor.new_CacheStorage"><span class="tsd-kind-constructor-signature">new <wbr/>Cache<wbr/>Storage</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">storage</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="CacheStorage.html" class="tsd-signature-type tsd-kind-class">CacheStorage</a><a href="#constructor.new_CacheStorage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="constructor.new_CacheStorage"><span class="tsd-kind-constructor-signature">new <wbr/>Cache<wbr/>Storage</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">storage</span>, <span class="tsd-kind-parameter">keyPrefix</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="CacheStorage.html" class="tsd-signature-type tsd-kind-class">CacheStorage</a><a href="#constructor.new_CacheStorage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Create a new CacheStorage instance</p>
 </div>
@@ -69,6 +72,11 @@
 <h5><span class="tsd-kind-parameter">storage</span>: <span class="tsd-signature-type ">Storage</span></h5>
 <div class="tsd-comment tsd-typography"><p>storage instance</p>
 </div>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">keyPrefix</span>: <span class="tsd-signature-type">string</span></h5>
+<div class="tsd-comment tsd-typography"><p>Optional key prefix for storage keys</p>
+</div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="CacheStorage.html" class="tsd-signature-type tsd-kind-class">CacheStorage</a></h4>
 <div class="tsd-comment tsd-typography">
@@ -76,6 +84,9 @@
 </div></li></ul></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Properties</h2>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_keyPrefix" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#key<wbr/>Prefix</span><a href="#_keyPrefix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">#key<wbr/>Prefix</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_storage" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#storage</span><a href="#_storage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">#storage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">Storage</span></div></section></section>
@@ -169,6 +180,7 @@
 <div class="tsd-accordion-details">
 <ul>
 <li><a href="#constructor" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-512"></use></svg><span>constructor</span></a></li>
+<li><a href="#_keyPrefix" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>#key<wbr/>Prefix</span></a></li>
 <li><a href="#_storage" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>#storage</span></a></li>
 <li><a href="#getItem" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Item</span></a></li>
 <li><a href="#removeItem" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>remove<wbr/>Item</span></a></li>
@@ -233,17 +245,26 @@
 <li><a href="../interfaces/ICacheStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>ICache<wbr/>Storage</span></a></li>
 <li><a href="../interfaces/IChatEventTarget.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IChat<wbr/>Event<wbr/>Target</span></a></li>
 <li><a href="../interfaces/IStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>IStorage</span></a></li>
+<li><a href="../interfaces/ListPickerMessageContent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>List<wbr/>Picker<wbr/>Message<wbr/>Content</span></a></li>
+<li><a href="../interfaces/ListPickerMessagePayload.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>List<wbr/>Picker<wbr/>Message<wbr/>Payload</span></a></li>
 <li><a href="../interfaces/LoadThreadMetadataChatEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Load<wbr/>Thread<wbr/>Metadata<wbr/>Chat<wbr/>Event</span></a></li>
 <li><a href="../interfaces/Message.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message</span></a></li>
+<li><a href="../interfaces/MessageContentBase.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Content<wbr/>Base</span></a></li>
 <li><a href="../interfaces/MessageCreatedData.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Created<wbr/>Data</span></a></li>
 <li><a href="../interfaces/MessageCreatedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Created<wbr/>Event</span></a></li>
+<li><a href="../interfaces/MessagePayload.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Payload</span></a></li>
 <li><a href="../interfaces/MessageReadChangedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Read<wbr/>Changed<wbr/>Event</span></a></li>
 <li><a href="../interfaces/MessageSentData.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Sent<wbr/>Data</span></a></li>
 <li><a href="../interfaces/MessageSentEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Sent<wbr/>Event</span></a></li>
 <li><a href="../interfaces/MessageSuccessEventData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Success<wbr/>Event<wbr/>Data</span></a></li>
+<li><a href="../interfaces/MessageTextContent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Message<wbr/>Text<wbr/>Content</span></a></li>
 <li><a href="../interfaces/MoreMessagesLoadedEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>More<wbr/>Messages<wbr/>Loaded<wbr/>Event</span></a></li>
 <li><a href="../interfaces/NetworkRequestMetadata.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Network<wbr/>Request<wbr/>Metadata</span></a></li>
 <li><a href="../interfaces/OfflineMessageData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Offline<wbr/>Message<wbr/>Data</span></a></li>
+<li><a href="../interfaces/QuickRepliesMessageContent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Quick<wbr/>Replies<wbr/>Message<wbr/>Content</span></a></li>
+<li><a href="../interfaces/QuickRepliesMessagePayload.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Quick<wbr/>Replies<wbr/>Message<wbr/>Payload</span></a></li>
+<li><a href="../interfaces/RichLinkMessageContent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Rich<wbr/>Link<wbr/>Message<wbr/>Content</span></a></li>
+<li><a href="../interfaces/RichLinkMessagePayload.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Rich<wbr/>Link<wbr/>Message<wbr/>Payload</span></a></li>
 <li><a href="../interfaces/SendMessageEventData.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Send<wbr/>Message<wbr/>Event<wbr/>Data</span></a></li>
 <li><a href="../interfaces/SetPositionInQueueChatEvent.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Set<wbr/>Position<wbr/>In<wbr/>Queue<wbr/>Chat<wbr/>Event</span></a></li>
 <li><a href="../interfaces/ThreadMetadataLoadedPostbackData.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Thread<wbr/>Metadata<wbr/>Loaded<wbr/>Postback<wbr/>Data</span></a></li>
@@ -272,6 +293,7 @@
 <li><a href="../types/CustomerIdentityIdOnExternalPlatform.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Customer<wbr/>Identity<wbr/>Id<wbr/>On<wbr/>External<wbr/>Platform</span></a></li>
 <li><a href="../types/ErrorCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Error<wbr/>Callback</span></a></li>
 <li><a href="../types/EventListenerFunction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Event<wbr/>Listener<wbr/>Function</span></a></li>
+<li><a href="../types/MessageContent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Message<wbr/>Content</span></a></li>
 <li><a href="../types/RawEventCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Raw<wbr/>Event<wbr/>Callback</span></a></li>
 <li><a href="../types/RemoveListenerFunction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Remove<wbr/>Listener<wbr/>Function</span></a></li>
 <li><a href="../types/SecureSessionsType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Secure<wbr/>Sessions<wbr/>Type</span></a></li>

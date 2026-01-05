@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.1.0]
+
+### Changed
+
+- Changed caching mechanism to store the entire transaction token response instead of just the token value, fixing potential data consistency errors.
+- Custom field values are now limited to 1024 characters. Attempting to set a custom field with a value exceeding this limit will result in an error.
+
+### Added
+
+- Added `keyPrefix` parameter to `CacheStorage` constructor to allow optional key prefixing for cached items.
+
 ## [3.0.0]
 
 ### Changed
@@ -11,7 +22,7 @@
 - Expand `ChatSDKOptions` with:
   - `isThirdPartyCookiesSupported` - flag to set fallback authorization flow when Third Party cookies are blocked and `securedSession` is set to `SECURED_COOKIES`.
   - `onAuthorization` - callback on successful (or failed) authorization
-  - `storage` - long term storage (eg. tokens), it can use `localStorage` directly, `null` to disable  
+  - `storage` - long term storage (eg. tokens), it can use `localStorage` directly, `null` to disable
   
 
 ## [2.3.0]
