@@ -1,10 +1,8 @@
 name: Publish NPM package
 on:
   push:
-    branches:
-      - main
-    paths-ignore:
-      - ".github/**"
+    tags:
+      - "v*"
 
 jobs:
   publish:
@@ -20,6 +18,14 @@ jobs:
           node-version: "lts/*"
           registry-url: "https://registry.npmjs.org/"
           scope: "@nice-devone"
+      - name: Validate tag matches package version
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          PKG_VERSION="$(jq -r .version dist/package.json)"
+          if [ "${TAG#v}" != "${PKG_VERSION}" ]; then
+            echo "Tag '${TAG}' does not match package version '${PKG_VERSION}'"
+            exit 1
+          fi
       - name: Publish to NPM
         working-directory: dist
         run: unset NODE_AUTH_TOKEN && npm publish --verbose --provenance --access public
