@@ -12,6 +12,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           package-manager-cache: false
@@ -26,6 +28,35 @@ jobs:
             echo "Tag '${TAG}' does not match package version '${PKG_VERSION}'"
             exit 1
           fi
+      - name: Determine npm dist-tag
+        id: dist-tag
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+
+          # Check if the version is a prerelease (contains a hyphen, e.g. 1.1.0-rc.10)
+          if [[ "${VERSION}" == *-* ]]; then
+            # Extract prerelease identifier (e.g. "rc" from "1.1.0-rc.10")
+            PRERELEASE="${VERSION#*-}"    # rc.10
+            NPM_TAG="${PRERELEASE%%.*}"   # rc
+            echo "Prerelease detected, using npm tag: ${NPM_TAG}"
+          else
+            # For stable versions, check if this is the highest semver tag
+            HIGHEST=$(git tag --list 'v*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sed 's/^v//' | sort -V | tail -1)
+            if [ "${VERSION}" = "${HIGHEST}" ]; then
+              NPM_TAG="latest"
+              echo "Highest stable version, using npm tag: latest"
+            else
+              # Older release line — use "release-<major>.<minor>" as dist-tag
+              # (npm rejects tags that are valid semver ranges like "v2.0")
+              MAJOR="${VERSION%%.*}"
+              MINOR="${VERSION#*.}" && MINOR="${MINOR%%.*}"
+              NPM_TAG="release-${MAJOR}.${MINOR}"
+              echo "Older release line, using npm tag: release-${MAJOR}.${MINOR}"
+            fi
+          fi
+
+          echo "npm_tag=${NPM_TAG}" >> "${GITHUB_OUTPUT}"
       - name: Publish to NPM
         working-directory: dist
-        run: unset NODE_AUTH_TOKEN && npm publish --verbose --provenance --access public
+        run: unset NODE_AUTH_TOKEN && npm publish --verbose --provenance --access public --tag "${{ steps.dist-tag.outputs.npm_tag }}"
