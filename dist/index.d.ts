@@ -1586,7 +1586,7 @@ export declare function createJoinGroupChatPayloadData(code: string): EventPaylo
 
 export declare function createLeaveGroupChatPayloadData(id: CaseId): EventPayloadData<LeaveGroupChatEventData>;
 
-export declare function createReconnectPayloadData(accessToken: AccessToken, visitorId?: string): EventPayloadData<ReconnectConsumerData>;
+export declare function createReconnectPayloadData(accessToken: AccessToken, visitorId: VisitorId): EventPayloadData<ReconnectConsumerData>;
 
 export declare function createSendEmailInvitationToGroupChatPayloadData(caseId: CaseId, invitationCode: string, email: string): EventPayloadData<SendEmailInvitationToGroupChatEventData>;
 
