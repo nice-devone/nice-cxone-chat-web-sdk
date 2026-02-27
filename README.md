@@ -6,7 +6,7 @@
 
 ## Requirements
 
-- TypeScript **4.9+**
+- TypeScript **4.9**
 - Runtime: **ES2022** (`WebSocket`, `Intl`, `Promise`, `EventTarget`, `CustomEvent`, `JSON`, `Date`, `crypto`, etc.)
 - Custom application bundler (webpack, create-react-app, etc.)
 
@@ -42,11 +42,10 @@ const sdk = new ChatSdk({
 });
 ```
 
-### Connect to server
+### Authorization
 
-By default, the SDK will not automatically connect to the server. You need to call the `connect()` method to establish a connection.
 ```ts
-await sdk.connect()
+await sdk.authorize()
 ```
 
 ### Channel Info
@@ -182,7 +181,7 @@ thread.onThreadEvent(ChatEvent.AGENT_TYPING_STOPPED, (event: CustomEvent<ChatEve
 });
 ```
 
-### Assignment
+### Assignemnt
 
 ```ts
 sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, (event: CustomEvent<ChatEventData>) => {
