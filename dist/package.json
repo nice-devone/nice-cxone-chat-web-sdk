@@ -1,6 +1,6 @@
 {
   "name": "@nice-devone/nice-cxone-chat-web-sdk",
-  "version": "3.1.0",
+  "version": "1.19.2",
   "description": "Web SDK for DFO Chat",
   "author": "NICE Ltd.",
   "main": "index.js",
@@ -11,6 +11,7 @@
     "url": "https://github.com/nice-devone/nice-cxone-chat-web-sdk"
   },
   "dependencies": {
-    "ua-parser-js": "1.0.37"
+    "ua-parser-js": "1.0.37",
+    "uuid": "8.3.2"
   }
 }

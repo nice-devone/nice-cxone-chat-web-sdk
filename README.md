@@ -6,8 +6,8 @@
 
 ## Requirements
 
-- TypeScript **4.9+**
-- Runtime: **ES2022** (`WebSocket`, `Intl`, `Promise`, `EventTarget`, `CustomEvent`, `JSON`, `Date`, `crypto`, etc.)
+- TypeScript **4.9**
+- Runtime: **ES2022** (`WebSocket`, `Intl`, `Promise`, `EventTarget`, `CustomEvent`, `JSON`, `Date`, etc.)
 - Custom application bundler (webpack, create-react-app, etc.)
 
 ## Quickstart
@@ -42,11 +42,10 @@ const sdk = new ChatSdk({
 });
 ```
 
-### Connect to server
+### Authorization
 
-By default, the SDK will not automatically connect to the server. You need to call the `connect()` method to establish a connection.
 ```ts
-await sdk.connect()
+await sdk.authorize()
 ```
 
 ### Channel Info
@@ -165,7 +164,7 @@ Send typing events. Can be called multiple times, for example on every keypress:
 
 ```ts
 thread.keystroke();
-// Optionally call stopTyping() when the user stops typing or leaves
+// Optionally call stopTyping() when the user stops typing or leaves 
 thread.stopTyping();
 ```
 
@@ -182,7 +181,7 @@ thread.onThreadEvent(ChatEvent.AGENT_TYPING_STOPPED, (event: CustomEvent<ChatEve
 });
 ```
 
-### Assignment
+### Assignemnt
 
 ```ts
 sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, (event: CustomEvent<ChatEventData>) => {
