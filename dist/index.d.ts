@@ -26,25 +26,27 @@ declare interface AccessToken {
     expiresIn: number;
 }
 
+declare type ActionType = Flavor<string, 'ActionType'>;
+
 export declare type Agent = User;
 
 declare interface AgentContact {
     id: string;
     createdAt: string;
     createdAtWithMilliseconds: string;
-    user: User;
+    user: User_2;
 }
 
 export declare type AgentId = UserId;
 
-export declare type AgentTypingEndedData = TypingEventData;
+export declare type AgentTypingEndedData = SenderTypingStartedData;
 
 export declare interface AgentTypingEndedEvent extends ChatEventData {
     data: AgentTypingEndedData;
     type: typeof ChatEvent.AGENT_TYPING_ENDED;
 }
 
-export declare type AgentTypingStartedData = TypingEventData;
+export declare type AgentTypingStartedData = SenderTypingStartedData;
 
 export declare interface AgentTypingStartedEvent extends ChatEventData {
     data: AgentTypingStartedData;
@@ -55,24 +57,10 @@ declare enum ApplicationType {
     BROWSER = "browser"
 }
 
-export declare interface AssignedAgentChangedData {
-    acceptRejectFlow?: {
-        isEnabled: boolean;
-        isTransfer?: boolean | null;
-        refusalTimeoutSeconds: number | null;
-    } | null;
-    brand: Brand;
-    case: Case;
-    channel: Channel;
-    inboxAssignee: User | null;
-    preferredUserForNextAssign?: User | null;
-    previousInboxAssignee: User | null;
-    routingMode?: ContactRoutingMode;
-    routingQueue: RoutingQueue | null;
-}
+export declare type AssignedAgentChangedData = CaseInboxAssigneeChangedData;
 
 export declare interface AssignedAgentChangedEvent extends ChatEventData {
-    data: AssignedAgentChangedData;
+    data: CaseInboxAssigneeChangedData;
     type: typeof ChatEvent.ASSIGNED_AGENT_CHANGED;
 }
 
@@ -297,7 +285,14 @@ export declare class CacheStorageError extends Error {
     constructor(message: string);
 }
 
-declare interface Case {
+export declare type Case = Omit<Case_2, 'inboxAssigneeUser' | 'inboxPreAssigneeUser' | 'ownerAssigneeUser' | 'targetedUser'> & {
+    inboxAssigneeUser?: User | null;
+    inboxPreAssigneeUser?: User | null;
+    ownerAssigneeUser?: User | null;
+    targetedUser?: User | null;
+};
+
+declare interface Case_2 {
     acceleration?: number;
     authorEndUserIdentity?: EndUserIdentity;
     consumerContactStorageId: ContactStorageId;
@@ -305,18 +300,20 @@ declare interface Case {
     createdAt: string;
     createdAtWithMilliseconds?: string | null;
     customerContactId?: string | null;
+    customFields: Array<CustomField>;
     detailUrl: string;
     direction: CaseDirection;
     divisionNumber?: number | null;
     endUserRecipients: Array<Recipient>;
+    endUser: CustomerView;
     id: CaseId;
     inboxAssignee?: number;
-    inboxAssigneeUser?: User | null;
-    inboxPreAssigneeUser?: User | null;
+    inboxAssigneeUser?: User_2 | null;
+    inboxPreAssigneeUser?: User_2 | null;
     interactionId: string;
     maximumPriority?: number;
     ownerAssignee?: number;
-    ownerAssigneeUser?: User | null;
+    ownerAssigneeUser?: User_2 | null;
     proficiency: Proficiency;
     recipients: Array<Recipient>;
     recipientsCustomers?: Array<RecipientCustomer>;
@@ -326,19 +323,37 @@ declare interface Case {
     routingQueuePriority: number;
     statistics: Statistics;
     status: ContactStatus;
-    targetedUser?: User | null;
+    targetedUser?: User_2 | null;
     threadId: ThreadId;
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
 }
 
 declare interface CaseCreatedData {
     brand: Brand;
-    case: Case;
+    case: Case_2;
     channel: Channel;
-    preferredUserForNextAssign?: User | null;
+    preferredUserForNextAssign?: User_2 | null;
     routingMode?: ContactRoutingMode;
     routingQueue?: RoutingQueue | null;
     thread: ThreadView;
+}
+
+/**
+ * CaseCreated event with privacy filtering support.
+ */
+declare interface CaseCreatedData_2 extends Omit<CaseCreatedEvent_2['data'], 'case' | 'preferredUserForNextAssign'> {
+    case: Case;
+    preferredUserForNextAssign?: User | null;
+}
+
+declare interface CaseCreatedEvent extends Omit<CaseCreatedEvent_2, 'data'> {
+    data: CaseCreatedData_2;
+}
+
+declare interface CaseCreatedEvent_2 extends PushUpdateEventFields {
+    data: CaseCreatedData;
+    eventObject: PushUpdateEventObject.CASE;
+    eventType: PushUpdateEventType.CASE_CREATED;
 }
 
 declare enum CaseDirection {
@@ -348,14 +363,69 @@ declare enum CaseDirection {
 
 declare type CaseId = ContactNumber;
 
-declare interface CaseStatusChangedData {
-    brand: Brand;
+declare interface CaseInboxAssigneeChangedData extends Omit<CaseInboxAssigneeChangedEvent['data'], 'case' | 'inboxAssignee' | 'previousInboxAssignee' | 'preferredUserForNextAssign'> {
     case: Case;
-    channel: Channel;
+    inboxAssignee: User | null;
+    previousInboxAssignee: User | null;
     preferredUserForNextAssign?: User | null;
+}
+
+declare interface CaseInboxAssigneeChangedData_2 {
+    acceptRejectFlow?: {
+        isEnabled: boolean;
+        isTransfer?: boolean | null;
+        refusalTimeoutSeconds: number | null;
+    } | null;
+    brand: Brand;
+    case: Case_2;
+    channel: Channel;
+    inboxAssignee: User_2 | null;
+    preferredUserForNextAssign?: User_2 | null;
+    previousInboxAssignee: User_2 | null;
+    routingMode?: ContactRoutingMode;
+    routingQueue: RoutingQueue | null;
+}
+
+declare interface CaseInboxAssigneeChangedEvent extends PushUpdateEventFields {
+    data: CaseInboxAssigneeChangedData_2;
+    eventObject: PushUpdateEventObject.CASE;
+    eventType: PushUpdateEventType.CASE_INBOX_ASSIGNEE_CHANGED;
+}
+
+declare interface CaseInboxAssigneeChangedEvent_2 extends Omit<CaseInboxAssigneeChangedEvent, 'data'> {
+    data: CaseInboxAssigneeChangedData;
+}
+
+declare interface CaseStatusChangedData {
+    agentContact?: AgentContact | null;
+    brand: Brand;
+    case: Case_2;
+    channel: Channel;
+    preferredUserForNextAssign?: User_2 | null;
     routingMode?: ContactRoutingMode;
     routingQueue?: RoutingQueue | null;
 }
+
+/**
+ * CaseStatusChanged event with privacy filtering support.
+ */
+declare interface CaseStatusChangedData_2 extends Omit<CaseStatusChangedEvent_2['data'], 'case' | 'preferredUserForNextAssign'> {
+    case: Case;
+    preferredUserForNextAssign?: User | null;
+}
+
+declare interface CaseStatusChangedEvent extends Omit<CaseStatusChangedEvent_2, 'data'> {
+    data: CaseStatusChangedData_2;
+}
+
+declare interface CaseStatusChangedEvent_2 extends PushUpdateEventFields {
+    data: CaseStatusChangedData;
+    eventObject: PushUpdateEventObject.CASE;
+    eventType: PushUpdateEventType.CASE_STATUS_CHANGED;
+}
+
+/** @deprecated in favor to ContactToRoutingQueueAssignmentChangedEvent */
+declare type CaseToRoutingQueueAssignmentChangedEvent = ContactToRoutingQueueAssignmentChangedEvent;
 
 declare interface Channel {
     canAgentInviteCustomersToContact?: boolean;
@@ -468,11 +538,9 @@ export declare interface ChannelInfo {
 }
 
 declare interface ChannelInfoFeatures {
-    accessibleFormFields: boolean;
     chatExtendedLogging: boolean;
-    chatOptimizeQueueCountingForChat: boolean;
+    chatSendPostbackAsTextMessage: boolean;
     disableAttachmentOnDfoChat: boolean;
-    enableClientSideEventsThrottling: boolean;
     isCoBrowsingEnabled: boolean;
     isCreditCardMaskingEnabled: boolean;
     isFeatureImproveVisitorInactivityTrackingEnabled: boolean;
@@ -482,8 +550,8 @@ declare interface ChannelInfoFeatures {
     liveChatLogoHidden: boolean;
     securedSessions: boolean;
     useStorageModuleInChat: boolean;
-    chatInitializationWithoutWebsocket: boolean;
     cxoneMpowerNewLogo254: boolean;
+    notificationSoundEnhancement: boolean;
 }
 
 export declare type ChannelInfoOptions = ChannelInfoOptionsWithEnvironment | ChannelInfoOptionsWithCustomEnvironment;
@@ -527,6 +595,7 @@ declare type ChannelInfoSettings = {
     emailInvitationContent: string;
     emailInvitationLink: string;
     enableChatTypingPreview: boolean;
+    enablePersistentMenu?: boolean;
     chatRedesign: boolean;
 };
 
@@ -542,6 +611,10 @@ export declare const ChatEvent: {
     readonly CONTACT_CREATED: "ContactCreated";
     readonly CONTACT_STATUS_CHANGED: "ContactStatusChanged";
     readonly CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED: "ContactToRoutingQueueAssignmentChanged";
+    readonly STREAMED_MESSAGE_STARTED: "StreamedMessageStarted";
+    readonly STREAMED_MESSAGE_DELTA: "StreamedMessageDelta";
+    readonly STREAMED_MESSAGE_FAILED: "StreamedMessageFailed";
+    readonly STREAMED_MESSAGE_COMPLETED: "StreamedMessageCompleted";
     readonly LIVECHAT_RECOVERED: AwsResponseEventType.LIVECHAT_RECOVERED;
     readonly MORE_MESSAGES_LOADED: AwsResponseEventType.MORE_MESSAGES_LOADED;
     readonly OFFLINE_MESSAGE_SENT: AwsResponseEventType.OFFLINE_MESSAGE_SENT;
@@ -557,50 +630,26 @@ export declare const ChatEvent: {
     readonly TOKEN_REFRESHED: AwsResponseEventType.TOKEN_REFRESHED;
     readonly AUTHORIZATION_TOKEN_GENERATED: AwsResponseEventType.AUTHORIZATION_TOKEN_GENERATED;
     readonly THREAD_ARCHIVED: AwsResponseEventType.THREAD_ARCHIVED;
-    readonly AUTHORIZE_CONSUMER: PushUpdateEventType.AUTHORIZE_CONSUMER;
-    readonly CASE_CREATED: PushUpdateEventType.CASE_CREATED;
-    readonly CASE_INBOX_ASSIGNEE_CHANGED: PushUpdateEventType.CASE_INBOX_ASSIGNEE_CHANGED;
-    readonly CASE_STATUS_CHANGED: PushUpdateEventType.CASE_STATUS_CHANGED;
-    readonly CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED: PushUpdateEventType.CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
-    readonly CONTACT_PREFERRED_USER_CHANGED: PushUpdateEventType.CONTACT_PREFERRED_USER_CHANGED;
-    readonly CONTACT_PROFICIENCY_CHANGED: PushUpdateEventType.CONTACT_PROFICIENCY_CHANGED;
-    readonly CONTACT_PRIORITY_CHANGED: PushUpdateEventType.CONTACT_PRIORITY_CHANGED;
-    readonly CONTACT_SYNC: PushUpdateEventType.CONTACT_SYNC;
-    readonly CHANNEL_CREATED: PushUpdateEventType.CHANNEL_CREATED;
-    readonly CHANNEL_DELETED: PushUpdateEventType.CHANNEL_DELETED;
-    readonly CHANNEL_UPDATED: PushUpdateEventType.CHANNEL_UPDATED;
-    readonly MESSAGE_ADDED_INTO_CASE: PushUpdateEventType.MESSAGE_ADDED_INTO_CASE;
-    readonly MESSAGE_CREATED: PushUpdateEventType.MESSAGE_CREATED;
-    readonly MESSAGE_DELIVERED_TO_END_USER: PushUpdateEventType.MESSAGE_DELIVERED_TO_END_USER;
-    readonly MESSAGE_DELIVERED_TO_USER: PushUpdateEventType.MESSAGE_DELIVERED_TO_USER;
-    readonly MESSAGE_DELIVERY_STATUS_CHANGED: PushUpdateEventType.MESSAGE_DELIVERY_STATUS_CHANGED;
-    readonly MESSAGE_NOTE_CREATED: PushUpdateEventType.MESSAGE_NOTE_CREATED;
-    readonly MESSAGE_NOTE_UPDATED: PushUpdateEventType.MESSAGE_NOTE_UPDATED;
-    readonly MESSAGE_NOTE_DELETED: PushUpdateEventType.MESSAGE_NOTE_DELETED;
-    readonly MESSAGE_READ_CHANGED: PushUpdateEventType.MESSAGE_READ_CHANGED;
-    readonly MESSAGE_SEEN_BY_END_USER: PushUpdateEventType.MESSAGE_SEEN_BY_END_USER;
-    readonly MESSAGE_SEEN_BY_USER: PushUpdateEventType.MESSAGE_SEEN_BY_USER;
-    readonly MESSAGE_SEEN_CHANGED: PushUpdateEventType.MESSAGE_SEEN_CHANGED;
-    readonly MESSAGE_SENT: PushUpdateEventType.MESSAGE_SENT;
-    readonly MESSAGE_UPDATED: PushUpdateEventType.MESSAGE_UPDATED;
-    readonly PAGE_VIEW_CREATED: PushUpdateEventType.PAGE_VIEW_CREATED;
-    readonly ROUTING_QUEUE_CREATED: PushUpdateEventType.ROUTING_QUEUE_CREATED;
-    readonly ROUTING_QUEUE_DELETED: PushUpdateEventType.ROUTING_QUEUE_DELETED;
-    readonly ROUTING_QUEUE_UPDATED: PushUpdateEventType.ROUTING_QUEUE_UPDATED;
-    readonly SUBQUEUE_ASSIGNED_TO_ROUTING_QUEUE: PushUpdateEventType.SUBQUEUE_ASSIGNED_TO_ROUTING_QUEUE;
-    readonly SUBQUEUE_UNASSIGNED_TO_ROUTING_QUEUE: PushUpdateEventType.SUBQUEUE_UNASSIGNED_TO_ROUTING_QUEUE;
-    readonly USER_ASSIGNED_TO_ROUTING_QUEUE: PushUpdateEventType.USER_ASSIGNED_TO_ROUTING_QUEUE;
-    readonly USER_STATUS_CHANGED: PushUpdateEventType.USER_STATUS_CHANGED;
-    readonly USER_UNASSIGNED_FROM_ROUTING_QUEUE: PushUpdateEventType.USER_UNASSIGNED_FROM_ROUTING_QUEUE;
-    readonly AGENT_CONTACT_STARTED: PushUpdateEventType.AGENT_CONTACT_STARTED;
-    readonly AGENT_CONTACT_ENDED: PushUpdateEventType.AGENT_CONTACT_ENDED;
-    readonly SENDER_TYPING_STARTED: PushUpdateEventType.SENDER_TYPING_STARTED;
-    readonly SENDER_TYPING_ENDED: PushUpdateEventType.SENDER_TYPING_ENDED;
-    readonly FIRE_PROACTIVE: PushUpdateEventType.FIRE_PROACTIVE;
-    readonly CONTACT_INBOX_PRE_ASSIGNEE_CHANGED: PushUpdateEventType.CONTACT_INBOX_PRE_ASSIGNEE_CHANGED;
-    readonly CONTACT_RECIPIENTS_CHANGED: PushUpdateEventType.CONTACT_RECIPIENTS_CHANGED;
-    readonly MESSAGE_PREVIEW_CREATED: PushUpdateEventType.MESSAGE_PREVIEW_CREATED;
-    readonly EVENT_IN_S3: PushUpdateEventType.EVENT_IN_S3;
+    readonly CASE_CREATED: PushUpdateEventType_2.CASE_CREATED;
+    readonly CASE_INBOX_ASSIGNEE_CHANGED: PushUpdateEventType_2.CASE_INBOX_ASSIGNEE_CHANGED;
+    readonly CASE_STATUS_CHANGED: PushUpdateEventType_2.CASE_STATUS_CHANGED;
+    readonly CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED: PushUpdateEventType_2.CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
+    readonly CONTACT_INBOX_PRE_ASSIGNEE_CHANGED: PushUpdateEventType_2.CONTACT_INBOX_PRE_ASSIGNEE_CHANGED;
+    readonly CONTACT_PREFERRED_USER_CHANGED: PushUpdateEventType_2.CONTACT_PREFERRED_USER_CHANGED;
+    readonly CONTACT_RECIPIENTS_CHANGED: PushUpdateEventType_2.CONTACT_RECIPIENTS_CHANGED;
+    readonly MESSAGE_ADDED_INTO_CASE: PushUpdateEventType_2.MESSAGE_ADDED_INTO_CASE;
+    readonly MESSAGE_CREATED: PushUpdateEventType_2.MESSAGE_CREATED;
+    readonly MESSAGE_DELIVERY_STATUS_CHANGED: PushUpdateEventType_2.MESSAGE_DELIVERY_STATUS_CHANGED;
+    readonly MESSAGE_SEEN_CHANGED: PushUpdateEventType_2.MESSAGE_SEEN_CHANGED;
+    readonly MESSAGE_READ_CHANGED: PushUpdateEventType_2.MESSAGE_READ_CHANGED;
+    readonly MESSAGE_SENT: PushUpdateEventType_2.MESSAGE_SENT;
+    readonly MESSAGE_UPDATED: PushUpdateEventType_2.MESSAGE_UPDATED;
+    readonly PAGE_VIEW_CREATED: PushUpdateEventType_2.PAGE_VIEW_CREATED;
+    readonly SENDER_TYPING_STARTED: PushUpdateEventType_2.SENDER_TYPING_STARTED;
+    readonly SENDER_TYPING_ENDED: PushUpdateEventType_2.SENDER_TYPING_ENDED;
+    readonly USER_STATUS_CHANGED: PushUpdateEventType_2.USER_STATUS_CHANGED;
+    readonly FIRE_PROACTIVE: PushUpdateEventType_2.FIRE_PROACTIVE;
+    readonly EVENT_IN_S3: PushUpdateEventType_2.EVENT_IN_S3;
 };
 
 export declare interface ChatEventData {
@@ -647,6 +696,12 @@ declare class ChatSdk {
      * @throws ChatSDKError
      */
     getChannelAvailability(): Promise<ChannelAvailabilityResponse>;
+    /**
+     * Get persistent menu items configured for the channel.
+     * @returns Array of PersistentMenuItem
+     * @throws ChatSDKError
+     */
+    getPersistentMenuItems(): Promise<Array<PersistentMenuItem>>;
     /**
      * Send Authorization Event
      * @deprecated - use Secured Session flow instead (SDK option `securedSession` and {@link ChatSdk.connect})
@@ -738,9 +793,24 @@ export declare class ChatSDKError extends Error {
 declare interface ChatSDKErrorData {
     [key: string]: unknown;
     /**
+     * performance.now() delta from before the fetch() call to the catch.
+     * Populated for fetch-originated errors only.
+     */
+    elapsedMs?: number;
+    /**
      * Use for wrap original error cased by this error
      */
     error?: unknown;
+    /**
+     * navigator.onLine at the time of failure. `'unknown'` when navigator.onLine
+     * was not readable. Populated for fetch-originated errors only.
+     */
+    navigatorOnLine?: boolean | 'unknown';
+    /**
+     * Categorical bucket for fetch-failure triage. Populated for fetch-
+     * originated errors only.
+     */
+    probableCause?: ProbableFetchCause;
 }
 
 export declare type ChatSDKOptions = ChatSDKOptionsDefinedEnvironment | ChatSDKOptionsCustomEnvironment;
@@ -794,7 +864,14 @@ export declare interface ConsumerAuthorizationSuccessPayloadData {
     };
 }
 
-export declare interface Contact {
+export declare interface Contact extends Omit<Contact_2, 'inboxAssigneeUser' | 'inboxPreAssigneeUser' | 'ownerAssigneeUser' | 'targetedUser'> {
+    inboxAssigneeUser: User | null;
+    inboxPreAssigneeUser: User | null;
+    ownerAssigneeUser: User | null;
+    targetedUser?: User | null;
+}
+
+declare interface Contact_2 {
     authorEndUserIdentity: EndUserIdentity | null;
     channelId: ChannelId;
     consumerContactStorageId: string;
@@ -806,11 +883,11 @@ export declare interface Contact {
     id: ContactNumber;
     inboxAssignee: UserId | null;
     inboxAssigneeLastAssignedAt: string | null;
-    inboxAssigneeUser: User | null;
-    inboxPreAssigneeUser: User | null;
+    inboxAssigneeUser: User_2 | null;
+    inboxPreAssigneeUser: User_2 | null;
     interactionId: string;
     ownerAssignee: UserId | null;
-    ownerAssigneeUser: User | null;
+    ownerAssigneeUser: User_2 | null;
     recipients: Array<Recipient>;
     routingQueueId: RoutingQueueId | null;
     routingQueuePriority: number;
@@ -827,7 +904,7 @@ export declare interface Contact {
     acceleration: number | undefined;
     maximumPriority: number | undefined;
     routingAttribute: number | undefined;
-    targetedUser: User | null | undefined;
+    targetedUser: User_2 | null | undefined;
 }
 
 export declare interface ContactCreatedChatEvent extends ChatEventData {
@@ -835,19 +912,96 @@ export declare interface ContactCreatedChatEvent extends ChatEventData {
     type: typeof ChatEvent.CONTACT_CREATED;
 }
 
-export declare type ContactCreatedData = CaseCreatedData;
+export declare type ContactCreatedData = CaseCreatedData_2;
+
+declare interface ContactInboxPreAssigneeChangedData {
+    acceptRejectFlow?: {
+        isEnabled: boolean;
+        isTransfer?: boolean | null;
+        refusalTimeoutSeconds: number | null;
+    } | null;
+    brand: Brand;
+    channel: Channel;
+    consumerContact: Case_2;
+    inboxPreAssignee: User_2;
+    preferredUserForNextAssign?: User_2 | null;
+    routingMode?: ContactRoutingMode;
+    routingQueue?: RoutingQueue | null;
+}
+
+/**
+ * ContactInboxPreAssigneeChanged event with privacy filtering support.
+ */
+declare interface ContactInboxPreAssigneeChangedData_2 extends Omit<ContactInboxPreAssigneeChangedEvent_2['data'], 'case' | 'inboxPreAssignee' | 'preferredUserForNextAssign'> {
+    case: Case;
+    inboxPreAssignee: User | null;
+    preferredUserForNextAssign?: User | null;
+}
+
+declare interface ContactInboxPreAssigneeChangedEvent extends Omit<ContactInboxPreAssigneeChangedEvent_2, 'data'> {
+    data: ContactInboxPreAssigneeChangedData_2;
+}
+
+declare interface ContactInboxPreAssigneeChangedEvent_2 extends PushUpdateEventFields {
+    data: ContactInboxPreAssigneeChangedData;
+    eventObject: PushUpdateEventObject.CONSUMER_CONTACT;
+    eventType: PushUpdateEventType.CONTACT_INBOX_PRE_ASSIGNEE_CHANGED;
+}
 
 declare type ContactNumber = Flavor<string, 'ContactNumber'>;
 
-export declare interface ContactRecipientsChangedChatEvent extends ChatEventData {
-    data: ContactRecipientsChangedData;
-    type: PushUpdateEventType.CONTACT_RECIPIENTS_CHANGED;
+declare interface ContactPreferredUserChangedData {
+    brand: Brand;
+    case: Case_2;
+    channel: Channel;
+    preferredUserForNextAssign?: User_2 | null;
+    previousPreferredUserForNextAssign?: User_2 | null;
+    routingMode?: ContactRoutingMode;
+    routingQueue: RoutingQueue | null;
 }
 
-export declare interface ContactRecipientsChangedData {
+/**
+ * ContactPreferredUserChanged event with privacy filtering support.
+ */
+declare interface ContactPreferredUserChangedData_2 extends Omit<ContactPreferredUserChangedEvent_2['data'], 'case' | 'preferredUserForNextAssign' | 'previousPreferredUserForNextAssign'> {
+    case: Case;
+    preferredUserForNextAssign?: User | null;
+    previousPreferredUserForNextAssign?: User | null;
+}
+
+declare interface ContactPreferredUserChangedEvent extends Omit<ContactPreferredUserChangedEvent_2, 'data'> {
+    data: ContactPreferredUserChangedData_2;
+}
+
+declare interface ContactPreferredUserChangedEvent_2 extends PushUpdateEventFields {
+    data: ContactPreferredUserChangedData;
+    eventObject: PushUpdateEventObject.CONTACT;
+    eventType: PushUpdateEventType.CONTACT_PREFERRED_USER_CHANGED;
+}
+
+export declare interface ContactRecipientsChangedChatEvent extends ChatEventData {
+    data: ContactRecipientsChangedData;
+    type: PushUpdateEventType_2.CONTACT_RECIPIENTS_CHANGED;
+}
+
+export declare interface ContactRecipientsChangedData extends Omit<ContactRecipientsChangedData_2, 'contact'> {
+    contact: Contact;
+}
+
+declare interface ContactRecipientsChangedData_2 {
     brand: Brand;
     channel: Channel;
-    contact: Case;
+    contact: Case_2;
+}
+
+declare interface ContactRecipientsChangedEvent extends Omit<ContactRecipientsChangedEvent_2, 'data'> {
+    data: ContactRecipientsChangedData;
+}
+
+declare interface ContactRecipientsChangedEvent_2 extends PushUpdateEventFields {
+    eventObject: PushUpdateEventObject.CONTACT;
+    eventType: PushUpdateEventType.CONTACT_RECIPIENTS_CHANGED;
+    data: ContactRecipientsChangedData_2;
 }
 
 declare enum ContactRoutableType {
@@ -876,23 +1030,41 @@ export declare interface ContactStatusChangedChatEvent extends ChatEventData {
     type: typeof ChatEvent.CONTACT_STATUS_CHANGED;
 }
 
-export declare type ContactStatusChangedData = CaseStatusChangedData;
+export declare type ContactStatusChangedData = CaseStatusChangedData_2;
 
 declare type ContactStorageId = Flavor<string, 'ContactStorageId'>;
 
 export declare interface ContactToRoutingQueueAssignmentChangedChatEvent extends ChatEventData {
-    data: ContactToRoutingQueueAssignmentChangedData;
+    data: ContactToRoutingQueueAssignmentChangedData_2;
     type: typeof ChatEvent.CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
 }
 
 declare interface ContactToRoutingQueueAssignmentChangedData {
     brand: Brand;
-    case: Case;
+    case: Case_2;
     channel: Channel;
-    preferredUserForNextAssign?: User | null;
+    preferredUserForNextAssign?: User_2 | null;
     previousRoutingQueue: RoutingQueue | null;
     routingMode?: ContactRoutingMode;
     routingQueue: RoutingQueue | null;
+}
+
+/**
+ * ContactToRoutingQueueAssignmentChanged event with privacy filtering support.
+ */
+declare interface ContactToRoutingQueueAssignmentChangedData_2 extends Omit<ContactToRoutingQueueAssignmentChangedEvent_2['data'], 'case' | 'preferredUserForNextAssign'> {
+    case: Case;
+    preferredUserForNextAssign?: User | null;
+}
+
+declare interface ContactToRoutingQueueAssignmentChangedEvent extends Omit<ContactToRoutingQueueAssignmentChangedEvent_2, 'data'> {
+    data: ContactToRoutingQueueAssignmentChangedData_2;
+}
+
+declare interface ContactToRoutingQueueAssignmentChangedEvent_2 extends PushUpdateEventFields {
+    data: ContactToRoutingQueueAssignmentChangedData;
+    eventObject: PushUpdateEventObject.CASE;
+    eventType: PushUpdateEventType.CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED;
 }
 
 declare enum ContentFormat {
@@ -937,7 +1109,7 @@ export declare function createJoinGroupChatPayloadData(code: string): EventPaylo
 
 export declare function createLeaveGroupChatPayloadData(id: CaseId): EventPayloadData<LeaveGroupChatEventData>;
 
-export declare function createReconnectPayloadData(accessToken: AccessToken, visitorId?: string): EventPayloadData<ReconnectConsumerData>;
+export declare function createReconnectPayloadData(accessToken: AccessToken, visitorId: VisitorId): EventPayloadData<ReconnectConsumerData>;
 
 export declare function createSendEmailInvitationToGroupChatPayloadData(caseId: CaseId, invitationCode: string, email: string): EventPayloadData<SendEmailInvitationToGroupChatEventData>;
 
@@ -968,13 +1140,13 @@ export declare class Customer {
      * @param name - Custom field name
      * @param value - Custom field value
      */
-    setCustomField(name: CustomField['ident'], value: CustomField['value']): Promise<ChatEventData> | undefined;
+    setCustomField(name: CustomField['ident'], value: CustomField['value']): Promise<ChatEventData | undefined> | undefined;
     /**
      * Set Customer Custom fields
      * @param customFields - custom fields object
      * @example setCustomFields(\{ identName: 'value', identName2: 'value2' \})
      */
-    setCustomFields(customFields: CustomFieldsObject): Promise<ChatEventData> | undefined;
+    setCustomFields(customFields: CustomFieldsObject): Promise<ChatEventData | undefined> | undefined;
     /**
      * Get Customer Custom fields (as object)
      */
@@ -993,7 +1165,7 @@ export declare class Customer {
      * - call this only after the first message or recover event
      * @returns Promise<ChatEventData>
      */
-    sendCustomFields(): Promise<ChatEventData>;
+    sendCustomFields(): Promise<ChatEventData | undefined>;
 }
 
 export declare interface CustomerIdentity {
@@ -1063,6 +1235,10 @@ declare enum CustomFieldType {
     EMAIL = "email",
     LIST = "list",
     TREE = "tree"
+}
+
+declare interface Destination {
+    id: ChatWindowId;
 }
 
 declare interface DestinationInput {
@@ -1138,6 +1314,12 @@ export declare interface EventPayloadData<D extends AwsInputEventData> {
     visitor?: VisitorInput;
 }
 
+/**
+ * List of User fields that contain sensitive personal information.
+ * These fields are completely removed when "Hide personal information" is enabled.
+ */
+declare const FIELDS_WITH_SENSITIVE_DATA: readonly ["emailAddress", "username", "loginUsername", "isBotUser", "isSurveyUser", "agentId", "incontactId", "inContactId", "divisionNumber", "publicImageUrl", "imagePublic", "image", "name", "fullName", "email", "inContactSharedUser", "isChatbot", "userType"];
+
 declare interface FileRestrictionsSettings {
     allowedFileSize: string;
     allowedFileTypes: Array<{
@@ -1145,6 +1327,17 @@ declare interface FileRestrictionsSettings {
         mimeType: string;
     }>;
     isAttachmentsEnabled: boolean;
+}
+
+declare interface FireProactiveActionEvent extends PushUpdateEventFields {
+    data: FireProactiveData;
+    eventObject: PushUpdateEventObject.CHAT_WINDOW;
+    eventType: PushUpdateEventType.FIRE_PROACTIVE;
+}
+
+declare interface FireProactiveData {
+    destination: Destination;
+    proactiveAction: ProactiveAction;
 }
 
 declare type Flavor<T, FlavorT> = T & Flavoring<FlavorT>;
@@ -1273,6 +1466,8 @@ export declare const isRecoverSuccessEvent: (response: ChatEventData) => respons
 
 export declare const isSetPositionInQueueEvent: (event: unknown) => event is SetPositionInQueueChatEvent;
 
+export declare const isStreamedMessageEventData: (eventData: unknown) => eventData is StreamedMessageEventData;
+
 export declare function isThreadArchivedSuccessPayload(response: ChatEventData): response is ThreadArchivedEvent;
 
 export declare const isThreadListFetchedPostbackData: (data: unknown) => data is ThreadListFetchedPostbackData;
@@ -1368,11 +1563,25 @@ export declare interface LoadThreadMetadataChatEvent extends ChatEventData {
     type: AwsResponseEventType.THREAD_METADATA_LOADED;
 }
 
-export declare interface Message {
+/**
+ * Message type with privacy filtering support using union types.
+ * The authorUser field can be either:
+ * - User with all fields (when privacy is disabled)
+ * - UserWithoutSensitiveData (when privacy is enabled - sensitive fields removed)
+ * - null (when no author)
+ *
+ * This allows the type system to properly represent both privacy states.
+ */
+export declare interface Message extends Omit<Message_2, 'authorUser' | 'user'> {
+    authorUser: User | null;
+    user: User | null;
+}
+
+declare interface Message_2 {
     attachments: Array<Attachment>;
     authorEndUserIdentity: EndUserIdentity | null;
     authorNameRemoved: ContentRemoved;
-    authorUser: User | null;
+    authorUser: User_2 | null;
     contactNumber: ContactNumber;
     contentRemoved: ContentRemoved;
     createdAt: string;
@@ -1406,13 +1615,38 @@ export declare interface Message {
     threadIdOnExternalPlatform: ThreadIdOnExternalPlatform;
     title?: string;
     url?: string | null;
-    user?: User | null;
+    user?: User_2 | null;
     userStatistics: UserStatistics;
     readAt?: string | null;
     deletedOnExternalPlatform?: boolean;
 }
 
-export declare type MessageContent = MessageTextContent | QuickRepliesMessageContent | ListPickerMessageContent | RichLinkMessageContent;
+declare interface MessageAddedIntoCaseData {
+    brand: Brand;
+    case: Case_2;
+    channel: Channel;
+    message: Message_2;
+}
+
+/**
+ * MessageAddedIntoCase event with privacy filtering support.
+ */
+declare interface MessageAddedIntoCaseData_2 extends Omit<MessageAddedIntoCaseEvent_2['data'], 'message' | 'case'> {
+    message: Message;
+    case: Case;
+}
+
+declare interface MessageAddedIntoCaseEvent extends Omit<MessageAddedIntoCaseEvent_2, 'data'> {
+    data: MessageAddedIntoCaseData_2;
+}
+
+declare interface MessageAddedIntoCaseEvent_2 extends PushUpdateEventFields {
+    data: MessageAddedIntoCaseData;
+    eventObject: PushUpdateEventObject.CASE;
+    eventType: PushUpdateEventType.MESSAGE_ADDED_INTO_CASE;
+}
+
+export declare type MessageContent = MessageTextContent | QuickRepliesMessageContent | ListPickerMessageContent | RichLinkMessageContent | StreamedMessageContent;
 
 export declare interface MessageContentBase {
     fallbackText?: string;
@@ -1422,18 +1656,37 @@ export declare interface MessageContentBase {
     type: MessageType;
 }
 
-export declare interface MessageCreatedData {
+/**
+ * MessageCreated event with privacy filtering support.
+ * When privacy is enabled, User fields in message and case are filtered.
+ */
+export declare interface MessageCreatedData extends Omit<MessageCreatedEvent_3['data'], 'message' | 'case'> {
+    message: Message;
+    case: Case;
+}
+
+declare interface MessageCreatedData_2 {
     agentContact?: AgentContact | null;
     brand: Brand;
-    case: Case;
+    case: Case_2;
     channel: Channel;
-    message: Message;
+    message: Message_2;
     thread: ThreadView;
 }
 
 export declare interface MessageCreatedEvent extends ChatEventData {
     data: MessageCreatedData;
-    type: PushUpdateEventType.MESSAGE_CREATED;
+    type: PushUpdateEventType_2.MESSAGE_CREATED;
+}
+
+declare interface MessageCreatedEvent_2 extends Omit<MessageCreatedEvent_3, 'data'> {
+    data: MessageCreatedData;
+}
+
+declare interface MessageCreatedEvent_3 extends PushUpdateEventFields {
+    data: MessageCreatedData_2;
+    eventObject: PushUpdateEventObject.MESSAGE;
+    eventType: PushUpdateEventType.MESSAGE_CREATED;
 }
 
 declare interface MessageDelivered {
@@ -1442,7 +1695,29 @@ declare interface MessageDelivered {
     userId: UserId;
 }
 
-export declare enum MessageDirection {
+declare interface MessageDeliveryStatusChanged {
+    agentContact?: AgentContact | null;
+    brand: Brand;
+    contact: Case_2;
+    message: Message_2;
+    pointOfContact: Channel;
+}
+
+declare interface MessageDeliveryStatusChangedData extends Omit<MessageDeliveryStatusChangedEvent_2['data'], 'message'> {
+    message: Message;
+}
+
+declare interface MessageDeliveryStatusChangedEvent extends Omit<MessageDeliveryStatusChangedEvent_2, 'data'> {
+    data: MessageDeliveryStatusChangedData;
+}
+
+declare interface MessageDeliveryStatusChangedEvent_2 extends PushUpdateEventFields {
+    data: MessageDeliveryStatusChanged;
+    eventObject: PushUpdateEventObject.MESSAGE;
+    eventType: PushUpdateEventType.MESSAGE_DELIVERY_STATUS_CHANGED;
+}
+
+declare enum MessageDirection {
     INBOUND = "inbound",
     OUTBOUND = "outbound"
 }
@@ -1480,13 +1755,29 @@ declare type MessagePayload_2 = {
 
 declare interface MessageReadChangedData {
     brand: Brand;
+    contact: Contact_2;
+    message: Message_2;
+    agentContact?: AgentContact | null;
+}
+
+declare interface MessageReadChangedData_2 extends Omit<MessageReadChangedEvent_3['data'], 'contact' | 'message'> {
     contact: Contact;
     message: Message;
 }
 
 export declare interface MessageReadChangedEvent extends ChatEventData {
+    data: MessageReadChangedData_2;
+    type: PushUpdateEventType_2.MESSAGE_READ_CHANGED;
+}
+
+declare interface MessageReadChangedEvent_2 extends Omit<MessageReadChangedEvent_3, 'data'> {
+    data: MessageReadChangedData_2;
+}
+
+declare interface MessageReadChangedEvent_3 extends PushUpdateEventFields {
     data: MessageReadChangedData;
-    type: PushUpdateEventType.MESSAGE_READ_CHANGED;
+    eventObject: PushUpdateEventObject.MESSAGE;
+    eventType: PushUpdateEventType.MESSAGE_READ_CHANGED;
 }
 
 declare interface MessageSeen {
@@ -1495,15 +1786,51 @@ declare interface MessageSeen {
     userId: UserId;
 }
 
-export declare interface MessageSentData {
+declare interface MessageSeenChanged {
+    agentContact?: AgentContact | null;
     brand: Brand;
+    contact: Case_2;
+    message: Message_2;
+    pointOfContact: Channel;
+}
+
+declare interface MessageSeenChangedData extends Omit<MessageSeenChangedEvent_2['data'], 'message'> {
+    message: Message;
+}
+
+declare interface MessageSeenChangedEvent extends Omit<MessageSeenChangedEvent_2, 'data'> {
+    data: MessageSeenChangedData;
+}
+
+declare interface MessageSeenChangedEvent_2 extends PushUpdateEventFields {
+    data: MessageSeenChanged;
+    eventObject: PushUpdateEventObject.MESSAGE;
+    eventType: PushUpdateEventType.MESSAGE_SEEN_CHANGED;
+}
+
+export declare interface MessageSentData extends Omit<MessageSentData_2, 'message'> {
     message: SentMessage;
+}
+
+declare interface MessageSentData_2 {
+    brand: Brand;
+    message: SentMessage_2;
     thread: ThreadView;
 }
 
 export declare interface MessageSentEvent extends ChatEventData {
     data: MessageSentData;
-    type: PushUpdateEventType.MESSAGE_SENT;
+    type: PushUpdateEventType_2.MESSAGE_SENT;
+}
+
+declare interface MessageSentEvent_2 extends Omit<MessageSentEvent_3, 'data'> {
+    data: MessageSentData;
+}
+
+declare interface MessageSentEvent_3 extends PushUpdateEventFields {
+    data: MessageSentData_2;
+    eventObject: PushUpdateEventObject.MESSAGE;
+    eventType: PushUpdateEventType.MESSAGE_SENT;
 }
 
 export declare interface MessageSuccessEventData extends ChatEventData {
@@ -1524,7 +1851,30 @@ export declare enum MessageType {
     RICH_LINK = "RICH_LINK",
     LIST_PICKER = "LIST_PICKER",
     ADAPTIVE_CARD = "ADAPTIVE_CARD",
-    TIME_PICKER = "TIME_PICKER"
+    TIME_PICKER = "TIME_PICKER",
+    STREAMED = "STREAMED"
+}
+
+declare interface MessageUpdatedData {
+    agentContact?: AgentContact | null;
+    brand: Brand;
+    case: Case_2;
+    channel: Channel;
+    message: Message_2;
+}
+
+declare interface MessageUpdatedData_2 extends Omit<MessageUpdatedData, 'message'> {
+    message: Message;
+}
+
+declare interface MessageUpdatedEvent extends Omit<MessageUpdatedEvent_2, 'data'> {
+    data: MessageUpdatedData_2;
+}
+
+declare interface MessageUpdatedEvent_2 extends PushUpdateEventFields {
+    data: MessageUpdatedData;
+    eventObject: PushUpdateEventObject.MESSAGE;
+    eventType: PushUpdateEventType.MESSAGE_UPDATED;
 }
 
 export declare interface MoreMessagesLoadedEvent extends ChatEventData {
@@ -1532,7 +1882,7 @@ export declare interface MoreMessagesLoadedEvent extends ChatEventData {
 }
 
 declare interface MoreMessagesLoadedPostbackData extends AwsResponseEventPostbackData {
-    messages: Message[];
+    messages: Array<Message>;
     scrollToken: string;
     contactHistory: Array<PushUpdateEventFields>;
 }
@@ -1548,6 +1898,43 @@ export declare interface OfflineMessageData {
     name: string;
 }
 
+declare interface PageView {
+    endUserIdentityIdOnExternalPlatform: string;
+    hasHappenedDuringSession: boolean;
+    id: string;
+    isOpeningVisit: boolean;
+    pageTitle: string;
+    pageUrl: string;
+    visitedAt: string;
+}
+
+declare interface PageViewCreatedData {
+    brand: Brand;
+    channel: Channel;
+    pageView: PageView;
+    thread: ThreadView;
+}
+
+declare interface PageViewCreatedData_2 extends Omit<PageViewCreatedData, 'contact'> {
+    contact: Contact;
+}
+
+declare interface PageViewCreatedEvent extends Omit<PageViewCreatedEvent_2, 'data'> {
+    data: PageViewCreatedData_2;
+}
+
+declare interface PageViewCreatedEvent_2 extends PushUpdateEventFields {
+    data: PageViewCreatedData;
+    eventObject: PushUpdateEventObject.PAGE_VIEW;
+    eventType: PushUpdateEventType.PAGE_VIEW_CREATED;
+}
+
+export declare type PersistentMenuItem = {
+    id: string;
+    label: string;
+    postback: string;
+};
+
 declare type Postback = string | null;
 
 /** @deprecated use ContactStorageId */
@@ -1557,6 +1944,102 @@ declare type PreContactFormCustomField = {
     isRequired: boolean;
     definition: CustomFieldDefinition;
 };
+
+declare interface ProactiveAction {
+    action: ProactiveChatAction;
+    conditions?: Array<{
+        conditionType?: string;
+        data?: Record<string, unknown>;
+    }>;
+}
+
+declare interface ProactiveChatAction {
+    actionId?: string;
+    actionName: string;
+    actionType: ActionType | ProactiveChatActionType;
+    context?: {
+        workflow?: {
+            id?: string;
+            name?: string;
+        };
+    };
+    data?: ProactiveChatActionData;
+}
+
+declare interface ProactiveChatActionData {
+    callToAction: {
+        isVisible?: boolean;
+        text: string | null;
+    };
+    content: {
+        body: string | null;
+        bodyText: string | null;
+        headlineSecondaryText: string | null;
+        headlineText: string | null;
+        image: string | null;
+    };
+    customization: {
+        customJs: string | null;
+    };
+    design: ProactiveChatActionDesign;
+    handover: {
+        customFields?: Array<CustomField>;
+    };
+    position: {
+        general?: string;
+        offsetX: number | null;
+        offsetY: number | null;
+    };
+    template: {
+        id: ProactiveChatTemplateId;
+    };
+}
+
+declare interface ProactiveChatActionDesign {
+    actionType: ActionType;
+    background: {
+        color: string | null;
+        image: string | null;
+    };
+    border: {
+        color: string | null;
+        radius: number | null;
+        size: number | null;
+    };
+    callToAction: {
+        backgroundColor: string | null;
+        textColor: string | null;
+    };
+    content: {
+        bodyTextColor: string | null;
+        headlineColor: string | null;
+        headlineSecondaryColor: string | null;
+    };
+    dimension: {
+        height: number | null;
+        spaceBetweenText: number | null;
+        width: number | null;
+    };
+}
+
+declare enum ProactiveChatActionType {
+    POPUPBOX = "PopupBox",
+    CUSTOM_POPUPBOX = "CustomPopupBox",
+    WELCOME_MESSAGE = "WelcomeMessage",
+    PUSH_NOTIFICATION = "PushNotification",
+    GUIDE_TEMPLATE = "GuideTemplate"
+}
+
+declare enum ProactiveChatTemplateId {
+    FULL_IMAGE = "fullImage",
+    IMAGE_LEFT = "imageLeft",
+    IMAGE_RIGHT = "imageRight",
+    IMAGE_TOP_CENTER = "imageTopCenter",
+    DYNAMIC_IMAGE_BOTTOM = "dynamicImageBottom",
+    CIRCLE_IMAGE_TOP = "circleImageTop"
+}
+
+declare type ProbableFetchCause = 'browser-blocked' | 'http-4xx' | 'http-5xx' | 'network-failure' | 'offline' | 'unknown' | 'user-aborted';
 
 declare interface Proficiency {
     from: number;
@@ -1592,6 +2075,8 @@ declare enum PushUpdateContextInitiatorType {
     ROUTING = "routing",
     UNIFIED_ROUTING = "unifiedRouting"
 }
+
+export declare type PushUpdateEvent = CaseCreatedEvent | CaseInboxAssigneeChangedEvent_2 | CaseStatusChangedEvent | CaseToRoutingQueueAssignmentChangedEvent | ContactInboxPreAssigneeChangedEvent | ContactPreferredUserChangedEvent | ContactRecipientsChangedEvent | ContactToRoutingQueueAssignmentChangedEvent | FireProactiveActionEvent | MessageAddedIntoCaseEvent | MessageCreatedEvent_2 | MessageDeliveryStatusChangedEvent | MessageSeenChangedEvent | MessageReadChangedEvent_2 | MessageSentEvent_2 | MessageUpdatedEvent | PageViewCreatedEvent | SenderTypingStartedEvent | SenderTypingEndedEvent | UserStatusChangedEvent | S3Event;
 
 declare interface PushUpdateEventFields {
     context?: PushUpdateContext | [];
@@ -1673,6 +2158,44 @@ declare enum PushUpdateEventType {
     CONTACT_INBOX_PRE_ASSIGNEE_CHANGED = "ConsumerContactInboxPreAssigneeChanged",
     CONTACT_RECIPIENTS_CHANGED = "ContactRecipientsChanged",
     MESSAGE_PREVIEW_CREATED = "MessagePreviewCreated",
+    EVENT_IN_S3 = "EventInS3"
+}
+
+/**
+ * Event types supported in ts-types-chat with privacy filtering.
+ * This is a filtered subset of platform PushUpdateEventType.
+ *
+ * IMPORTANT: When adding a new event type to PushUpdateEvent union,
+ * you MUST also add the corresponding event type here.
+ */
+declare enum PushUpdateEventType_2 {
+    /** @deprecated use CONTACT_CREATED */
+    CASE_CREATED = "CaseCreated",
+    CONTACT_CREATED = "CaseCreated",
+    /** @deprecated use ASSIGNED_AGENT_CHANGED */
+    CASE_INBOX_ASSIGNEE_CHANGED = "CaseInboxAssigneeChanged",
+    ASSIGNED_AGENT_CHANGED = "CaseInboxAssigneeChanged",
+    /** @deprecated use CONTACT_STATUS_CHANGED */
+    CASE_STATUS_CHANGED = "CaseStatusChanged",
+    CONTACT_STATUS_CHANGED = "CaseStatusChanged",
+    /** @deprecated use CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED */
+    CASE_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED = "CaseToRoutingQueueAssignmentChanged",
+    CONTACT_TO_ROUTING_QUEUE_ASSIGNMENT_CHANGED = "CaseToRoutingQueueAssignmentChanged",
+    CONTACT_INBOX_PRE_ASSIGNEE_CHANGED = "ConsumerContactInboxPreAssigneeChanged",
+    CONTACT_PREFERRED_USER_CHANGED = "ContactPreferredUserChanged",
+    CONTACT_RECIPIENTS_CHANGED = "ContactRecipientsChanged",
+    MESSAGE_ADDED_INTO_CASE = "MessageAddedIntoCase",
+    MESSAGE_CREATED = "MessageCreated",
+    MESSAGE_DELIVERY_STATUS_CHANGED = "MessageDeliveryStatusChanged",
+    MESSAGE_SEEN_CHANGED = "MessageSeenChanged",
+    MESSAGE_READ_CHANGED = "MessageReadChanged",
+    MESSAGE_SENT = "MessageSent",
+    MESSAGE_UPDATED = "MessageUpdated",
+    PAGE_VIEW_CREATED = "PageViewCreated",
+    SENDER_TYPING_STARTED = "SenderTypingStarted",
+    SENDER_TYPING_ENDED = "SenderTypingEnded",
+    USER_STATUS_CHANGED = "UserStatusChanged",
+    FIRE_PROACTIVE = "FireProactiveAction",
     EVENT_IN_S3 = "EventInS3"
 }
 
@@ -1760,6 +2283,22 @@ declare interface RoutingQueue {
 
 declare type RoutingQueueId = Flavor<string, 'RoutingQueueId'>;
 
+declare interface S3Event extends PushUpdateEventFields {
+    data: S3EventData;
+    eventObject: PushUpdateEventObject.S3_OBJECT;
+    eventType: PushUpdateEventType.EVENT_IN_S3;
+}
+
+declare interface S3EventData {
+    originEvent: {
+        eventObject: string;
+        eventType: string;
+    };
+    s3Object: {
+        url: string;
+    };
+}
+
 export declare class SdkVersionNotSupported extends Error {
     name: string;
     message: string;
@@ -1805,6 +2344,40 @@ declare interface SendEmailInvitationToGroupChatEventData extends AwsInputEventD
     }>;
 }
 
+/**
+ * SenderTypingEnded event with privacy filtering support.
+ */
+declare interface SenderTypingEndedData extends Omit<SenderTypingEndedEvent_2['data'], 'user'> {
+    user?: User;
+}
+
+declare interface SenderTypingEndedEvent extends Omit<SenderTypingEndedEvent_2, 'data'> {
+    data: SenderTypingEndedData;
+}
+
+declare interface SenderTypingEndedEvent_2 extends PushUpdateEventFields {
+    data: TypingEventData;
+    eventObject: PushUpdateEventObject.SENDER_ACTION;
+    eventType: PushUpdateEventType.SENDER_TYPING_ENDED;
+}
+
+/**
+ * SenderTypingStarted event with privacy filtering support.
+ */
+declare interface SenderTypingStartedData extends Omit<SenderTypingStartedEvent_2['data'], 'user'> {
+    user?: User;
+}
+
+declare interface SenderTypingStartedEvent extends Omit<SenderTypingStartedEvent_2, 'data'> {
+    data: SenderTypingStartedData;
+}
+
+declare interface SenderTypingStartedEvent_2 extends PushUpdateEventFields {
+    data: TypingEventData;
+    eventObject: PushUpdateEventObject.SENDER_ACTION;
+    eventType: PushUpdateEventType.SENDER_TYPING_STARTED;
+}
+
 export declare function sendJoinGroupChatEvent(joinGroupChatPayloadData: EventPayloadData<JoinGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
 
 export declare function sendLeaveGroupChatEvent(leaveGroupChatPayloadData: EventPayloadData<LeaveGroupChatEventData>, wsClient: WebSocketClient | null): Promise<ChatEventData>;
@@ -1847,8 +2420,10 @@ declare interface SendMessageOptions {
     messageId?: MessageId;
 }
 
-declare interface SendOutboundEventData extends Omit<SendMessageEventData, 'consumer'> {
+export declare interface SendOutboundEventData extends Omit<SendMessageEventData, 'consumer'> {
 }
+
+declare type SensitiveUserField = (typeof FIELDS_WITH_SENSITIVE_DATA)[number];
 
 declare enum Sentiment {
     POSITIVE = "positive",
@@ -1856,10 +2431,14 @@ declare enum Sentiment {
     NEGATIVE = "negative"
 }
 
-declare interface SentMessage {
+export declare interface SentMessage extends Omit<SentMessage_2, 'authorUser'> {
+    authorUser: User | null;
+}
+
+declare interface SentMessage_2 {
     attachments: Array<Attachment>;
     authorEndUserIdentity: EndUserIdentity | null;
-    authorUser: User | null;
+    authorUser: User_2 | null;
     createdAt: string;
     direction: MessageDirection;
     idOnExternalPlatform: MessageIdOnExternalPlatform;
@@ -1888,6 +2467,28 @@ export declare function splitName(name: string): [string, string];
 
 declare interface Statistics {
     inboxAssigneeResponseTime: InboxAssigneeResponseTime | null;
+}
+
+export declare interface StreamedMessageContent extends MessageContentBase {
+    payload: StreamedPayload;
+    type: MessageType.STREAMED;
+}
+
+export declare interface StreamedMessageDelta {
+    content: string;
+}
+
+export declare interface StreamedMessageEventData {
+    delta?: StreamedMessageDelta;
+    fullContent: string;
+    messageId: string;
+    originalMessage: Message;
+    threadId: string;
+}
+
+export declare interface StreamedPayload {
+    protocol: string;
+    sourceUrl: string;
 }
 
 declare interface Tag {
@@ -2091,8 +2692,8 @@ export declare interface ThreadRecoveredData extends Omit<ThreadRecoveredPostbac
 
 export declare interface ThreadRecoveredPostbackData extends AwsResponseEventPostbackData {
     contact: Contact;
-    ownerAssignee: UserFromApiData | null;
-    inboxAssignee: UserFromApiData | null;
+    ownerAssignee: User | null;
+    inboxAssignee: User | null;
     messages: Array<Message>;
     messagesScrollToken: string;
     thread: {
@@ -2150,7 +2751,7 @@ declare interface TypingEventData {
     brand: Brand;
     channel: Channel;
     thread: ThreadView;
-    user?: User;
+    user?: User_2;
     direction?: 'inbound' | 'outbound';
 }
 
@@ -2171,7 +2772,16 @@ export declare interface UploadFailResponse {
     }>;
 }
 
-declare interface User {
+/**
+ * User type that supports both privacy modes:
+ * - UserFromPlatformTypes: Full user data with all fields (privacy disabled)
+ * - UserWithoutSensitiveData: User data without sensitive fields (privacy enabled)
+ *
+ * When "Hide personal information" is enabled, sensitive fields are completely removed.
+ */
+export declare type User = User_2 | UserWithoutSensitiveData;
+
+declare interface User_2 {
     agentId?: number | null;
     emailAddress: string;
     firstName: string;
@@ -2184,18 +2794,12 @@ declare interface User {
     nickname?: string | null;
     publicImageUrl?: string;
     surname: string;
+    divisionNumber: number | null;
+    imagePublic?: string | null;
+    image?: string | null;
 }
 
-declare interface UserFromApiData {
-    firstName: string;
-    id: number;
-    image: string;
-    imagePublic: string;
-    nickname: string | null;
-    surname: string;
-}
-
-declare type UserId = Flavor<number, 'UserId'>;
+export declare type UserId = Flavor<number, 'UserId'>;
 
 declare interface UserStatistics {
     createdToReadSeconds: {
@@ -2205,6 +2809,50 @@ declare interface UserStatistics {
     readAt: string | null;
     seenAt: string | null;
 }
+
+declare interface UserStatus {
+    id: UserStatusId;
+    name: string;
+    timeElapsedInSeconds?: number;
+    type: UserStatusType;
+}
+
+declare interface UserStatusChangedData {
+    brand: Brand;
+    user: User_2;
+    userStatus: UserStatus;
+}
+
+declare interface UserStatusChangedData_2 extends Omit<UserStatusChangedData, 'user'> {
+    user: User;
+}
+
+declare interface UserStatusChangedEvent extends Omit<UserStatusChangedEvent_2, 'data'> {
+    data: UserStatusChangedData_2;
+}
+
+declare interface UserStatusChangedEvent_2 extends PushUpdateEventFields {
+    data: UserStatusChangedData;
+    eventObject: PushUpdateEventObject.USER_STATUS;
+    eventType: PushUpdateEventType.USER_STATUS_CHANGED;
+}
+
+declare type UserStatusId = Flavor<string, 'UserStatusId'>;
+
+declare enum UserStatusType {
+    ONLINE = "online",
+    OFFLINE = "offline",
+    NOT_AVAILABLE = "na"
+}
+
+/**
+ * User type without sensitive personal information fields.
+ * Used when "Hide personal information" channel setting is enabled.
+ *
+ * Removed fields: emailAddress, loginUsername, isBotUser, isSurveyUser, agentId, incontactId, divisionNumber
+ * Kept fields with actual values: id, firstName, surname, nickname, imageUrl, publicImageUrl
+ */
+declare type UserWithoutSensitiveData = Omit<User_2, SensitiveUserField>;
 
 declare type Value = CustomField['value'];
 
@@ -2277,7 +2925,13 @@ export declare enum WebSocketClientEvent {
     ERROR = "error",
     MESSAGE = "message",
     OPEN = "open",
-    AUTHORIZATION_FAILED = "authorizationFailed"
+    AUTHORIZATION_FAILED = "authorizationFailed",
+    RECONNECTING = "reconnecting"
+}
+
+export declare class WebSocketConnectionError extends Error {
+    name: string;
+    constructor(message: string, reason?: string);
 }
 
 export { }

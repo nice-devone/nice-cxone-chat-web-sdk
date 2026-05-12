@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.2.0]
+
+### Added
+- New `ChatSdk.getPersistentMenuItems(): Promise<Array<PersistentMenuItem>>` method and the `PersistentMenuItem` type. Calls `GET /chat/1.0/brand/{brandId}/channel/{channelId}/persistent-menu-items` using the SDK instance's `brandId`, `channelId`, and chat endpoint. Throws `ChatSDKError` on transport failure or when the response is not an array.
+
+### Changed
+- When the maximum number of retries to establish a WebSocket connection is reached, a new **WebSocketConnectionError** is emitted. This error can be handled via the existing onError callback, allowing consumers to react to permanent connection failures.
+
+### Fixed
+- Fixed WebSocket reconnection status display by preventing CLOSE event from being forwarded during active reconnection attempts. The RECONNECTING event is now emitted only when actively reconnecting (`retryCount > 0 && retryCount < maxRetries`), allowing consumers to properly display reconnection status without interference from CLOSE events. When reconnection retries are exhausted (`retryCount >= maxRetries`), the CLOSE event is now correctly forwarded to allow proper error handling and display of error pages.
+
+
 ## [3.1.0]
 
 ### Changed
