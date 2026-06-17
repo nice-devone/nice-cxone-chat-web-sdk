@@ -4,6 +4,20 @@
 - [NPM package](https://www.npmjs.com/package/@nice-devone/nice-cxone-chat-web-sdk)
 - [Sample Web App](https://github.com/nice-devone/nice-cxone-chat-web-sample)
 
+## Guides
+
+In-depth developer guides live in [`docs_guides/`](docs_guides/):
+
+- [Getting started](docs_guides/getting-started.md) — install, initialize, connect, and send your first message.
+- [Configuration reference](docs_guides/configuration.md) — every `ChatSDKOptions` field, environments, storage, and channel info.
+- [Authentication](docs_guides/authentication.md) — Secured Sessions, customer identity, and token lifecycle.
+- [Connection, reconnect & heartbeat](docs_guides/connection-guidance.md) — the connection lifecycle, reconnect/recovery (recover after connect vs. reconnect), `FetchThreadList` vs `Recover`, and what the SDK handles for you.
+- [Events & errors](docs_guides/events-and-errors.md) — the event catalog, type guards, and error handling.
+- [Messaging & rich content](docs_guides/messaging-and-rich-content.md) — sending/receiving, rich content, streamed (GenAI) messages, and attachments.
+- [Threads & livechat](docs_guides/threads-and-livechat.md) — messaging vs livechat, contacts/cases, custom fields, and group chat.
+- [Proactive & visitors](docs_guides/proactive-and-visitors.md) — proactive actions, page views, and visitor tracking.
+- [Migration](docs_guides/migration.md) — upgrading between SDK versions and replacing deprecated APIs.
+
 ## Requirements
 
 - TypeScript **4.9+**
@@ -33,12 +47,29 @@ import ChatSdk, { EnvironmentName, ChatEvent, ChatEventData } from '@nice-devone
 ### Init
 
 ```ts
-// Initialize Chat SDK with required options
+// Minimal setup — no persistence or caching
 const sdk = new ChatSdk({
   brandId: 123,
   channelId: 'my-channel-id',
   customerId: 'customer-id',
-  environment: EnvironmentName.EU1
+  environment: EnvironmentName.EU1,
+  cacheStorage: null,
+  storage: null,
+});
+```
+
+`cacheStorage` and `storage` are required. Pass `null` if you do not want the SDK to cache or persist anything. For production use, pass real instances so customer identity, scroll tokens and other state survive page reloads:
+
+```ts
+import ChatSdk, { CacheStorage, EnvironmentName } from '@nice-devone/nice-cxone-chat-web-sdk';
+
+const sdk = new ChatSdk({
+  brandId: 123,
+  channelId: 'my-channel-id',
+  customerId: 'customer-id',
+  environment: EnvironmentName.EU1,
+  cacheStorage: new CacheStorage(window.localStorage),
+  storage: window.localStorage,
 });
 ```
 
@@ -67,11 +98,13 @@ await sdk.getChannelAvailability()
 Get or create a Thread instance:
 
 ```ts
-const thread = await sdk.getThread('thread-id');
+const thread = sdk.getThread('thread-id');
 // Optionally recover a thread state (messages) from the server
 const threadRecoveredData = await thread.recover();
 console.log(threadRecoveredData.messages);
 ```
+
+`getThread()` is synchronous — it returns a `Thread` (or `LivechatThread` for livechat channels) without any network call.
 
 
 #### Send a message
@@ -94,9 +127,13 @@ thread.onThreadEvent(ChatEvent.MESSAGE_CREATED, (event: CustomEvent<ChatEventDat
 
 #### Load more messages
 
+`loadMoreMessages()` returns `null` when there are no more messages to load (no scroll token), so the result must be null-checked:
+
 ```ts
 const loadMoreMessageResponse = await thread.loadMoreMessages();
-console.log(loadMoreMessageResponse.data.messages);
+if (loadMoreMessageResponse !== null) {
+    console.log(loadMoreMessageResponse.data.messages);
+}
 ```
 
 ### Mark messages as read
@@ -108,10 +145,10 @@ await thread.lastMessageSeen();
 
 ### Livechat
 
-Livechat channel needs to call `startChat()` method first to start the chat.
-Customers might end the chat by calling `endChat()` method.
+`startChat()` and `endChat()` are available **only on livechat channels** — they are methods of `LivechatThread`, which is the concrete type returned by `sdk.getThread(...)` when the channel is configured as livechat. Livechat channel needs to call `startChat()` method first to start the chat. Customers might end the chat by calling `endChat()` method.
 
 ```ts
+const thread = sdk.getThread('thread-id') as LivechatThread;
 await thread.startChat();
 ```
 
@@ -119,7 +156,7 @@ Get position in queue:
 
 ```ts
 sdk.onChatEvent(ChatEvent.SET_POSITION_IN_QUEUE, (event) => {
-    if (isSetPositionInQueuePayload(event.detail)) {
+    if (isSetPositionInQueueEvent(event)) {
         setQueuePosition(event.detail.data.positionInQueue);
     }
 });
@@ -153,7 +190,7 @@ await thread.setName('New thread name');
 ```
 
 
-### Attachements
+### Attachments
 
 ```ts
 await thread.sendAttachments(fileList);
@@ -177,7 +214,7 @@ thread.onThreadEvent(ChatEvent.AGENT_TYPING_STARTED, (event: CustomEvent<ChatEve
    // Do something with the event
 });
 
-thread.onThreadEvent(ChatEvent.AGENT_TYPING_STOPPED, (event: CustomEvent<ChatEventData>) => {
+thread.onThreadEvent(ChatEvent.AGENT_TYPING_ENDED, (event: CustomEvent<ChatEventData>) => {
    // Do something with the event
 });
 ```
@@ -185,8 +222,9 @@ thread.onThreadEvent(ChatEvent.AGENT_TYPING_STOPPED, (event: CustomEvent<ChatEve
 ### Assignment
 
 ```ts
-sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, (event: CustomEvent<ChatEventData>) => {
-    const agentName = parseAgentName((event.detail.data as AssignedAgentChangedData).inboxAssignee);
+sdk.onChatEvent(ChatEvent.ASSIGNED_AGENT_CHANGED, (event) => {
+    const assignee = event.detail.data.inboxAssignee;
+    const agentName = `${assignee?.firstName ?? ''} ${assignee?.surname ?? ''}`.trim();
 });
 ```
 

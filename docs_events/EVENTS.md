@@ -2,6 +2,8 @@
 
 This document describes the events that the client can listen to.
 
+> For how to subscribe to and narrow these events in code — plus the full `ChatEvent` catalog (including queue-position and streamed/GenAI message events) and error handling — see the [Events & errors guide](../docs_guides/events-and-errors.md). Rendering streamed messages and rich content is covered in the [Messaging & rich content guide](../docs_guides/messaging-and-rich-content.md).
+
 ## Message events
 
 | Event                     | Description                                                                                                                                                           |                                                |

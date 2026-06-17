@@ -1,9 +1,24 @@
 # Changelog
 
+## [3.3.0]
+
+### Added
+- `TypeErrors` from `fetch` — e.g., when the connection drops before any bytes are exchanged — are now retried automatically. Network-level failures on GET requests are retried up to 5 total attempts with exponential backoff and jitter. HTTP error responses, including 429 and 5xx, are not retried, since the server has already explicitly chosen to refuse the request. Retries respect the caller-provided `AbortSignal` and the `timeout` option, which caps total time across all attempts. `POST` and other non-idempotent methods are not retried.
+- Developer documentation guide set under `docs_guides/` — getting started, configuration reference, authentication (Secured Sessions), connection/reconnect & heartbeat, events & errors, messaging & rich content, threads & livechat, proactive & visitors, and migration — linked from the README. Published with the package via the existing `docs_*` release step.
+
+### Changed
+- Revised the README usage documentation to accurately reflect the public SDK surface, including required initialization options, method return types, event identifiers, and supported helper functions.
+
+### Fixed
+- Resolved a WebSocket connectivity issue in environments where the chat gateway host diverged from the canonical pattern. `buildEnvironmentEndpoints()` now resolves to `wss://chat-gw-de-{env}.{publicDNS}`, matching the deployed gateway across every supported region and restoring connectivity for affected SDK consumers.
+- Fixed `beforeunload` handler registration in `abortableFetch` so an in-flight fetch is actually aborted when the page unloads.
+- Fixed nested `ChatSDKError` inside `ChatSDKError` when wrapping a fetch failure: the inner error's `data` is now flattened onto the outer instead of duplicated. Non-`Error` throws (cross-realm `TypeError`, plain objects) get a fixed `Unknown error` message with the raw value stashed on `additionalInfo._thrownValue`. Subclasses of `ChatSDKError` (e.g. `AbortError`) are preserved as `cause` so `instanceof` checks against the subclass still work; only direct `ChatSDKError` instances have their `cause` flattened to the underlying root cause.
+
 ## [3.2.0]
 
 ### Added
 - New `ChatSdk.getPersistentMenuItems(): Promise<Array<PersistentMenuItem>>` method and the `PersistentMenuItem` type. Calls `GET /chat/1.0/brand/{brandId}/channel/{channelId}/persistent-menu-items` using the SDK instance's `brandId`, `channelId`, and chat endpoint. Throws `ChatSDKError` on transport failure or when the response is not an array.
+- Added optional `timeoutMs` option to `fetchJSON` and applied a 30s timeout to the `getTransactionToken` request; the request now aborts and throws when the timeout is exceeded.
 
 ### Changed
 - When the maximum number of retries to establish a WebSocket connection is reached, a new **WebSocketConnectionError** is emitted. This error can be handled via the existing onError callback, allowing consumers to react to permanent connection failures.

@@ -43,7 +43,12 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
-<div class="tsd-index-list"><a href="UploadAttachmentError.html#captureStackTrace" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>capture<wbr/>Stack<wbr/>Trace</span></a>
+<div class="tsd-index-list"><a href="UploadAttachmentError.html#_formatBaseMessage" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>#format<wbr/>Base<wbr/>Message</span></a>
+<a href="UploadAttachmentError.html#_initializeFromError" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#initialize<wbr/>From<wbr/>Error</span></a>
+<a href="UploadAttachmentError.html#_isDirectChatSDKError" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#is<wbr/>Direct<wbr/>ChatSDKError</span></a>
+<a href="UploadAttachmentError.html#_mergeAdditionalInfo" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#merge<wbr/>Additional<wbr/>Info</span></a>
+<a href="UploadAttachmentError.html#_stripNamePrefix" class="tsd-index-link tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#strip<wbr/>Name<wbr/>Prefix</span></a>
+<a href="UploadAttachmentError.html#captureStackTrace" class="tsd-index-link tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>capture<wbr/>Stack<wbr/>Trace</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Constructors</h2>
@@ -117,6 +122,71 @@
 <p>Inherited from <a href="ChatSDKError.html">ChatSDKError</a>.<a href="ChatSDKError.html#stackTraceLimit">stackTraceLimit</a></p></aside></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
+<section class="tsd-panel tsd-member tsd-is-private tsd-is-inherited"><a id="_formatBaseMessage" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#format<wbr/>Base<wbr/>Message</span><a href="#_formatBaseMessage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="_formatBaseMessage._formatBaseMessage-1"><span class="tsd-kind-call-signature">#format<wbr/>Base<wbr/>Message</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_formatBaseMessage._formatBaseMessage-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">error</span>: <span class="tsd-signature-type">unknown</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="ChatSDKError.html">ChatSDKError</a>.<a href="ChatSDKError.html#_formatBaseMessage">#formatBaseMessage</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private tsd-is-inherited"><a id="_initializeFromError" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#initialize<wbr/>From<wbr/>Error</span><a href="#_initializeFromError" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="_initializeFromError._initializeFromError-1"><span class="tsd-kind-call-signature">#initialize<wbr/>From<wbr/>Error</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#_initializeFromError._initializeFromError-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">error</span>: <a href="ChatSDKError.html" class="tsd-signature-type tsd-kind-class">ChatSDKError</a></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="ChatSDKError.html">ChatSDKError</a>.<a href="ChatSDKError.html#_initializeFromError">#initializeFromError</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private tsd-is-inherited"><a id="_isDirectChatSDKError" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#is<wbr/>Direct<wbr/>ChatSDKError</span><a href="#_isDirectChatSDKError" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="_isDirectChatSDKError._isDirectChatSDKError-1"><span class="tsd-kind-call-signature">#is<wbr/>Direct<wbr/>ChatSDKError</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol"> is </span><a href="ChatSDKError.html" class="tsd-signature-type tsd-kind-class">ChatSDKError</a><a href="#_isDirectChatSDKError._isDirectChatSDKError-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Checks if the value is direct ChatSDKError not a subclass.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">value</span>: <span class="tsd-signature-type">unknown</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-kind-parameter">value</span><span class="tsd-signature-symbol"> is </span><a href="ChatSDKError.html" class="tsd-signature-type tsd-kind-class">ChatSDKError</a></h4>
+<div class="tsd-comment tsd-typography"></div><aside class="tsd-sources">
+<p>Inherited from <a href="ChatSDKError.html">ChatSDKError</a>.<a href="ChatSDKError.html#_isDirectChatSDKError">#isDirectChatSDKError</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private tsd-is-inherited"><a id="_mergeAdditionalInfo" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#merge<wbr/>Additional<wbr/>Info</span><a href="#_mergeAdditionalInfo" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="_mergeAdditionalInfo._mergeAdditionalInfo-1"><span class="tsd-kind-call-signature">#merge<wbr/>Additional<wbr/>Info</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">inner</span>, <span class="tsd-kind-parameter">rest</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">unknown</span><a href="#_mergeAdditionalInfo._mergeAdditionalInfo-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">inner</span>: <span class="tsd-signature-type">unknown</span></h5></li>
+<li>
+<h5><span class="tsd-kind-parameter">rest</span>: <span class="tsd-signature-type ">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="ChatSDKError.html">ChatSDKError</a>.<a href="ChatSDKError.html#_mergeAdditionalInfo">#mergeAdditionalInfo</a></p></aside></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private tsd-is-inherited"><a id="_stripNamePrefix" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#strip<wbr/>Name<wbr/>Prefix</span><a href="#_stripNamePrefix" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private tsd-is-inherited">
+<li class="tsd-signature tsd-anchor-link" id="_stripNamePrefix._stripNamePrefix-1"><span class="tsd-kind-call-signature">#strip<wbr/>Name<wbr/>Prefix</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">message</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><a href="#_stripNamePrefix._stripNamePrefix-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">message</span>: <span class="tsd-signature-type">string</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
+<p>Inherited from <a href="ChatSDKError.html">ChatSDKError</a>.<a href="ChatSDKError.html#_stripNamePrefix">#stripNamePrefix</a></p></aside></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external"><a id="captureStackTrace" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagStatic">Static</code> <span>capture<wbr/>Stack<wbr/>Trace</span><a href="#captureStackTrace" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-inherited tsd-is-external">
@@ -161,6 +231,11 @@
 <li><a href="#stack" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>stack</span></a></li>
 <li><a href="#prepareStackTrace" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>prepare<wbr/>Stack<wbr/>Trace</span></a></li>
 <li><a href="#stackTraceLimit" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>stack<wbr/>Trace<wbr/>Limit</span></a></li>
+<li><a href="#_formatBaseMessage" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#format<wbr/>Base<wbr/>Message</span></a></li>
+<li><a href="#_initializeFromError" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#initialize<wbr/>From<wbr/>Error</span></a></li>
+<li><a href="#_isDirectChatSDKError" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#is<wbr/>Direct<wbr/>ChatSDKError</span></a></li>
+<li><a href="#_mergeAdditionalInfo" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#merge<wbr/>Additional<wbr/>Info</span></a></li>
+<li><a href="#_stripNamePrefix" class="tsd-is-private tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#strip<wbr/>Name<wbr/>Prefix</span></a></li>
 <li><a href="#captureStackTrace" class="tsd-is-inherited tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>capture<wbr/>Stack<wbr/>Trace</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>Cx<wbr/>One chat web SDK</span></a>

@@ -523,6 +523,7 @@ export declare interface ChannelInfo {
     translations: {
         [key: string]: string;
     };
+    translationsLocale: string;
     colors: BrandInfoColors;
     widget: BrandInfoWidget;
     popups: Array<BrandInfoPopup>;
@@ -597,6 +598,7 @@ declare type ChannelInfoSettings = {
     enableChatTypingPreview: boolean;
     enablePersistentMenu?: boolean;
     chatRedesign: boolean;
+    enableAiLabel?: boolean;
 };
 
 export declare const CHAT_SDK_VERSION: string;
@@ -784,6 +786,7 @@ export { ChatSdk }
 export default ChatSdk;
 
 export declare class ChatSDKError extends Error {
+    #private;
     name: string;
     data: unknown;
     additionalInfo?: unknown;
@@ -886,6 +889,7 @@ declare interface Contact_2 {
     inboxAssigneeUser: User_2 | null;
     inboxPreAssigneeUser: User_2 | null;
     interactionId: string;
+    isDraft?: boolean;
     ownerAssignee: UserId | null;
     ownerAssigneeUser: User_2 | null;
     recipients: Array<Recipient>;
@@ -1599,6 +1603,7 @@ declare interface Message_2 {
     isMadeByUser: boolean;
     isRead?: boolean;
     isReplyAllowed?: boolean;
+    isAiGenerated?: boolean;
     messageContent: MessageContent;
     postId: PostId;
     reactionStatistics?: ReactionStatistics;
