@@ -42,6 +42,8 @@ You pass a single options object to `new ChatSdk(...)`. The table below lists ev
 | `securedSession` | `SecureSessionsType` | No | — | Enables a Secured Session authentication model (`SecureSessions.ANONYMOUS`, `SECURED_COOKIES`, or `THIRD_PARTY`), or `null` for none. See **authentication.md**. |
 | `isAuthorizationEnabled` | `boolean` | No | — | Indicates the channel requires customer authorization (OAuth). Forced on automatically when the Secured Session type is `THIRD_PARTY`. See **authentication.md**. |
 | `authorizationCode` | `string` | No | — | OAuth authorization code for the legacy authorization flow. Can also be passed later to `connect(authorizationCode)`. See **authentication.md**. |
+| `accessToken` | `string` | No | — | Pre-obtained 3rd-party OAuth access token, selecting the **implicit** grant. Takes precedence over `authorizationCode` when both are set. See **authentication.md**. |
+| `codeVerifier` | `string` | No | — | PKCE code verifier, sent alongside the authorization code. Set this at construction when the code only becomes available later (on the IdP redirect). See **authentication.md**. |
 | `identityToken` | `string` | No | — | Pre-existing identity token used to resume an authenticated session. See **authentication.md**. |
 | `isThirdPartyCookiesSupported` | `boolean` | No | — | Tells the SDK whether the embedding context allows third-party cookies, affecting the secured-cookie strategy. See **authentication.md**. |
 | `onAuthorization` | `AuthorizationCallback` | No | — | Callback invoked with the authorization result. See **authentication.md**. |

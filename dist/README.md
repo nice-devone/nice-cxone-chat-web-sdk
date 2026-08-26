@@ -23,6 +23,7 @@ In-depth developer guides live in [`docs_guides/`](docs_guides/):
 - TypeScript **4.9+**
 - Runtime: **ES2022** (`WebSocket`, `Intl`, `Promise`, `EventTarget`, `CustomEvent`, `JSON`, `Date`, `crypto`, `EventSource`, etc.)
 - Custom application bundler (webpack, create-react-app, etc.)
+- NICE always supports the two most recent major versions (semantic versioning), older versions are marked as deprecated on NPM (and it is in the customer's best interest to update to the new versions)
 
 ## Quickstart
 

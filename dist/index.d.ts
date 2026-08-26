@@ -173,6 +173,13 @@ declare interface BasicChannelInfo {
     };
 }
 
+export declare interface BotProtection {
+    provider: BotProtectionProvider;
+    token: string;
+}
+
+export declare type BotProtectionProvider = 'recaptcha' | 'turnstile';
+
 declare interface Brand {
     businessUnitId: number | null;
     friendlyName: string;
@@ -285,6 +292,10 @@ export declare class CacheStorageError extends Error {
     constructor(message: string);
 }
 
+export declare class CaptchaRequiredError extends Error {
+    name: string;
+}
+
 export declare type Case = Omit<Case_2, 'inboxAssigneeUser' | 'inboxPreAssigneeUser' | 'ownerAssigneeUser' | 'targetedUser'> & {
     inboxAssigneeUser?: User | null;
     inboxPreAssigneeUser?: User | null;
@@ -306,6 +317,7 @@ declare interface Case_2 {
     divisionNumber?: number | null;
     endUserRecipients: Array<Recipient>;
     endUser: CustomerView;
+    handler: ContactHandler;
     id: CaseId;
     inboxAssignee?: number;
     inboxAssigneeUser?: User_2 | null;
@@ -319,6 +331,7 @@ declare interface Case_2 {
     recipientsCustomers?: Array<RecipientCustomer>;
     routableType?: ContactRoutableType;
     routingAttribute?: number;
+    routingAttributes?: Array<number>;
     routingQueueId?: RoutingQueueId;
     routingQueuePriority: number;
     statistics: Statistics;
@@ -597,8 +610,10 @@ declare type ChannelInfoSettings = {
     emailInvitationLink: string;
     enableChatTypingPreview: boolean;
     enablePersistentMenu?: boolean;
+    cognigyEndpointUrl?: string | null;
     chatRedesign: boolean;
     enableAiLabel?: boolean;
+    isCaptchaInPreChatSurveyEnabled: boolean;
 };
 
 export declare const CHAT_SDK_VERSION: string;
@@ -678,11 +693,31 @@ declare class ChatSdk {
     constructor(options: ChatSDKOptions);
     /**
      * Initiate a WebSocket connection
-     * @param authorizationCode - authorization code
-     * @returns Promise<boolean> - true if the connection was created, false if the connection already exists
-     * @throws ChatSDKError
+     * @param credentials - an authorization code (shorthand for the authorization_code grant), or a
+     * {@link ThirdPartyCredentials} object to use the implicit grant or supply a PKCE code verifier
+     * @param botProtection - bot protection token (e.g. reCAPTCHA, Turnstile) sent with the initial authorization_code grant
+     * @returns Promise<boolean> - true if the connection was created, false if the connection already exists.
+     * Credentials are stored before that check, so passing them to an already-connected instance seeds
+     * them for the next grant run by retryAuthorization() or resetSession().
+     * @throws ChatSDKError - if `credentials` is an object whose `grantType` is missing or is not
+     * 'authorization_code' | 'implicit'. Rejects the promise; not delivered via onError.
+     * @throws ChatSDKError | IpAddressBlockedError | CaptchaRequiredError - for secure sessions, if the authorization grant is rejected. The error is also delivered via onError; call retryAuthorization() to recover from a CaptchaRequiredError.
      */
-    connect(authorizationCode?: string): Promise<boolean>;
+    connect(credentials?: string | ThirdPartyCredentials, botProtection?: BotProtection): Promise<boolean>;
+    /**
+     * Recover from a rejected authorization grant (e.g. after the SDK surfaced
+     * a CaptchaRequiredError via onError) by re-running the grant with a fresh
+     * bot-protection token.
+     *
+     * A plain connect() retry cannot recover here: #createConnection() leaves
+     * #websocketClient non-null on failure, so connect() would just return
+     * false. This tears the failed attempt down and re-runs it with a fresh
+     * #ready deferred.
+     * @param botProtection - fresh bot protection token (e.g. reCAPTCHA, Turnstile) for the retried authorization_code grant
+     * @returns Promise<boolean> - true once the retried connection succeeds
+     * @throws ChatSDKError | IpAddressBlockedError | CaptchaRequiredError - if the retried grant is rejected again (e.g. the captcha challenge was failed twice); safe to call again with a new token
+     */
+    retryAuthorization(botProtection: BotProtection): Promise<boolean>;
     ready(): Promise<void>;
     /**
      * Get channel info
@@ -699,21 +734,18 @@ declare class ChatSdk {
      */
     getChannelAvailability(): Promise<ChannelAvailabilityResponse>;
     /**
-     * Get persistent menu items configured for the channel.
-     * @returns Array of PersistentMenuItem
-     * @throws ChatSDKError
-     */
-    getPersistentMenuItems(): Promise<Array<PersistentMenuItem>>;
-    /**
      * Send Authorization Event
      * @deprecated - use Secured Session flow instead (SDK option `securedSession` and {@link ChatSdk.connect})
-     * @param authorizationCode - authorization code
+     * @param credentials - an authorization code (shorthand for the authorization_code grant), or a
+     * {@link ThirdPartyCredentials} object to use the implicit grant or supply a PKCE code verifier
      * @param visitorId - visitor id
      * @param browserFingerprint - BrowserFingerprint object, use getBrowserFingerprint helper function to create it
      * @throws AuthorizationError
      *  * This exception is thrown when the authorization or refresh token fails
+     * @throws ChatSDKError - if `credentials` is an object whose `grantType` is missing or is not
+     * 'authorization_code' | 'implicit'. Rejects the promise; not delivered via onError.
      */
-    authorize(authorizationCode?: string, visitorId?: VisitorId, browserFingerprint?: BrowserFingerprint): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
+    authorize(credentials?: string | ThirdPartyCredentials, visitorId?: VisitorId, browserFingerprint?: BrowserFingerprint): Promise<ConsumerAuthorizationSuccessPayloadData | CustomerReconnectSuccessPayloadData>;
     /**
      * Generate Authorization Token from the given url
      *
@@ -819,12 +851,16 @@ declare interface ChatSDKErrorData {
 export declare type ChatSDKOptions = ChatSDKOptionsDefinedEnvironment | ChatSDKOptionsCustomEnvironment;
 
 declare interface ChatSDKOptionsBase {
+    /** Pre-obtained 3rd-party OAuth access token (implicit grant). */
+    accessToken?: string;
     appName?: string;
     appVersion?: string | number;
     authorizationCode?: string;
     brandId: BrandId;
     cacheStorage: ICacheStorage | null;
     channelId: ChannelId;
+    /** PKCE code verifier, sent alongside an authorization_code grant. */
+    codeVerifier?: string;
     customerId?: CustomerIdentityIdOnExternalPlatform;
     customerImage?: string;
     customerName?: string;
@@ -883,6 +919,7 @@ declare interface Contact_2 {
     customerContactId: string;
     customerStatistics: CustomerStatistics;
     detailUrl: string;
+    handler: ContactHandler;
     id: ContactNumber;
     inboxAssignee: UserId | null;
     inboxAssigneeLastAssignedAt: string | null;
@@ -917,6 +954,11 @@ export declare interface ContactCreatedChatEvent extends ChatEventData {
 }
 
 export declare type ContactCreatedData = CaseCreatedData_2;
+
+export declare enum ContactHandler {
+    COGNIGY = "cognigy",
+    CXONE = "cxone"
+}
 
 declare interface ContactInboxPreAssigneeChangedData {
     acceptRejectFlow?: {
@@ -1322,7 +1364,7 @@ export declare interface EventPayloadData<D extends AwsInputEventData> {
  * List of User fields that contain sensitive personal information.
  * These fields are completely removed when "Hide personal information" is enabled.
  */
-declare const FIELDS_WITH_SENSITIVE_DATA: readonly ["emailAddress", "username", "loginUsername", "isBotUser", "isSurveyUser", "agentId", "incontactId", "inContactId", "divisionNumber", "publicImageUrl", "imagePublic", "image", "name", "fullName", "email", "inContactSharedUser", "isChatbot", "userType"];
+declare const FIELDS_WITH_SENSITIVE_DATA: readonly ["emailAddress", "username", "loginUsername", "isBotUser", "agentId", "incontactId", "inContactId", "divisionNumber", "publicImageUrl", "imagePublic", "image", "name", "fullName", "email", "inContactSharedUser", "isChatbot", "userType"];
 
 declare interface FileRestrictionsSettings {
     allowedFileSize: string;
@@ -1934,12 +1976,6 @@ declare interface PageViewCreatedEvent_2 extends PushUpdateEventFields {
     eventType: PushUpdateEventType.PAGE_VIEW_CREATED;
 }
 
-export declare type PersistentMenuItem = {
-    id: string;
-    label: string;
-    postback: string;
-};
-
 declare type Postback = string | null;
 
 /** @deprecated use ContactStorageId */
@@ -2507,6 +2543,27 @@ declare type TagId = Flavor<number, 'TagId'>;
 
 declare type TenantId = Flavor<string, 'TenantId'>;
 
+/** Credentials for the `authorization_code` grant, optionally with a PKCE verifier. */
+declare interface ThirdPartyAuthorizationCodeCredentials {
+    authorizationCode: string;
+    codeVerifier?: string;
+    grantType: 'authorization_code';
+}
+
+/**
+ * Credentials an integrator supplies for 3rd-party OAuth, discriminated by grant type. The
+ * pairings are not interchangeable — the backend requires an access token for `implicit` and
+ * accepts a PKCE `codeVerifier` only with `authorization_code` — so the union keeps an invalid
+ * combination unrepresentable.
+ */
+export declare type ThirdPartyCredentials = ThirdPartyAuthorizationCodeCredentials | ThirdPartyImplicitCredentials;
+
+/** Credentials for the `implicit` grant: an access token the integrator already holds. */
+declare interface ThirdPartyImplicitCredentials {
+    accessToken: string;
+    grantType: 'implicit';
+}
+
 declare interface ThirdPartyToken {
     access_token: string;
     expires_in: number;
@@ -2854,8 +2911,10 @@ declare enum UserStatusType {
  * User type without sensitive personal information fields.
  * Used when "Hide personal information" channel setting is enabled.
  *
- * Removed fields: emailAddress, loginUsername, isBotUser, isSurveyUser, agentId, incontactId, divisionNumber
- * Kept fields with actual values: id, firstName, surname, nickname, imageUrl, publicImageUrl
+ * Removed fields: emailAddress, loginUsername, isBotUser, agentId, incontactId, divisionNumber
+ * Kept fields with actual values: id, firstName, surname, nickname, imageUrl, publicImageUrl, isSurveyUser
+ *
+ * isSurveyUser is intentionally retained: it identifies the satisfaction-survey service author
  */
 declare type UserWithoutSensitiveData = Omit<User_2, SensitiveUserField>;
 

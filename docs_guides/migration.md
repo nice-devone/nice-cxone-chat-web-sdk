@@ -148,7 +148,6 @@ You don't *have* to use these, but they make integrations simpler and more robus
 
 - **Secured Sessions.** The recommended authentication model. The gateway authenticates the socket directly, so your app never handles a token and skips `authorize()` entirely. Configure via the `securedSession` option. → **[authentication.md](./authentication.md)**
 - **Streamed / GenAI message events.** The SDK exposes `StreamedMessageEventData` (with incremental `delta` and the accumulated `fullContent`) and an `isStreamedMessageEventData` guard, so you can render generative responses as they stream in rather than waiting for the full message. → **[events-and-errors.md](./events-and-errors.md)**
-- **Persistent menu.** `sdk.getPersistentMenuItems()` returns the channel's configured `PersistentMenuItem[]`, letting you render a persistent quick-action menu. *(Added in `3.2.0`.)*
 - **Richer `ChatSDKError`.** Errors now carry `cause` (the original error), structured `data`, and — for fetch-originated failures — a `probableCause` bucket (`offline`, `network-failure`, `browser-blocked`, `http-4xx`, `http-5xx`, `user-aborted`, `unknown`) plus `navigatorOnLine` / `elapsedMs` diagnostics. Use these to give users a precise failure reason and to triage support reports. → **[events-and-errors.md](./events-and-errors.md)**
 - **`WebSocketConnectionError` on exhausted retries.** When the SDK gives up reconnecting the WebSocket, it emits `WebSocketConnectionError`, which you can handle via your `onError` callback to show a permanent-failure state. *(Added in `3.2.0`.)*
 - **Automatic GET retries.** Network-level `fetch` failures on GET requests are now retried automatically (up to 5 attempts, exponential backoff with jitter, respecting your `AbortSignal` and `timeout`). No action required — your reads are simply more resilient. *(Added in `3.3.0`.)*
@@ -165,7 +164,7 @@ A condensed view of recent releases, taken from `CHANGELOG.md`. Use it to see ex
 - **Fixed:** `beforeunload` handler registration in `abortableFetch` (in-flight fetch is now actually aborted on page unload); nested `ChatSDKError`-in-`ChatSDKError` wrapping (inner error `data` flattened, not duplicated; subclasses like `AbortError` preserved as `cause`).
 
 ### 3.2.0
-- **Added:** `sdk.getPersistentMenuItems(): Promise<PersistentMenuItem[]>` and the `PersistentMenuItem` type; optional `timeoutMs` for `fetchJSON` plus a 30s timeout on `getTransactionToken`.
+- **Added:** optional `timeoutMs` for `fetchJSON` plus a 30s timeout on `getTransactionToken`.
 - **Changed:** a new `WebSocketConnectionError` is emitted when WebSocket connection retries are exhausted (handle it via `onError`).
 - **Fixed:** reconnection status display — `RECONNECTING` is emitted only while actively reconnecting; `CLOSE` is forwarded only once retries are exhausted.
 

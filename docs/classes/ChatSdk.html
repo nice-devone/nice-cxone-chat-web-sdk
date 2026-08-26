@@ -53,6 +53,7 @@
 <h3 class="tsd-index-heading">Methods</h3>
 <div class="tsd-index-list"><a href="ChatSdk.html#_createConnection" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>#create<wbr/>Connection</span></a>
 <a href="ChatSdk.html#_createSocketUrl" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#create<wbr/>Socket<wbr/>Url</span></a>
+<a href="ChatSdk.html#_finishConnect" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#finish<wbr/>Connect</span></a>
 <a href="ChatSdk.html#_initEnvironment" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#init<wbr/>Environment</span></a>
 <a href="ChatSdk.html#_initWS" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#initWS</span></a>
 <a href="ChatSdk.html#_onErrorHandler" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#on<wbr/>Error<wbr/>Handler</span></a>
@@ -64,7 +65,6 @@
 <a href="ChatSdk.html#getChannelAvailability" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Channel<wbr/>Availability</span></a>
 <a href="ChatSdk.html#getChannelInfo" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Channel<wbr/>Info</span></a>
 <a href="ChatSdk.html#getCustomer" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Customer</span></a>
-<a href="ChatSdk.html#getPersistentMenuItems" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Persistent<wbr/>Menu<wbr/>Items</span></a>
 <a href="ChatSdk.html#getThread" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Thread</span></a>
 <a href="ChatSdk.html#getThreadList" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Thread<wbr/>List</span></a>
 <a href="ChatSdk.html#getWebsocketClient" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Websocket<wbr/>Client</span></a>
@@ -73,6 +73,7 @@
 <a href="ChatSdk.html#recoverLivechatThreadData" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>recover<wbr/>Livechat<wbr/>Thread<wbr/>Data</span></a>
 <a href="ChatSdk.html#recoverThreadData" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>recover<wbr/>Thread<wbr/>Data</span></a>
 <a href="ChatSdk.html#resetSession" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reset<wbr/>Session</span></a>
+<a href="ChatSdk.html#retryAuthorization" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>retry<wbr/>Authorization</span></a>
 <a href="ChatSdk.html#sendOfflineMessage" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Offline<wbr/>Message</span></a>
 </div></section></div></details></section></section>
 <section class="tsd-panel-group tsd-member-group">
@@ -118,8 +119,15 @@
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>#message<wbr/>Emitter</span><a href="#_messageEmitter" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">#message<wbr/>Emitter</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/IChatEventTarget.html" class="tsd-signature-type tsd-kind-interface">IChatEventTarget</a><span class="tsd-signature-symbol"> = ...</span></div></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_ready" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>#ready</span><a href="#_ready" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<div class="tsd-signature"><span class="tsd-kind-property">#ready</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">PromiseWithResolvers</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div></section>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#ready</span><a href="#_ready" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">#ready</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">PromiseWithResolvers</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = ...</span></div>
+<div class="tsd-comment tsd-typography"><p>The current connection attempt&#39;s authorization outcome:
+#createSocketUrl() rejects it on a failed grant and #finishConnect()
+resolves it on success. connect() / retryAuthorization() / resetSession()
+each install a fresh one before starting a new attempt, since a settled
+promise can&#39;t be re-settled for the next attempt.</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_streamedMessageHandler" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <code class="tsd-tag ts-flagReadonly">Readonly</code> <span>#streamed<wbr/>Message<wbr/>Handler</span><a href="#_streamedMessageHandler" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">#streamed<wbr/>Message<wbr/>Handler</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type ">StreamedMessageHandler</span><span class="tsd-signature-symbol"> = ...</span></div></section>
@@ -158,6 +166,21 @@
 <li class="tsd-signature tsd-anchor-link" id="_createSocketUrl._createSocketUrl-1"><span class="tsd-kind-call-signature">#create<wbr/>Socket<wbr/>Url</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span><a href="#_createSocketUrl._createSocketUrl-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></section>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_finishConnect" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#finish<wbr/>Connect</span><a href="#_finishConnect" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_finishConnect._finishConnect-1"><span class="tsd-kind-call-signature">#finish<wbr/>Connect</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#_finishConnect._finishConnect-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>The tail shared by connect() and retryAuthorization() once
+#createConnection() has run: wait for the grant to settle (for secure
+sessions), wire up the Customer, and mark the instance ready. Extracted
+because retryAuthorization() needs to run exactly this same sequence
+after its own #createConnection() call — duplicating it would drift the
+two entry points apart (e.g. one getting the Customer wiring and the
+other not).</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_initEnvironment" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#init<wbr/>Environment</span><a href="#_initEnvironment" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -209,7 +232,7 @@
 <section class="tsd-panel tsd-member"><a id="authorize" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>authorize</span><a href="#authorize" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="authorize.authorize-1"><span class="tsd-kind-call-signature">authorize</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">authorizationCode</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">visitorId</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">browserFingerprint</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ConsumerAuthorizationSuccessPayloadData.html" class="tsd-signature-type tsd-kind-interface">ConsumerAuthorizationSuccessPayloadData</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/CustomerReconnectSuccessPayloadData.html" class="tsd-signature-type tsd-kind-interface">CustomerReconnectSuccessPayloadData</a><span class="tsd-signature-symbol">&gt;</span><a href="#authorize.authorize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="authorize.authorize-1"><span class="tsd-kind-call-signature">authorize</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">credentials</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">visitorId</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">browserFingerprint</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ConsumerAuthorizationSuccessPayloadData.html" class="tsd-signature-type tsd-kind-interface">ConsumerAuthorizationSuccessPayloadData</a><span class="tsd-signature-symbol"> | </span><a href="../interfaces/CustomerReconnectSuccessPayloadData.html" class="tsd-signature-type tsd-kind-interface">CustomerReconnectSuccessPayloadData</a><span class="tsd-signature-symbol">&gt;</span><a href="#authorize.authorize-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Send Authorization Event</p>
 </div>
@@ -217,8 +240,9 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">authorizationCode</span>: <span class="tsd-signature-type">string</span></h5>
-<div class="tsd-comment tsd-typography"><p>authorization code</p>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">credentials</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../types/ThirdPartyCredentials.html" class="tsd-signature-type tsd-kind-type-alias">ThirdPartyCredentials</a></h5>
+<div class="tsd-comment tsd-typography"><p>an authorization code (shorthand for the authorization_code grant), or a
+<a href="../types/ThirdPartyCredentials.html" class="tsd-kind-type-alias">ThirdPartyCredentials</a> object to use the implicit grant or supply a PKCE code verifier</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li>
 <li>
@@ -241,11 +265,14 @@
 <ul>
 <li>This exception is thrown when the authorization or refresh token fails</li>
 </ul>
+
+<h4>Throws</h4><p>ChatSDKError - if <code>credentials</code> is an object whose <code>grantType</code> is missing or is not
+&#39;authorization_code&#39; | &#39;implicit&#39;. Rejects the promise; not delivered via onError.</p>
 </div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="connect" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>connect</span><a href="#connect" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="connect.connect-1"><span class="tsd-kind-call-signature">connect</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">authorizationCode</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#connect.connect-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-signature tsd-anchor-link" id="connect.connect-1"><span class="tsd-kind-call-signature">connect</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">credentials</span><span class="tsd-signature-symbol">?</span>, <span class="tsd-kind-parameter">botProtection</span><span class="tsd-signature-symbol">?</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#connect.connect-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
 <li class="tsd-description">
 <div class="tsd-comment tsd-typography"><p>Initiate a WebSocket connection</p>
 </div>
@@ -253,14 +280,25 @@
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">authorizationCode</span>: <span class="tsd-signature-type">string</span></h5>
-<div class="tsd-comment tsd-typography"><p>authorization code</p>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">credentials</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><a href="../types/ThirdPartyCredentials.html" class="tsd-signature-type tsd-kind-type-alias">ThirdPartyCredentials</a></h5>
+<div class="tsd-comment tsd-typography"><p>an authorization code (shorthand for the authorization_code grant), or a
+<a href="../types/ThirdPartyCredentials.html" class="tsd-kind-type-alias">ThirdPartyCredentials</a> object to use the implicit grant or supply a PKCE code verifier</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li>
+<li>
+<h5><code class="tsd-tag ts-flagOptional">Optional</code> <span class="tsd-kind-parameter">botProtection</span>: <a href="../interfaces/BotProtection.html" class="tsd-signature-type tsd-kind-interface">BotProtection</a></h5>
+<div class="tsd-comment tsd-typography"><p>bot protection token (e.g. reCAPTCHA, Turnstile) sent with the initial authorization_code grant</p>
 </div>
 <div class="tsd-comment tsd-typography"></div></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise<boolean> - true if the connection was created, false if the connection already exists</p>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise<boolean> - true if the connection was created, false if the connection already exists.
+Credentials are stored before that check, so passing them to an already-connected instance seeds
+them for the next grant run by retryAuthorization() or resetSession().</p>
 
 <div class="tsd-comment tsd-typography">
-<h4>Throws</h4><p>ChatSDKError</p>
+<h4>Throws</h4><p>ChatSDKError - if <code>credentials</code> is an object whose <code>grantType</code> is missing or is not
+&#39;authorization_code&#39; | &#39;implicit&#39;. Rejects the promise; not delivered via onError.</p>
+
+<h4>Throws</h4><p>ChatSDKError | IpAddressBlockedError | CaptchaRequiredError - for secure sessions, if the authorization grant is rejected. The error is also delivered via onError; call retryAuthorization() to recover from a CaptchaRequiredError.</p>
 </div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="generateAuthorizationToken" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>generate<wbr/>Authorization<wbr/>Token</span><a href="#generateAuthorizationToken" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
@@ -321,18 +359,6 @@ Returns channel info like feature toggle status, translations, file upload restr
 </div>
 <h4 class="tsd-returns-title">Returns <a href="Customer.html" class="tsd-signature-type tsd-kind-class">Customer</a></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
-<section class="tsd-panel tsd-member"><a id="getPersistentMenuItems" class="tsd-anchor"></a>
-<h3 class="tsd-anchor-link"><span>get<wbr/>Persistent<wbr/>Menu<wbr/>Items</span><a href="#getPersistentMenuItems" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
-<ul class="tsd-signatures">
-<li class="tsd-signature tsd-anchor-link" id="getPersistentMenuItems.getPersistentMenuItems-1"><span class="tsd-kind-call-signature">get<wbr/>Persistent<wbr/>Menu<wbr/>Items</span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/PersistentMenuItem.html" class="tsd-signature-type tsd-kind-type-alias">PersistentMenuItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span><a href="#getPersistentMenuItems.getPersistentMenuItems-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
-<li class="tsd-description">
-<div class="tsd-comment tsd-typography"><p>Get persistent menu items configured for the channel.</p>
-</div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../types/PersistentMenuItem.html" class="tsd-signature-type tsd-kind-type-alias">PersistentMenuItem</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Array of PersistentMenuItem</p>
-
-<div class="tsd-comment tsd-typography">
-<h4>Throws</h4><p>ChatSDKError</p>
-</div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="getThread" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>get<wbr/>Thread</span><a href="#getThread" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -483,6 +509,32 @@ Returns channel info like feature toggle status, translations, file upload restr
 <h5><span class="tsd-kind-parameter">visitId</span>: <span class="tsd-signature-type ">VisitId</span><span class="tsd-signature-symbol"> = ...</span></h5></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 <div class="tsd-comment tsd-typography"></div></li></ul></section>
+<section class="tsd-panel tsd-member"><a id="retryAuthorization" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><span>retry<wbr/>Authorization</span><a href="#retryAuthorization" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="tsd-signature tsd-anchor-link" id="retryAuthorization.retryAuthorization-1"><span class="tsd-kind-call-signature">retry<wbr/>Authorization</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">botProtection</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span><a href="#retryAuthorization.retryAuthorization-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Recover from a rejected authorization grant (e.g. after the SDK surfaced
+a CaptchaRequiredError via onError) by re-running the grant with a fresh
+bot-protection token.</p>
+<p>A plain connect() retry cannot recover here: #createConnection() leaves
+#websocketClient non-null on failure, so connect() would just return
+false. This tears the failed attempt down and re-runs it with a fresh
+#ready deferred.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">botProtection</span>: <a href="../interfaces/BotProtection.html" class="tsd-signature-type tsd-kind-interface">BotProtection</a></h5>
+<div class="tsd-comment tsd-typography"><p>fresh bot protection token (e.g. reCAPTCHA, Turnstile) for the retried authorization_code grant</p>
+</div>
+<div class="tsd-comment tsd-typography"></div></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">&gt;</span></h4><p>Promise<boolean> - true once the retried connection succeeds</p>
+
+<div class="tsd-comment tsd-typography">
+<h4>Throws</h4><p>ChatSDKError | IpAddressBlockedError | CaptchaRequiredError - if the retried grant is rejected again (e.g. the captcha challenge was failed twice); safe to call again with a new token</p>
+</div></li></ul></section>
 <section class="tsd-panel tsd-member"><a id="sendOfflineMessage" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><span>send<wbr/>Offline<wbr/>Message</span><a href="#sendOfflineMessage" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -545,6 +597,7 @@ Returns channel info like feature toggle status, translations, file upload restr
 <li><a href="#onRawEvent" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>on<wbr/>Raw<wbr/>Event</span></a></li>
 <li><a href="#_createConnection" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#create<wbr/>Connection</span></a></li>
 <li><a href="#_createSocketUrl" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#create<wbr/>Socket<wbr/>Url</span></a></li>
+<li><a href="#_finishConnect" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#finish<wbr/>Connect</span></a></li>
 <li><a href="#_initEnvironment" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#init<wbr/>Environment</span></a></li>
 <li><a href="#_initWS" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#initWS</span></a></li>
 <li><a href="#_onErrorHandler" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#on<wbr/>Error<wbr/>Handler</span></a></li>
@@ -556,7 +609,6 @@ Returns channel info like feature toggle status, translations, file upload restr
 <li><a href="#getChannelAvailability" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Channel<wbr/>Availability</span></a></li>
 <li><a href="#getChannelInfo" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Channel<wbr/>Info</span></a></li>
 <li><a href="#getCustomer" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Customer</span></a></li>
-<li><a href="#getPersistentMenuItems" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Persistent<wbr/>Menu<wbr/>Items</span></a></li>
 <li><a href="#getThread" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Thread</span></a></li>
 <li><a href="#getThreadList" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Thread<wbr/>List</span></a></li>
 <li><a href="#getWebsocketClient" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>get<wbr/>Websocket<wbr/>Client</span></a></li>
@@ -565,12 +617,14 @@ Returns channel info like feature toggle status, translations, file upload restr
 <li><a href="#recoverLivechatThreadData" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>recover<wbr/>Livechat<wbr/>Thread<wbr/>Data</span></a></li>
 <li><a href="#recoverThreadData" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>recover<wbr/>Thread<wbr/>Data</span></a></li>
 <li><a href="#resetSession" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>reset<wbr/>Session</span></a></li>
+<li><a href="#retryAuthorization" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>retry<wbr/>Authorization</span></a></li>
 <li><a href="#sendOfflineMessage" class=""><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>send<wbr/>Offline<wbr/>Message</span></a></li></ul></div></details></div>
 <div class="site-menu">
 <nav class="tsd-navigation"><a href="../modules.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-4"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-namespace)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.33 16V7.24H10.77L13.446 14.74C13.43 14.54 13.41 14.296 13.386 14.008C13.37 13.712 13.354 13.404 13.338 13.084C13.33 12.756 13.326 12.448 13.326 12.16V7.24H14.37V16H12.93L10.266 8.5C10.282 8.692 10.298 8.936 10.314 9.232C10.33 9.52 10.342 9.828 10.35 10.156C10.366 10.476 10.374 10.784 10.374 11.08V16H9.33Z" fill="var(--color-text)"></path></g></svg><span>Cx<wbr/>One chat web SDK</span></a>
 <ul class="tsd-small-nested-navigation">
 <li><a href="../modules.html#default"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-8388608"><rect fill="var(--color-icon-background)" stroke="#FF4D82" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M10.354 17V8.24H13.066C13.586 8.24 14.042 8.348 14.434 8.564C14.826 8.772 15.13 9.064 15.346 9.44C15.562 9.816 15.67 10.256 15.67 10.76C15.67 11.352 15.514 11.86 15.202 12.284C14.898 12.708 14.482 13 13.954 13.16L15.79 17H14.518L12.838 13.28H11.434V17H10.354ZM11.434 12.308H13.066C13.514 12.308 13.874 12.168 14.146 11.888C14.418 11.6 14.554 11.224 14.554 10.76C14.554 10.288 14.418 9.912 14.146 9.632C13.874 9.352 13.514 9.212 13.066 9.212H11.434V12.308Z" fill="var(--color-text)"></path></g></svg><span>default</span></a></li>
 <li><a href="../enums/ChannelAvailability.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-8"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-enum)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z" fill="var(--color-text)"></path></g></svg><span>Channel<wbr/>Availability</span></a></li>
+<li><a href="../enums/ContactHandler.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Contact<wbr/>Handler</span></a></li>
 <li><a href="../enums/ContactStatus.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Contact<wbr/>Status</span></a></li>
 <li><a href="../enums/EnvironmentName.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Environment<wbr/>Name</span></a></li>
 <li><a href="../enums/MessageType.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Message<wbr/>Type</span></a></li>
@@ -581,6 +635,7 @@ Returns channel info like feature toggle status, translations, file upload restr
 <li><a href="AuthorizationError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Authorization<wbr/>Error</span></a></li>
 <li><a href="CacheStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage</span></a></li>
 <li><a href="CacheStorageError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage<wbr/>Error</span></a></li>
+<li><a href="CaptchaRequiredError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Captcha<wbr/>Required<wbr/>Error</span></a></li>
 <li><a href="ChatSDKError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>ChatSDKError</span></a></li>
 <li><a href="ChatSdk.html" class="current"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Chat<wbr/>Sdk</span></a></li>
 <li><a href="CreateInvitationFailedError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Create<wbr/>Invitation<wbr/>Failed<wbr/>Error</span></a></li>
@@ -605,6 +660,7 @@ Returns channel info like feature toggle status, translations, file upload restr
 <li><a href="../interfaces/AuthorizationToken.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorization<wbr/>Token</span></a></li>
 <li><a href="../interfaces/AuthorizeConsumerEventSuccessResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorize<wbr/>Consumer<wbr/>Event<wbr/>Success<wbr/>Response</span></a></li>
 <li><a href="../interfaces/AuthorizeConsumerEventSuccessResponseData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorize<wbr/>Consumer<wbr/>Event<wbr/>Success<wbr/>Response<wbr/>Data</span></a></li>
+<li><a href="../interfaces/BotProtection.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Bot<wbr/>Protection</span></a></li>
 <li><a href="../interfaces/BrowserFingerprintOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Browser<wbr/>Fingerprint<wbr/>Options</span></a></li>
 <li><a href="../interfaces/CachedStorageItem.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Cached<wbr/>Storage<wbr/>Item</span></a></li>
 <li><a href="../interfaces/ChannelAvailabilityResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Channel<wbr/>Availability<wbr/>Response</span></a></li>
@@ -668,6 +724,7 @@ Returns channel info like feature toggle status, translations, file upload restr
 <li><a href="../types/AssignedAgentChangedData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Assigned<wbr/>Agent<wbr/>Changed<wbr/>Data</span></a></li>
 <li><a href="../types/AttachmentId.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Attachment<wbr/>Id</span></a></li>
 <li><a href="../types/AuthorizationCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Authorization<wbr/>Callback</span></a></li>
+<li><a href="../types/BotProtectionProvider.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Bot<wbr/>Protection<wbr/>Provider</span></a></li>
 <li><a href="../types/BrandId.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Brand<wbr/>Id</span></a></li>
 <li><a href="../types/Case.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Case</span></a></li>
 <li><a href="../types/ChannelAvailabilityOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Channel<wbr/>Availability<wbr/>Options</span></a></li>
@@ -682,11 +739,11 @@ Returns channel info like feature toggle status, translations, file upload restr
 <li><a href="../types/ErrorCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Error<wbr/>Callback</span></a></li>
 <li><a href="../types/EventListenerFunction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Event<wbr/>Listener<wbr/>Function</span></a></li>
 <li><a href="../types/MessageContent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Message<wbr/>Content</span></a></li>
-<li><a href="../types/PersistentMenuItem.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Persistent<wbr/>Menu<wbr/>Item</span></a></li>
 <li><a href="../types/PushUpdateEvent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Push<wbr/>Update<wbr/>Event</span></a></li>
 <li><a href="../types/RawEventCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Raw<wbr/>Event<wbr/>Callback</span></a></li>
 <li><a href="../types/RemoveListenerFunction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Remove<wbr/>Listener<wbr/>Function</span></a></li>
 <li><a href="../types/SecureSessionsType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Secure<wbr/>Sessions<wbr/>Type</span></a></li>
+<li><a href="../types/ThirdPartyCredentials.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Third<wbr/>Party<wbr/>Credentials</span></a></li>
 <li><a href="../types/ThreadIdOnExternalPlatform.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Thread<wbr/>Id<wbr/>On<wbr/>External<wbr/>Platform</span></a></li>
 <li><a href="../types/User.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>User</span></a></li>
 <li><a href="../types/UserId.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>User<wbr/>Id</span></a></li>

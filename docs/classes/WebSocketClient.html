@@ -42,7 +42,8 @@
 </div></section>
 <section class="tsd-index-section">
 <h3 class="tsd-index-heading">Methods</h3>
-<div class="tsd-index-list"><a href="WebSocketClient.html#_setupConnection" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>#setup<wbr/>Connection</span></a>
+<div class="tsd-index-list"><a href="WebSocketClient.html#_isSocketURLGetterRejection" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-2048"><rect fill="var(--color-icon-background)" stroke="#FF4DB8" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M9.162 16V7.24H10.578L11.514 10.072C11.602 10.328 11.674 10.584 11.73 10.84C11.794 11.088 11.842 11.28 11.874 11.416C11.906 11.28 11.954 11.088 12.018 10.84C12.082 10.584 12.154 10.324 12.234 10.06L13.122 7.24H14.538V16H13.482V12.82C13.482 12.468 13.49 12.068 13.506 11.62C13.53 11.172 13.558 10.716 13.59 10.252C13.622 9.78 13.654 9.332 13.686 8.908C13.726 8.476 13.762 8.1 13.794 7.78L12.366 12.16H11.334L9.894 7.78C9.934 8.092 9.97 8.456 10.002 8.872C10.042 9.28 10.078 9.716 10.11 10.18C10.142 10.636 10.166 11.092 10.182 11.548C10.206 12.004 10.218 12.428 10.218 12.82V16H9.162Z" fill="var(--color-text)"></path></g></svg><span>#is<wbr/>SocketURLGetter<wbr/>Rejection</span></a>
+<a href="WebSocketClient.html#_setupConnection" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#setup<wbr/>Connection</span></a>
 <a href="WebSocketClient.html#_socketEventHandler" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#socket<wbr/>Event<wbr/>Handler</span></a>
 <a href="WebSocketClient.html#_errorHandler" class="tsd-index-link tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_error<wbr/>Handler</span></a>
 <a href="WebSocketClient.html#connect" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>connect</span></a>
@@ -113,6 +114,25 @@
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type ">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></h4></li></ul></li></ul></div></section></section>
 <section class="tsd-panel-group tsd-member-group">
 <h2>Methods</h2>
+<section class="tsd-panel tsd-member tsd-is-private"><a id="_isSocketURLGetterRejection" class="tsd-anchor"></a>
+<h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#is<wbr/>SocketURLGetter<wbr/>Rejection</span><a href="#_isSocketURLGetterRejection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures tsd-is-private">
+<li class="tsd-signature tsd-anchor-link" id="_isSocketURLGetterRejection._isSocketURLGetterRejection-1"><span class="tsd-kind-call-signature">#is<wbr/>SocketURLGetter<wbr/>Rejection</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">error</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><a href="#_isSocketURLGetterRejection._isSocketURLGetterRejection-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></li>
+<li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>True only when <code>error</code> is one of the specific types the caller-supplied
+socketURLGetter is known to reject with (ChatSdk&#39;s #createSocketUrl
+throws these on a failed authorization grant) — not a generic
+<code>instanceof Error</code> check, so an unrelated library change that starts
+populating ErrorEvent.error can&#39;t silently disable real error reporting
+above.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li>
+<h5><span class="tsd-kind-parameter">error</span>: <span class="tsd-signature-type">unknown</span></h5></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+<div class="tsd-comment tsd-typography"></div></li></ul></section>
 <section class="tsd-panel tsd-member tsd-is-private"><a id="_setupConnection" class="tsd-anchor"></a>
 <h3 class="tsd-anchor-link"><code class="tsd-tag ts-flagPrivate">Private</code> <span>#setup<wbr/>Connection</span><a href="#_setupConnection" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24"><use href="#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures tsd-is-private">
@@ -278,6 +298,7 @@
 <li><a href="#_eventTarget" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>#event<wbr/>Target</span></a></li>
 <li><a href="#onError" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>on<wbr/>Error</span></a></li>
 <li><a href="#socketURLGetter" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-1024"></use></svg><span>socketURLGetter</span></a></li>
+<li><a href="#_isSocketURLGetterRejection" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#is<wbr/>SocketURLGetter<wbr/>Rejection</span></a></li>
 <li><a href="#_setupConnection" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#setup<wbr/>Connection</span></a></li>
 <li><a href="#_socketEventHandler" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>#socket<wbr/>Event<wbr/>Handler</span></a></li>
 <li><a href="#_errorHandler" class="tsd-is-private"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-2048"></use></svg><span>_error<wbr/>Handler</span></a></li>
@@ -292,6 +313,7 @@
 <ul class="tsd-small-nested-navigation">
 <li><a href="../modules.html#default"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-8388608"><rect fill="var(--color-icon-background)" stroke="#FF4D82" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="12"></rect><path d="M10.354 17V8.24H13.066C13.586 8.24 14.042 8.348 14.434 8.564C14.826 8.772 15.13 9.064 15.346 9.44C15.562 9.816 15.67 10.256 15.67 10.76C15.67 11.352 15.514 11.86 15.202 12.284C14.898 12.708 14.482 13 13.954 13.16L15.79 17H14.518L12.838 13.28H11.434V17H10.354ZM11.434 12.308H13.066C13.514 12.308 13.874 12.168 14.146 11.888C14.418 11.6 14.554 11.224 14.554 10.76C14.554 10.288 14.418 9.912 14.146 9.632C13.874 9.352 13.514 9.212 13.066 9.212H11.434V12.308Z" fill="var(--color-text)"></path></g></svg><span>default</span></a></li>
 <li><a href="../enums/ChannelAvailability.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><g id="icon-8"><rect fill="var(--color-icon-background)" stroke="var(--color-ts-enum)" stroke-width="1.5" x="1" y="1" width="22" height="22" rx="6"></rect><path d="M9.45 16V7.24H14.49V8.224H10.518V10.936H14.07V11.908H10.518V15.016H14.49V16H9.45Z" fill="var(--color-text)"></path></g></svg><span>Channel<wbr/>Availability</span></a></li>
+<li><a href="../enums/ContactHandler.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Contact<wbr/>Handler</span></a></li>
 <li><a href="../enums/ContactStatus.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Contact<wbr/>Status</span></a></li>
 <li><a href="../enums/EnvironmentName.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Environment<wbr/>Name</span></a></li>
 <li><a href="../enums/MessageType.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-8"></use></svg><span>Message<wbr/>Type</span></a></li>
@@ -302,6 +324,7 @@
 <li><a href="AuthorizationError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Authorization<wbr/>Error</span></a></li>
 <li><a href="CacheStorage.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage</span></a></li>
 <li><a href="CacheStorageError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Cache<wbr/>Storage<wbr/>Error</span></a></li>
+<li><a href="CaptchaRequiredError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Captcha<wbr/>Required<wbr/>Error</span></a></li>
 <li><a href="ChatSDKError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>ChatSDKError</span></a></li>
 <li><a href="ChatSdk.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Chat<wbr/>Sdk</span></a></li>
 <li><a href="CreateInvitationFailedError.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-128"></use></svg><span>Create<wbr/>Invitation<wbr/>Failed<wbr/>Error</span></a></li>
@@ -326,6 +349,7 @@
 <li><a href="../interfaces/AuthorizationToken.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorization<wbr/>Token</span></a></li>
 <li><a href="../interfaces/AuthorizeConsumerEventSuccessResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorize<wbr/>Consumer<wbr/>Event<wbr/>Success<wbr/>Response</span></a></li>
 <li><a href="../interfaces/AuthorizeConsumerEventSuccessResponseData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Authorize<wbr/>Consumer<wbr/>Event<wbr/>Success<wbr/>Response<wbr/>Data</span></a></li>
+<li><a href="../interfaces/BotProtection.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Bot<wbr/>Protection</span></a></li>
 <li><a href="../interfaces/BrowserFingerprintOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Browser<wbr/>Fingerprint<wbr/>Options</span></a></li>
 <li><a href="../interfaces/CachedStorageItem.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Cached<wbr/>Storage<wbr/>Item</span></a></li>
 <li><a href="../interfaces/ChannelAvailabilityResponse.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-256"></use></svg><span>Channel<wbr/>Availability<wbr/>Response</span></a></li>
@@ -389,6 +413,7 @@
 <li><a href="../types/AssignedAgentChangedData.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Assigned<wbr/>Agent<wbr/>Changed<wbr/>Data</span></a></li>
 <li><a href="../types/AttachmentId.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Attachment<wbr/>Id</span></a></li>
 <li><a href="../types/AuthorizationCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Authorization<wbr/>Callback</span></a></li>
+<li><a href="../types/BotProtectionProvider.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Bot<wbr/>Protection<wbr/>Provider</span></a></li>
 <li><a href="../types/BrandId.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Brand<wbr/>Id</span></a></li>
 <li><a href="../types/Case.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Case</span></a></li>
 <li><a href="../types/ChannelAvailabilityOptions.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Channel<wbr/>Availability<wbr/>Options</span></a></li>
@@ -403,11 +428,11 @@
 <li><a href="../types/ErrorCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Error<wbr/>Callback</span></a></li>
 <li><a href="../types/EventListenerFunction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Event<wbr/>Listener<wbr/>Function</span></a></li>
 <li><a href="../types/MessageContent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Message<wbr/>Content</span></a></li>
-<li><a href="../types/PersistentMenuItem.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Persistent<wbr/>Menu<wbr/>Item</span></a></li>
 <li><a href="../types/PushUpdateEvent.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Push<wbr/>Update<wbr/>Event</span></a></li>
 <li><a href="../types/RawEventCallback.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Raw<wbr/>Event<wbr/>Callback</span></a></li>
 <li><a href="../types/RemoveListenerFunction.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Remove<wbr/>Listener<wbr/>Function</span></a></li>
 <li><a href="../types/SecureSessionsType.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Secure<wbr/>Sessions<wbr/>Type</span></a></li>
+<li><a href="../types/ThirdPartyCredentials.html"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Third<wbr/>Party<wbr/>Credentials</span></a></li>
 <li><a href="../types/ThreadIdOnExternalPlatform.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>Thread<wbr/>Id<wbr/>On<wbr/>External<wbr/>Platform</span></a></li>
 <li><a href="../types/User.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>User</span></a></li>
 <li><a href="../types/UserId.html" class="tsd-is-external"><svg class="tsd-kind-icon" viewBox="0 0 24 24"><use href="#icon-4194304"></use></svg><span>User<wbr/>Id</span></a></li>

@@ -214,7 +214,9 @@ const sdk = new ChatSdk({
 
 ### The error hierarchy
 
-The base class is **`ChatSDKError`** (extends `Error`). It normalizes arbitrary thrown values, preserves the original error in `cause`, and exposes a `data` field and an `additionalInfo` field. Anything the SDK reports through `onError` that isn't already a `ChatSDKError` is wrapped in one.
+The base class for the SDK's own structured errors is **`ChatSDKError`** (extends `Error`). It normalizes arbitrary thrown values, preserves the original error in `cause`, and exposes a `data` field and an `additionalInfo` field.
+
+**Not every error reaching `onError` is a `ChatSDKError`.** Several types in the table below extend `Error` directly, and the SDK passes any `Error` through to `onError` unchanged — precisely so subclass identity and a custom `name` survive (that is what makes the `name`-branching below possible). Only a non-`Error` throw gets wrapped in a `ChatSDKError`. So `onError` receives `Error`, and you should branch on `name` or on `instanceof <SpecificError>` rather than assuming `instanceof ChatSDKError`.
 
 The exported guard **`isChatSDKError(error)`** returns true only when `error instanceof ChatSDKError` **and** `error.data !== undefined`.
 
@@ -229,6 +231,7 @@ The distinct error types, when they fire, and their base class:
 | `WebSocketConnectionError` | `Error` | The socket closed and the heartbeat had already declared the connection dead ("HeartBeat died") — i.e. a genuine connection loss after retries. Show a hard-offline state. |
 | `WebSocketClientError` | `Error` | A transient WebSocket error or close (connection error, connection closed, or an unknown socket error) that is *not* a dead-heartbeat disconnect. Usually paired with the SDK's reconnect logic. |
 | `IpAddressBlockedError` | `Error` | The consumer's IP address is blocked. **Its `name` is `'ipAddressBlocked'`** (not the class name) — branch on `name`. |
+| `CaptchaRequiredError` | `Error` | The token endpoint rejected the authorization grant because a captcha challenge is required. **Its `name` is `'captchaRequired'`** (not the class name) — branch on `name`. Recover by presenting the challenge and calling `chatSdk.retryAuthorization(botProtection)` with the fresh token; see [authentication.md](./authentication.md#errors). |
 | `SdkVersionNotSupported` | `Error` | The backend rejected the SDK version. `name` is `'SdkVersionNotSupported'`; message asks the user to update. Prompt an app update. |
 | `UploadAttachmentError` | `ChatSDKError` | An attachment upload failed; `data.response` holds the failure response. |
 | `AbortError` | `ChatSDKError` | An abortable operation (e.g. a data-recovery call) was cancelled. `name` is `'AbortError'`. |
@@ -247,7 +250,7 @@ The `*FailedError` classes are **thrown (rejected)** from their corresponding as
 
 ### Branching `onError` by type
 
-`IpAddressBlockedError` and `SdkVersionNotSupported` set a custom `name` rather than relying on the class name, so branch on `name` for those and on `instanceof` for the rest:
+`IpAddressBlockedError`, `CaptchaRequiredError`, and `SdkVersionNotSupported` set a custom `name` rather than relying on the class name, so branch on `name` for those and on `instanceof` for the rest:
 
 ```ts
 import {
@@ -261,6 +264,12 @@ function handleSdkError(error: Error): void {
   // name-based first — these extend plain Error with a custom `name`
   if (error.name === 'ipAddressBlocked') {
     showBlockedScreen();        // IpAddressBlockedError
+    return;
+  }
+  if (error.name === 'captchaRequired') {
+    // Present the challenge, then recover with:
+    //   chatSdk.retryAuthorization({ provider, token: freshToken })
+    showCaptchaChallenge();     // CaptchaRequiredError
     return;
   }
   if (error.name === 'SdkVersionNotSupported') {

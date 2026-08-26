@@ -10,12 +10,12 @@ How the SDK authenticates the chat session and establishes who the customer is. 
 
 Pick exactly one model for your integration. In almost all cases it is a Secured Session.
 
-| Your situation | Use | Identity comes from |
-|---|---|---|
-| No user accounts — chat is open to anonymous visitors | Secured Session `ANONYMOUS` | A `customerId` **you** generate and persist per visitor |
-| You want the CXone platform to manage customer identity for you (no accounts, no id to manage) | Secured Session `SECURED_COOKIES` | A secured, HTTP-only identity cookie that the **CXone authentication service** issues and manages |
-| You have your own Identity Provider (SSO / OAuth / OIDC) | Secured Session `THIRD_PARTY` | An OAuth **authorization code** your backend mints |
-| Existing integration on the old token flow | Legacy `sdk.authorize()` — **deprecated** | The SDK exchanges an auth code for an access token it manages itself |
+| Your situation                                                                                 | Use                                       | Identity comes from                                                                               |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| No user accounts — chat is open to anonymous visitors                                          | Secured Session `ANONYMOUS`               | A `customerId` **you** generate and persist per visitor                                           |
+| You want the CXone platform to manage customer identity for you (no accounts, no id to manage) | Secured Session `SECURED_COOKIES`         | A secured, HTTP-only identity cookie that the **CXone authentication service** issues and manages |
+| You have your own Identity Provider (SSO / OAuth / OIDC)                                       | Secured Session `THIRD_PARTY`             | An OAuth **authorization code** your backend mints                                                |
+| Existing integration on the old token flow                                                     | Legacy `sdk.authorize()` — **deprecated** | The SDK exchanges an auth code for an access token it manages itself                              |
 
 Secured Sessions and the legacy flow are mutually exclusive: when `securedSession` is set you **do not** call `authorize()`, and the gateway authenticates the WebSocket directly. Migrating off the legacy flow is covered in **[migration.md](./migration.md)**.
 
@@ -29,21 +29,21 @@ Enable a Secured Session by passing the `securedSession` option when you constru
 import { ChatSdk, SecureSessions } from '@nice-devone/nice-cxone-chat-web-sdk';
 ```
 
-| `SecureSessions` member | Value | Meaning |
-|---|---|---|
-| `SecureSessions.ANONYMOUS` | `'anonymous'` | Anonymous, app-supplied customer id |
-| `SecureSessions.SECURED_COOKIES` | `'securedCookies'` | Server-managed identity via a cookie |
-| `SecureSessions.THIRD_PARTY` | `'thirdParty'` | Identity from your own IdP via an authorization code |
+| `SecureSessions` member          | Value              | Meaning                                              |
+| -------------------------------- | ------------------ | ---------------------------------------------------- |
+| `SecureSessions.ANONYMOUS`       | `'anonymous'`      | Anonymous, app-supplied customer id                  |
+| `SecureSessions.SECURED_COOKIES` | `'securedCookies'` | Server-managed identity via a cookie                 |
+| `SecureSessions.THIRD_PARTY`     | `'thirdParty'`     | Identity from your own IdP via an authorization code |
 
 > Secured Sessions must also be enabled for your channel on the platform side. Passing a value the SDK doesn't recognise throws immediately (`Expected a SecureSessions value, got …`). Passing `null` (or omitting the option) means "no Secured Session" — the legacy/standard flow.
 
 The single most important per-mode rule concerns `customerId`:
 
-| Mode | `customerId` | `authorizationCode` (to `connect`) | Cookie required | Notes |
-|---|---|---|---|---|
-| `ANONYMOUS` | **Required** — throws if missing/empty | Not used | No | You own and persist the id |
-| `SECURED_COOKIES` | **Forbidden** — throws if passed | Not used | **Yes** — issued by the CXone auth service | Identity is created and managed by the platform |
-| `THIRD_PARTY` | **Forbidden** — throws if passed | **Required** per `connect()` | No | `isAuthorizationEnabled` is forced `true` |
+| Mode              | `customerId`                           | Credentials (to `connect`)                                                | Cookie required                            | Notes                                           |
+| ----------------- | -------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------ | ----------------------------------------------- |
+| `ANONYMOUS`       | **Required** — throws if missing/empty | Not used                                                                  | No                                         | You own and persist the id                      |
+| `SECURED_COOKIES` | **Forbidden** — throws if passed       | Not used                                                                  | **Yes** — issued by the CXone auth service | Identity is created and managed by the platform |
+| `THIRD_PARTY`     | **Forbidden** — throws if passed       | **Required** per `connect()` — an authorization code _or_ an access token | No                                         | `isAuthorizationEnabled` is forced `true`       |
 
 Passing `customerId` with `SECURED_COOKIES` or `THIRD_PARTY` throws `The CustomerId cannot be set when secured sessions are enabled`. Passing an empty `customerId` with `ANONYMOUS` throws `The CustomerId cannot be empty string when "anonymous" secured sessions are enabled`.
 
@@ -52,22 +52,28 @@ Passing `customerId` with `SECURED_COOKIES` or `THIRD_PARTY` throws `The Custome
 Use when there are no user accounts and you just need a stable identity per visitor. **You** generate the id and persist it (so a returning visitor keeps the same conversation). The SDK exposes `generateId()` if you need one.
 
 ```ts
-import { ChatSdk, SecureSessions, generateId } from '@nice-devone/nice-cxone-chat-web-sdk';
+import {
+  ChatSdk,
+  SecureSessions,
+  generateId,
+} from '@nice-devone/nice-cxone-chat-web-sdk';
 
 // Reuse a previously stored id, or mint and persist a new one.
 const customerId = localStorage.getItem('cx_customer_id') ?? generateId();
 localStorage.setItem('cx_customer_id', customerId);
 
 const sdk = new ChatSdk({
-  brandId, channelId, environment,
+  brandId,
+  channelId,
+  environment,
   securedSession: SecureSessions.ANONYMOUS,
-  customerId,                 // REQUIRED for ANONYMOUS
+  customerId, // REQUIRED for ANONYMOUS
   cacheStorage,
   storage,
   onError: (e) => log(e),
 });
 
-await sdk.connect();          // no auth code in this mode
+await sdk.connect(); // no auth code in this mode
 ```
 
 ### `SECURED_COOKIES`
@@ -76,24 +82,46 @@ Use this when you want the **CXone platform to own customer identity** — there
 
 ```ts
 const sdk = new ChatSdk({
-  brandId, channelId, environment,
+  brandId,
+  channelId,
+  environment,
   securedSession: SecureSessions.SECURED_COOKIES,
   // NO customerId here
   cacheStorage,
-  storage,                    // needed for the third-party-cookie fallback (below)
+  storage, // needed for the third-party-cookie fallback (below)
   onError: (e) => log(e),
 });
 
-await sdk.connect();          // no auth code; the cookie carries identity
+await sdk.connect(); // no auth code; the cookie carries identity
 ```
 
 ### `THIRD_PARTY`
 
-Use when you have your own Identity Provider. Your backend performs the OAuth flow and mints a short-lived **authorization code**; you pass that code to `connect()`, and the gateway exchanges it. In this mode the SDK forces `isAuthorizationEnabled` to `true` for you, so you don't set it. **Do not** pass `customerId`.
+Use when you have your own Identity Provider. In this mode the SDK forces `isAuthorizationEnabled` to `true` for you, so you don't set it. **Do not** pass `customerId`.
+
+Two OAuth grants are supported:
+
+| Grant                          | You supply                                                  | The gateway does                                                      |
+| ------------------------------ | ----------------------------------------------------------- | --------------------------------------------------------------------- |
+| `authorization_code` (default) | a short-lived **authorization code** minted by your backend | exchanges the code at your IdP's token endpoint                       |
+| `implicit`                     | a **pre-obtained access token**                             | validates the token against your IdP's `/me` (UserInfo) endpoint only |
+
+Pick `implicit` when your app already holds a valid access token for the user and you don't want to mint a code just for chat. Note the weaker guarantee: the token is only checked against the UserInfo endpoint, so there is no code exchange binding it to this session.
+
+> **The token has to stay valid for the whole conversation.** On a channel with OAuth active the
+> backend re-validates a third-party token against `/me` on **every message sent**, not just at
+> authorization. With `authorization_code` the gateway mints its own token and refreshes it for you;
+> with `implicit` there is nothing to refresh — the token you supplied is the only one the IdP will
+> accept, so once it expires sending fails and the SDK cannot recover on its own. Either supply a
+> token that outlives the conversation, or hand the SDK a fresh one with
+> `connect({ accessToken, grantType: 'implicit' })` — credentials are stored before the
+> already-connected early return, so subsequent messages pick the new token up without reconnecting.
 
 ```ts
 const sdk = new ChatSdk({
-  brandId, channelId, environment,
+  brandId,
+  channelId,
+  environment,
   securedSession: SecureSessions.THIRD_PARTY,
   // NO customerId here; isAuthorizationEnabled is forced true internally
   cacheStorage,
@@ -101,11 +129,63 @@ const sdk = new ChatSdk({
   onError: (e) => log(e),
 });
 
-const authCode = await fetchAuthCodeFromBackend();   // short-lived; fetch fresh
-await sdk.connect(authCode);                          // REQUIRED for THIRD_PARTY
+const authCode = await fetchAuthCodeFromBackend(); // short-lived; fetch fresh
+await sdk.connect(authCode); // REQUIRED for THIRD_PARTY
 ```
 
-The authorization code is one-time / short-lived: fetch a **fresh** code immediately before each `connect()` and never cache or reuse it (see *Anti-patterns*). Unlike the other modes, the SDK does **not** reuse a cached transaction response for `THIRD_PARTY`, so a new code is exchanged each time you connect.
+The authorization code is one-time / short-lived: fetch a **fresh** code immediately before each `connect()` and never cache or reuse it (see _Anti-patterns_). Unlike the other modes, the SDK does **not** reuse a cached transaction response for `THIRD_PARTY`, so a new code is exchanged each time you connect.
+
+#### Selecting the grant explicitly
+
+A bare string passed to `connect()` always means an authorization code, so the call above is unchanged. To choose a grant explicitly, pass a `ThirdPartyCredentials` object instead:
+
+```ts
+// implicit — a token you already hold
+await sdk.connect({ accessToken, grantType: 'implicit' });
+
+// authorization_code, with a PKCE code verifier
+await sdk.connect({
+  authorizationCode: authCode,
+  codeVerifier,
+  grantType: 'authorization_code',
+});
+```
+
+The type is a discriminated union, so an invalid pairing — a `codeVerifier` with the implicit grant, say — is a compile error rather than a request the backend rejects.
+
+> **`grantType` is required on the object form, and checked at runtime.** The union only binds TypeScript callers, so `connect()` and `authorize()` also validate it and throw a `ChatSDKError` when it is missing or not one of `'authorization_code'` / `'implicit'`. Without that check, `connect({ accessToken })` from plain JS would be read as an authorization-code grant with no code and fail silently. If you don't want to name the grant, pass the authorization code as a bare string instead — that form needs no `grantType`.
+
+Both credentials can also be supplied at construction, through the `accessToken` and `codeVerifier` options. That is the usual shape for **PKCE**, because the verifier is generated before the redirect while the code only arrives on the way back:
+
+```ts
+const sdk = new ChatSdk({
+  ...options,
+  securedSession: SecureSessions.THIRD_PARTY,
+  codeVerifier,
+});
+
+// The verifier from the options is sent along with this code.
+await sdk.connect(new URLSearchParams(location.search).get('code'));
+```
+
+> **Pair the verifier with its code.** Under PKCE the verifier is generated per authorization request and the code is cryptographically bound to that verifier's `code_challenge`. Set `codeVerifier` **once, before the first `connect()`**, together with the code it was generated for. A verifier left in the construction options will not match a code minted by a later authorization request, and the exchange fails at your IdP.
+>
+> If you obtain a _fresh_ pair after the first grant has already run, seed it and then re-run the grant — in that order. Neither `retryAuthorization()` nor `resetSession()` takes credentials, and the `connect()` that would supply them returns early once a connection exists, so the grant has to be triggered separately:
+>
+> ```ts
+> // Stores the new pair. Returns false — the existing connection is not replaced.
+> await sdk.connect({
+>   authorizationCode,
+>   codeVerifier,
+>   grantType: 'authorization_code',
+> });
+>
+> await sdk.retryAuthorization(botProtection); // or: await sdk.resetSession(...)
+> ```
+>
+> Calling them the other way round grants against the stale pair. If you would rather not depend on that ordering, construct a new `ChatSdk` with the new pair in its options.
+
+> **Precedence.** `accessToken`, `authorizationCode` and `codeVerifier` are independent optional options, so nothing stops you setting both credentials. If both are present, **the implicit grant wins** — a pre-obtained access token is read as the more specific intent. A credential passed to `connect()` is authoritative and clears whatever the other grant had left behind, so an explicit call always gets the grant it asked for.
 
 ---
 
@@ -123,16 +203,18 @@ What this means for you:
 
 ```ts
 const sdk = new ChatSdk({
-  brandId, channelId, environment,
+  brandId,
+  channelId,
+  environment,
   securedSession: SecureSessions.SECURED_COOKIES,
-  isThirdPartyCookiesSupported: detectThirdPartyCookies(),  // YOUR detection
-  storage,                                                  // REQUIRED for the fallback
+  isThirdPartyCookiesSupported: detectThirdPartyCookies(), // YOUR detection
+  storage, // REQUIRED for the fallback
   cacheStorage,
   onError: (e) => log(e),
 });
 ```
 
-> The fallback applies only to `SECURED_COOKIES`. `ANONYMOUS` (you own the id) and `THIRD_PARTY` (identity rides on the auth code) don't use the cookie path.
+> The fallback applies only to `SECURED_COOKIES`. `ANONYMOUS` (you own the id) and `THIRD_PARTY` (identity rides on the OAuth credentials) don't use the cookie path.
 
 There is also an `identityToken` option you can pass at construction if you already hold a previously issued token (e.g. carried across a navigation). In normal use you don't set it — the SDK obtains and stores the token through `storage` for you.
 
@@ -182,11 +264,11 @@ try {
 
 Identity is established differently per mode, but in all cases you read it back through the **`Customer`** object returned by `sdk.getCustomer()`.
 
-| Option | Type | Purpose |
-|---|---|---|
-| `customerId` | `string` | Unique, **stable** identifier for the end customer. Required only for `ANONYMOUS` (and the legacy/standard flow); forbidden for `SECURED_COOKIES` / `THIRD_PARTY`. Reuse the same value for a returning visitor so their history is preserved. |
-| `customerName` | `string` | Optional display name. |
-| `customerImage` | `string` | Optional avatar URL. |
+| Option          | Type     | Purpose                                                                                                                                                                                                                                        |
+| --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `customerId`    | `string` | Unique, **stable** identifier for the end customer. Required only for `ANONYMOUS` (and the legacy/standard flow); forbidden for `SECURED_COOKIES` / `THIRD_PARTY`. Reuse the same value for a returning visitor so their history is preserved. |
+| `customerName`  | `string` | Optional display name.                                                                                                                                                                                                                         |
+| `customerImage` | `string` | Optional avatar URL.                                                                                                                                                                                                                           |
 
 How identity is established per mode:
 
@@ -198,16 +280,16 @@ How identity is established per mode:
 
 `sdk.getCustomer()` returns the live `Customer` instance. Its public methods:
 
-| Method | Purpose |
-|---|---|
-| `getId()` / `setId(id)` | Read / set the customer's external-platform id. |
-| `getName()` / `setName(name)` | Read / set the display name. |
-| `getImage()` / `setImage(url)` | Read / set the avatar URL. |
-| `getIdOrCreateNewOne()` | Return the current id, generating and storing a new one if none is set. |
-| `setCustomField(name, value)` | Set a single customer custom field. Returns a promise once the session is established (the value is queued and sent after the first message / recover). |
-| `setCustomFields(obj)` | Set several custom fields at once, e.g. `setCustomFields({ tier: 'gold' })`. |
-| `getCustomFields()` | Read custom fields as an object. |
-| `setCustomFieldsFromArray(arr)` / `getCustomFieldsArray()` | Set / read custom fields as an array of `CustomField`. |
+| Method                                                     | Purpose                                                                                                                                                 |
+| ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `getId()` / `setId(id)`                                    | Read / set the customer's external-platform id.                                                                                                         |
+| `getName()` / `setName(name)`                              | Read / set the display name.                                                                                                                            |
+| `getImage()` / `setImage(url)`                             | Read / set the avatar URL.                                                                                                                              |
+| `getIdOrCreateNewOne()`                                    | Return the current id, generating and storing a new one if none is set.                                                                                 |
+| `setCustomField(name, value)`                              | Set a single customer custom field. Returns a promise once the session is established (the value is queued and sent after the first message / recover). |
+| `setCustomFields(obj)`                                     | Set several custom fields at once, e.g. `setCustomFields({ tier: 'gold' })`.                                                                            |
+| `getCustomFields()`                                        | Read custom fields as an object.                                                                                                                        |
+| `setCustomFieldsFromArray(arr)` / `getCustomFieldsArray()` | Set / read custom fields as an array of `CustomField`.                                                                                                  |
 
 ```ts
 const customer = sdk.getCustomer();
@@ -257,11 +339,12 @@ All arguments are optional; anything you omit is regenerated. Use it to log a us
 
 ## Errors
 
-| Error / signal | When | What to do |
-|---|---|---|
-| **`AuthorizationError`** | The legacy `authorize()` flow's authorization or token-refresh fails. Its message includes the underlying reason (`… because of (…)`). | Re-fetch the auth code and restart the flow, or migrate to a Secured Session. |
-| **`IpAddressBlockedError`** (`name === 'ipAddressBlocked'`) | The customer's IP is blocked during the Secured Session token exchange. | Surface a blocked-access message; this is delivered to `onError` and also rejects `connect()`. |
-| Transaction-token failure (Secured Sessions) | The token exchange fails for any other reason (including the ~30s timeout). | Reported via `onError` and rejects `connect()`. `onAuthorization('error', {})` also fires, but with no detail — read the error from `onError` / the `connect()` rejection. |
+| Error / signal                                              | When                                                                                                                                   | What to do                                                                                                                                                                                                                                                                                                                                                                          |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`AuthorizationError`**                                    | The legacy `authorize()` flow's authorization or token-refresh fails. Its message includes the underlying reason (`… because of (…)`). | Re-fetch the auth code and restart the flow, or migrate to a Secured Session.                                                                                                                                                                                                                                                                                                       |
+| **`IpAddressBlockedError`** (`name === 'ipAddressBlocked'`) | The customer's IP is blocked during the Secured Session token exchange.                                                                | Surface a blocked-access message; this is delivered to `onError` and also rejects `connect()`.                                                                                                                                                                                                                                                                                      |
+| **`CaptchaRequiredError`** (`name === 'captchaRequired'`)   | The token endpoint requires a captcha challenge (`captcha_required`) during the Secured Session token exchange.                        | Delivered to `onError` and also rejects `connect()`. Present the challenge, then recover with `chatSdk.retryAuthorization({ provider, token })` passing the fresh captcha token — a plain `connect()` retry will not recover. `retryAuthorization()` itself rejects with `CaptchaRequiredError` again if the retried challenge also fails; it can be called again with a new token. |
+| Transaction-token failure (Secured Sessions)                | The token exchange fails for any other reason (including the ~30s timeout).                                                            | Reported via `onError` and rejects `connect()`. `onAuthorization('error', {})` also fires, but with no detail — read the error from `onError` / the `connect()` rejection.                                                                                                                                                                                                          |
 
 For the full catalog of SDK errors and push events, see **[events-and-errors.md](./events-and-errors.md)**.
 

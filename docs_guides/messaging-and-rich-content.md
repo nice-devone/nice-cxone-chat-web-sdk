@@ -1,6 +1,6 @@
 # Chat Web SDK — Messaging & Rich Content
 
-How to send messages from your application, receive and render them (including rich content and GenAI streamed replies), load history, track read state, upload attachments, and drive a persistent menu. The patterns here mirror what the reference chat widget does in production.
+How to send messages from your application, receive and render them (including rich content and GenAI streamed replies), load history, track read state, and upload attachments. The patterns here mirror what the reference chat widget does in production.
 
 This guide assumes you already have a connected SDK and an open `Thread` — see **[getting-started.md](./getting-started.md)** and **[threads-and-livechat.md](./threads-and-livechat.md)** for how to get there. All examples import from the public package:
 
@@ -36,7 +36,7 @@ await thread.sendTextMessage('Hi, I need help with my order');
 
 ### `thread.sendPostbackMessage(postback, text, options?)`
 
-Use this to **reply to interactive content** — a quick-reply chip, a list-picker option, or a persistent-menu item. The `postback` is the machine-readable value the backend expects; the `text` is the human-readable label to display in the conversation.
+Use this to **reply to interactive content** — a quick-reply chip or a list-picker option. The `postback` is the machine-readable value the backend expects; the `text` is the human-readable label to display in the conversation.
 
 ```ts
 // User tapped a quick reply whose postback is 'ORDER_STATUS' and label is 'Order status'
@@ -390,30 +390,6 @@ function renderAttachments(message) {
 ```
 
 A `FILE`-type message has no exported content shape, so for those rely on `message.attachments` plus a fallback.
-
----
-
-## Persistent menu
-
-A channel can be configured with a **persistent menu** — a fixed set of shortcut actions. Fetch the items with `sdk.getPersistentMenuItems()`:
-
-```ts
-const items = await sdk.getPersistentMenuItems(); // Array<PersistentMenuItem>
-```
-
-Each `PersistentMenuItem` is `{ id: string; label: string; postback: string }`. Render the `label`s as a menu; when the user taps one, reply with the item's `postback` (and show the `label`):
-
-```ts
-function renderPersistentMenu(items, thread) {
-  return items.map((item) => ({
-    id: item.id,
-    label: item.label,
-    onTap: () => thread.sendPostbackMessage(item.postback, item.label),
-  }));
-}
-```
-
-`getPersistentMenuItems()` throws `ChatSDKError` if the fetch fails. Whether to show the menu at all is a channel setting (`channelInfo.settings.enablePersistentMenu`); gate your UI on it. The menu is empty if the channel has no items configured.
 
 ---
 
